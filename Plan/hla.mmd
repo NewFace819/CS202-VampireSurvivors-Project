@@ -1,0 +1,36 @@
+graph TD
+    %% Main Game Loop Container
+    Start((Start Frame)) --> PollEvents[1. Poll SFML Input & Events]
+    
+    PollEvents --> CheckState{Current FSM State?}
+    
+    %% Menu / Pause paths
+    CheckState -->|Paused / Menus| Render[Render Screen]
+    
+    %% Active Gameplay Loop
+    CheckState -->|Playing State| MovePlayer[2. Update Player Position]
+    
+    subgraph Gameplay Update
+        MovePlayer --> AutoFire[3. Weapons Auto-Fire / Spawn Projectiles]
+        AutoFire --> MoveEnemies[4. Enemy Swarm Tracks Player]
+        MoveEnemies --> UpdateGrid[5. Register Positions in Spatial Hash Grid]
+    end
+    
+    subgraph Physics & Memory Management
+        UpdateGrid --> Collisions[6. Grid O(1) Collision Queries]
+        Collisions --> ApplyDamage[7. Apply Damage & Mass-Based Knockback]
+        ApplyDamage --> ObjectPool[8. Recycle Dead Entities to Object Pool]
+    end
+    
+    subgraph Progression & Event Observers
+        ObjectPool --> SpawnEXP[9. Drop EXP & Apply Magnet]
+        SpawnEXP --> LevelCheck{EXP Cap Reached?}
+        LevelCheck -->|Yes| PushState[Push Level-Up UI State]
+        LevelCheck -->|No| Audio[10. Trigger Sound Effect Observers]
+    end
+    
+    Audio --> Render
+    PushState --> Render
+    
+    Render --> End((End Frame))
+    End -.->|Loop| Start
