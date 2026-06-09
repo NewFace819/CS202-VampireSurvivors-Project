@@ -1,0 +1,56 @@
+cmake_minimum_required(VERSION 3.20)
+
+project(VampireSurvivors LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+
+include(FetchContent)
+
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries" FORCE)
+set(SFML_BUILD_AUDIO OFF CACHE BOOL "Build SFML audio module" FORCE)
+set(SFML_BUILD_NETWORK OFF CACHE BOOL "Build SFML network module" FORCE)
+set(SFML_BUILD_EXAMPLES OFF CACHE BOOL "Build SFML examples" FORCE)
+set(SFML_BUILD_DOC OFF CACHE BOOL "Build SFML documentation" FORCE)
+
+FetchContent_Declare(
+    SFML
+    GIT_REPOSITORY https://github.com/SFML/SFML.git
+    GIT_TAG 2.6.2
+    GIT_SHALLOW TRUE
+)
+
+FetchContent_Declare(
+    nlohmann_json
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    GIT_TAG v3.11.3
+    GIT_SHALLOW TRUE
+)
+
+FetchContent_MakeAvailable(SFML nlohmann_json)
+
+add_executable(VampireSurvivors
+    main.cpp
+)
+
+target_include_directories(VampireSurvivors PRIVATE 
+    "${CMAKE_CURRENT_SOURCE_DIR}/src"
+)
+
+target_link_libraries(VampireSurvivors PRIVATE 
+    sfml-graphics 
+    sfml-window 
+    sfml-system
+    sfml-main
+    nlohmann_json::nlohmann_json
+)
+
+add_custom_command(TARGET VampireSurvivors POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/assets"
+        "$<TARGET_FILE_DIR:VampireSurvivors>/assets"
+    COMMENT "Copying Assets directory to build output..."
+)
