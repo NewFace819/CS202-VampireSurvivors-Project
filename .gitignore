@@ -308,6 +308,7 @@ paket-files/
 
 # FAKE - F# Make
 .fake/
+agent.md
 
 # CodeRush personal settings
 .cr/personal
@@ -361,3 +362,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+build/
+
