@@ -1,4 +1,5 @@
 #pragma once
+#include <SFML/Graphics.hpp>
 #include "State/GameState.h"
 
 class GameManager;
@@ -16,6 +17,9 @@ public:
 private:
     GameManager* m_manager;
     sf::Font m_font;
-    sf::Text m_titleText;
+    sf::Texture m_titleTexture;
+    sf::Sprite m_titleSprite;
+    sf::Texture m_playTexture;
+    sf::Sprite m_playSprite;
     sf::Text m_promptText;
 };

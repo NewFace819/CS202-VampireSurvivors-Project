@@ -13,6 +13,8 @@ public:
     void popState();
     void changeState(std::unique_ptr<GameState> state);
 
+    sf::RenderWindow& getWindow() { return m_window; }
+
 private:
     sf::RenderWindow m_window;
     std::stack<std::unique_ptr<GameState>> m_states;
