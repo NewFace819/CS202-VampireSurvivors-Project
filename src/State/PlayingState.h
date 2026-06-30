@@ -34,4 +34,9 @@ private:
     std::vector<ExpGem> m_activeGems;
 
     float m_spawnTimer = 0.f;
+    float m_survivalTime = 0.f;
+    bool m_bossSpawned = false;
+
+    sf::Font m_font;
+    sf::Text m_timerText;
 };

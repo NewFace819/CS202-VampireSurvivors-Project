@@ -8,7 +8,9 @@ public:
     virtual ~EnemyBase() = default;
 
     // Resets the enemy state for Object Pooling
-    virtual void init(const sf::Vector2f& startPos, float hp, float speed);
+    virtual void init(const sf::Vector2f& startPos, float hp, float speed, float radius = 20.f, sf::Color color = sf::Color::Red);
+
+    float getRadius() const { return m_shape.getRadius(); }
 
     void update(float dt) override;
     void draw(sf::RenderWindow& window) override;

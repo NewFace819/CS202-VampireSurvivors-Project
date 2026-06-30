@@ -1,5 +1,6 @@
 #include "Physics/Collision.h"
 #include <cmath>
+#include <algorithm>
 
 namespace Collision {
 

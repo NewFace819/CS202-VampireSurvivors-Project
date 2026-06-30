@@ -9,16 +9,18 @@ MainMenuState::MainMenuState(GameManager* manager) : m_manager(manager) {
     }
     m_titleSprite.setTexture(m_titleTexture);
     
-    // Center it on a 1280x720 window
+    sf::Vector2u windowSize = m_manager->getWindow().getSize();
+    
+    // Center it on the screen
     m_titleSprite.setOrigin(m_titleTexture.getSize().x / 2.0f, m_titleTexture.getSize().y / 2.0f);
-    m_titleSprite.setPosition(1280.0f / 2.0f, 720.0f / 2.0f - 100.f);
+    m_titleSprite.setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f - 100.f);
 
     if (!m_playTexture.loadFromFile("assets/ExportedProject/Assets/Texture2D/Play_Now.png")) {
         std::cerr << "Could not load play button image!\n";
     }
     m_playSprite.setTexture(m_playTexture);
     m_playSprite.setOrigin(m_playTexture.getSize().x / 2.0f, m_playTexture.getSize().y / 2.0f);
-    m_playSprite.setPosition(1280.0f / 2.0f, 720.0f / 2.0f + 100.f);
+    m_playSprite.setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f + 100.f);
 
 }
 

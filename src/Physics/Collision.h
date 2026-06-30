@@ -1,6 +1,5 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Physics/Agent.h"
 
 namespace Collision {
     // Check if two circles intersect using squared distance (O(1), cache friendly)
