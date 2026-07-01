@@ -1,0 +1,52 @@
+using System;
+using Coherence.Entities;
+using Coherence.SimulationFrame;
+using Coherence.Toolkit.Bindings.ValueBindings;
+using UnityEngine;
+using UnityEngine.Scripting;
+using VampireSurvivors.Objects.Characters.Enemies;
+
+namespace Coherence.Generated
+{
+	[Preserve]
+	public class Binding_475e660c5fce21a4c9cabd04b51f3047_a60c2bd55d5e4e26959b31ddb4e0e550 : BoolBinding
+	{
+		private EnemyStalkerCart CastedUnityComponent;
+
+		public override Type CoherenceComponentType => null;
+
+		public override string CoherenceComponentName => null;
+
+		public override uint FieldMask => 0u;
+
+		public override bool Value
+		{
+			get
+			{
+				return false;
+			}
+			set
+			{
+			}
+		}
+
+		protected override void OnBindingCloned()
+		{
+		}
+
+		protected override (bool, AbsoluteSimulationFrame) ReadComponentData(ICoherenceComponentData coherenceComponent, Vector3 floatingOriginDelta)
+		{
+			return default((bool, AbsoluteSimulationFrame));
+		}
+
+		public override ICoherenceComponentData WriteComponentData(ICoherenceComponentData coherenceComponent, AbsoluteSimulationFrame simFrame)
+		{
+			return null;
+		}
+
+		public override ICoherenceComponentData CreateComponentData()
+		{
+			return null;
+		}
+	}
+}

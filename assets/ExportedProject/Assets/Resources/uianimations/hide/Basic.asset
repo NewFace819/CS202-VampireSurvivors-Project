@@ -1,0 +1,90 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -701280273, guid: 4d426826c48d7417bda07e2fb7028f22, type: 3}
+  m_Name: Basic
+  m_EditorClassIdentifier:
+  AnimationNames:
+  - BlastOff
+  - Cascade
+  - DoubleOut
+  - ElegantFallOff
+  - FadeDown
+  - FadeLeft
+  - FadeRight
+  - FadeUp
+  - FallRotateLeft
+  - FallRotateRight
+  - FastFadeOut
+  - FinetuneBottom
+  - FinetuneLeft
+  - FinetuneRight
+  - FinetuneTop
+  - FoldToBottom
+  - FoldToLeft
+  - FoldToRight
+  - FoldToTop
+  - JumpOut
+  - Punch
+  - SailLeft
+  - SailRight
+  - ShakeToBottom
+  - ShakeToLeft
+  - ShakeToRight
+  - ShakeToTop
+  - ShrinkToBottomFade
+  - ShrinkToLeftFade
+  - ShrinkToRightFade
+  - ShrinkToTopFade
+  - SlowFadeOut
+  - SubsideHorizontal
+  - SubsideLeft
+  - SubsideRight
+  - SubsideVertical
+  Database:
+  - {fileID: 11400000, guid: 64c13560923f1564090323f6b50bcd5b, type: 2}
+  - {fileID: 11400000, guid: 5e3056a1f24e00145b81f4c8aad76bb5, type: 2}
+  - {fileID: 11400000, guid: 3c42ddb5bdd4fbc488e50e329d24c900, type: 2}
+  - {fileID: 11400000, guid: 161ee9ce68eda2a4ba9a952a86810412, type: 2}
+  - {fileID: 11400000, guid: d7cde80bafb38e747ba9a73076e9d1cf, type: 2}
+  - {fileID: 11400000, guid: d4f559234f8e14242b810a5a2dae15f6, type: 2}
+  - {fileID: 11400000, guid: 22f41d55e04568a40934af729dd35153, type: 2}
+  - {fileID: 11400000, guid: 35cc36b243b129c4cbc647a717da8805, type: 2}
+  - {fileID: 11400000, guid: 1227397c46bef9b4ba64d8cacfca46d5, type: 2}
+  - {fileID: 11400000, guid: f9db480048074454ebd020af34924fb9, type: 2}
+  - {fileID: 11400000, guid: c19c8d7f30286664ea1cf2600c78ea40, type: 2}
+  - {fileID: 11400000, guid: eaf52970fa7cbce43a08d0dd50ef8c1a, type: 2}
+  - {fileID: 11400000, guid: 2e8fe73301df54048880fdd93ba83537, type: 2}
+  - {fileID: 11400000, guid: 909ff03f8a262744592a11bf4d3effa4, type: 2}
+  - {fileID: 11400000, guid: 311f612ef9ac57a489acfb63638c862c, type: 2}
+  - {fileID: 11400000, guid: 85156b93a1cbe1e40a40149ca41343b3, type: 2}
+  - {fileID: 11400000, guid: 3a106dfcea6ed2849922597889aaae18, type: 2}
+  - {fileID: 11400000, guid: 84ee3e2b3793a824588c98e89c37e7e0, type: 2}
+  - {fileID: 11400000, guid: e8dd71aad89a05f4f9ad7bed771b61c4, type: 2}
+  - {fileID: 11400000, guid: 0b352ad28b6616e41ac3be38faa732a1, type: 2}
+  - {fileID: 11400000, guid: 34db408d52ec54b4687e60ed5c672eac, type: 2}
+  - {fileID: 11400000, guid: bc52a63e8a22dea4fad8589fb38d57a9, type: 2}
+  - {fileID: 11400000, guid: 76dc03a46aaa4ed46a2bfca76f403ef0, type: 2}
+  - {fileID: 11400000, guid: 21f41d3dfa797c24e8250e34c2c37e66, type: 2}
+  - {fileID: 11400000, guid: c14b61c5a0a8d64469606ad4021b106a, type: 2}
+  - {fileID: 11400000, guid: f3d38c8b9c23f9748810cfcf4890b774, type: 2}
+  - {fileID: 11400000, guid: becdaccca46b7624ab266f889669224d, type: 2}
+  - {fileID: 11400000, guid: e3c9509f77964fc41b9132e6370473e0, type: 2}
+  - {fileID: 11400000, guid: 839b18a4c1798224686a337455886bc0, type: 2}
+  - {fileID: 11400000, guid: bc4e9196d7c718b49ba3f51a2b52bbe8, type: 2}
+  - {fileID: 11400000, guid: 1541f350ae080e247bb900e3f161d19b, type: 2}
+  - {fileID: 11400000, guid: e4f6e56b1ae2ec54aa4e93739abae512, type: 2}
+  - {fileID: 11400000, guid: d23135e2fd54f6044966c307cde50da7, type: 2}
+  - {fileID: 11400000, guid: 0e4306ac2e40db3408e7be60f8ce0c61, type: 2}
+  - {fileID: 11400000, guid: 4071b6c138593764faac40b56a35f0a1, type: 2}
+  - {fileID: 11400000, guid: 53d80f32e3b8c8348b262362f1a8c7d7, type: 2}
+  DatabaseName: Basic
+  DataType: 2

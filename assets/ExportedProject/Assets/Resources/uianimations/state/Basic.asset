@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -701280273, guid: 4d426826c48d7417bda07e2fb7028f22, type: 3}
+  m_Name: Basic
+  m_EditorClassIdentifier:
+  AnimationNames:
+  - Fade
+  - FadeReset
+  - MoveDown
+  - MoveDownReset
+  - MoveLeft
+  - MoveLeftReset
+  - MoveRight
+  - MoveRightReset
+  - MoveUp
+  - MoveUpReset
+  - RotateLeft
+  - RotateLeftReset
+  - RotateRight
+  - RotateRightReset
+  - ScaleBig
+  - ScaleBigReset
+  - ScaleNormal
+  - ScaleNormalReset
+  Database:
+  - {fileID: 11400000, guid: 53982d334a0fed141bb52379d45f6cbe, type: 2}
+  - {fileID: 11400000, guid: 7bae919fefe52fa42804f21cbea0954c, type: 2}
+  - {fileID: 11400000, guid: 2a8b980e0a774f340aa5e72bc4303908, type: 2}
+  - {fileID: 11400000, guid: 00b00c2241339564baecc44a0c8162d8, type: 2}
+  - {fileID: 11400000, guid: 642d02f9710ee814888819917d4387f2, type: 2}
+  - {fileID: 11400000, guid: 45714f0f5144f6545b1f05bd173a7a3b, type: 2}
+  - {fileID: 11400000, guid: 2cfca13a381b5d44fb3873c04cfe52e5, type: 2}
+  - {fileID: 11400000, guid: 6690e9405b420fc42b0d5823329a4924, type: 2}
+  - {fileID: 11400000, guid: 14cbfbcf41b8cd740bcd3d35928dc866, type: 2}
+  - {fileID: 11400000, guid: 68e8d71e7cf17da46b07757a9464a494, type: 2}
+  - {fileID: 11400000, guid: 8aefb93102ae8bd4ca9dff385cb58e3c, type: 2}
+  - {fileID: 11400000, guid: 2a0d81e297f0d284395186078913331c, type: 2}
+  - {fileID: 11400000, guid: 8b427e2eff65324458065fcab806cb3f, type: 2}
+  - {fileID: 11400000, guid: b54abc1f21b03694090beea305448ff7, type: 2}
+  - {fileID: 11400000, guid: 3935b54b857406e498fa84b3d78dbca5, type: 2}
+  - {fileID: 11400000, guid: d4fb4aea37da6bc4db8e2fd8d02b88d6, type: 2}
+  - {fileID: 11400000, guid: 22b83bd46dfcb3f4f97125ae15e12b4a, type: 2}
+  - {fileID: 11400000, guid: 5f72235a64ab2274286f209547568ccd, type: 2}
+  DatabaseName: Basic
+  DataType: 5

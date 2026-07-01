@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1565582399, guid: 48e2a2bbdf27d9639db3355676641881, type: 3}
+  m_Name: Stage5wip.tmx_PlayerWall
+  m_EditorClassIdentifier:
+  hash:
+    bytes[0]: 190
+    bytes[1]: 127
+    bytes[2]: 254
+    bytes[3]: 196
+    bytes[4]: 153
+    bytes[5]: 157
+    bytes[6]: 136
+    bytes[7]: 36
+    bytes[8]: 180
+    bytes[9]: 11
+    bytes[10]: 118
+    bytes[11]: 245
+    bytes[12]: 195
+    bytes[13]: 83
+    bytes[14]: 66
+    bytes[15]: 101
+  combine:
+    bound1: 0
+    bound2: 0
+  allBounds:
+  - m_Position: {x: 0, y: -31, z: 0}
+    m_Size: {x: 256, y: 32, z: 1}

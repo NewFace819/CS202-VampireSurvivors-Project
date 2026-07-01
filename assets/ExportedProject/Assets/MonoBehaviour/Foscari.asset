@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 75184437, guid: 361d993a59a3ee483fbe6b04a31f86b4, type: 3}
+  m_Name: Foscari
+  m_EditorClassIdentifier:
+  _Title: Tides of the Foscari
+  _TitleLocKey: lang/tides_of_the_foscari
+  _DlcType: 1
+  _DlcIcon: {fileID: 21300000, guid: 2f725211bc9485749b0441c076a3647e, type: 2}
+  _ContentGroupType: 3
+  _ExpectedVersion: 1.0.188
+  _HasBeenReleased: 1
+  _ReleaseDate:
+    _Date:
+      _Day: 13
+      _Month: 4
+      _Year: 2023
+    _Time:
+      _Hour: 16
+      _Minute: 0
+      _Second: 0
+  _Steam:
+    _AppID: 2313550
+    _WindowsDepotID: 2313551
+    _OSXDepotID: 2313552
+    _LinuxDepotID: 2313553
+  _EpicGamesesStore:
+    _ArtifactId: de3622e6d1894793a852083720d6f58b
+    _AudienceItemId: 164ed738f3864d51898978abb0c760ad
+  _Xbox:
+    _StoreID: 9NN6687VZN76
+    _StorePackageIdentifier: poncle.TidesoftheFoscari
+  _Switch:
+    _AocIndex: 2
+    _Tag: Tides of the Foscari
+  _PS5:
+    _ContentLabel: 0850097983733846
+    _ServiceId: EB0324-PPSA21703_00
+    _EntitlementKey: 00112233445566778899aabbccdd0001
+    _IconAssetPath: Assets/BuildResources/PlayStation/PS5/[VS]Foscari_Icon_512x512.png
+  _PS4:
+    _ContentLabel: 0042832076160875
+    _ServiceId: EB0324-CUSA47783_00
+    _EntitlementKey: 00112233445566778899aabbccdd0001
+    _IconAssetPath: Assets/BuildResources/PlayStation/PS5/[VS]Foscari_Icon_512x512.png
+  _Mobile:
+    _Product: dlc_foscari
+    _InGameStoreIconRef:
+      m_AssetGUID: 1da5c17e142e41444984eb47c43bc2bb
+      m_SubObjectName: stage_foscari
+      m_SubObjectType: UnityEngine.Sprite, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  _BundleDlc:
+    _Steam: 0
+    _Xbox: 0
+    _Switch: 0
+    _Android: 0
+    _iOS: 0
+    _AppleArcade: 1
+    _PlayStation: 0
+  DoNotAutoInclude: 0
+  _DoNotBuild: 0

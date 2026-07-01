@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -701280273, guid: 4d426826c48d7417bda07e2fb7028f22, type: 3}
+  m_Name: Rotate
+  m_EditorClassIdentifier:
+  AnimationNames:
+  - FadeAndDoubleRotate
+  - FadeAndRotate
+  - RotateAndScaleFast
+  - RotateAndScaleNormal
+  - RotateAndScaleSlow
+  Database:
+  - {fileID: 11400000, guid: f2bba3be6c89bf24197970d4f85efdf9, type: 2}
+  - {fileID: 11400000, guid: 5dc7e2cd03a22914096ef7d084ba9fba, type: 2}
+  - {fileID: 11400000, guid: 4e22995f5d31ee74d9418e191f1f1b4d, type: 2}
+  - {fileID: 11400000, guid: cc93b7af1383a6b4d82241a87ab148b7, type: 2}
+  - {fileID: 11400000, guid: 69d19a9b266812f4994db8df5cb6ae8a, type: 2}
+  DatabaseName: Rotate
+  DataType: 1

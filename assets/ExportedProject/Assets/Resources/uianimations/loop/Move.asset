@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -701280273, guid: 4d426826c48d7417bda07e2fb7028f22, type: 3}
+  m_Name: Move
+  m_EditorClassIdentifier:
+  AnimationNames:
+  - MoveScaleSidesFast
+  - MoveScaleSidesNormal
+  - MoveScaleSidesSlow
+  - ScaleSideToSideFast
+  - ScaleSideToSideNormal
+  - ScaleSideToSideSlow
+  - ScaleSideToSideVeryFast
+  - ShakeDiagonalFast
+  - ShakeDiagonalNormal
+  - ShakeDiagonalSlow
+  - SideToSideFadeFast
+  - SideToSideFadeNormal
+  - SideToSideFadeSlow
+  - SideToSideFast
+  - SideToSideNormal
+  - SideToSideSlow
+  - UpAndDownFast
+  - UpAndDownNormal
+  - UpAndDownSlow
+  Database:
+  - {fileID: 11400000, guid: aec59c42ecd393f488f2dd59f13062b0, type: 2}
+  - {fileID: 11400000, guid: b5a3ee87563439449935895ee93750bb, type: 2}
+  - {fileID: 11400000, guid: 5a9a8e132e3aa10459221d51e2be4a94, type: 2}
+  - {fileID: 11400000, guid: acee95c142deae04eb911f5be63bd756, type: 2}
+  - {fileID: 11400000, guid: 313695b0666557241bf508c9a7387c7c, type: 2}
+  - {fileID: 11400000, guid: 5383a8c37918a314ca81504aeccd3b73, type: 2}
+  - {fileID: 11400000, guid: 6af03902b9dddee4a99c24f472177cea, type: 2}
+  - {fileID: 11400000, guid: a49bec22c670742409e5756c5d8f7d7b, type: 2}
+  - {fileID: 11400000, guid: b7c853b9d03e3c14886f74ce0f3954f0, type: 2}
+  - {fileID: 11400000, guid: f38e305b8f785954596a4a2852bb3f24, type: 2}
+  - {fileID: 11400000, guid: 73b63561a65ee3c4eb11d133346bf4e0, type: 2}
+  - {fileID: 11400000, guid: 475a47afad7ee6e428b98626b4791b2d, type: 2}
+  - {fileID: 11400000, guid: f9ba18c77eeb13540826e5b61ff76025, type: 2}
+  - {fileID: 11400000, guid: fee43e9030032194c9921323208b7cc9, type: 2}
+  - {fileID: 11400000, guid: 2bad4cb0f166ded46a888d7098fd91b1, type: 2}
+  - {fileID: 11400000, guid: 30b3acf99f36127418076b39622a58d5, type: 2}
+  - {fileID: 11400000, guid: 676863d47dbe85648b890f939b811891, type: 2}
+  - {fileID: 11400000, guid: b08c62b38eb0dbc4d9242375a036dede, type: 2}
+  - {fileID: 11400000, guid: b1b460060a4e13e4eb02fb2282f18d3d, type: 2}
+  DatabaseName: Move
+  DataType: 3

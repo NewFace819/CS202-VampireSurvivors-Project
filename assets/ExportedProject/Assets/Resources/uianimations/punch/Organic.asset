@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -701280273, guid: 4d426826c48d7417bda07e2fb7028f22, type: 3}
+  m_Name: Organic
+  m_EditorClassIdentifier:
+  AnimationNames:
+  - Balance
+  - BlowDown
+  - BlowLeft
+  - BlowRight
+  - BlowUp
+  - GummyFast
+  - GummyNormal
+  - GummySlow
+  - HeavyJumpDown
+  - HeavyJumpLeft
+  - HeavyJumpRight
+  - HeavyJumpUp
+  - JellyFast
+  - JellyNormal
+  - JellySlow
+  - JumpDown
+  - JumpLeft
+  - JumpRight
+  - JumpUp
+  - QuickDown
+  - QuickUp
+  Database:
+  - {fileID: 11400000, guid: a43e777c377c5504d87f9424adf8d1ff, type: 2}
+  - {fileID: 11400000, guid: c80d2cf2e2c106f47a6d8f11b0bab6fb, type: 2}
+  - {fileID: 11400000, guid: 619462d10a64d5148ae049250d661a8d, type: 2}
+  - {fileID: 11400000, guid: 72f808e7cf9712540aebd3d0aca5b71a, type: 2}
+  - {fileID: 11400000, guid: 9313150341ab5bc4882389d7523801f5, type: 2}
+  - {fileID: 11400000, guid: 07baebf3763da8a4ab6bb84815824720, type: 2}
+  - {fileID: 11400000, guid: ac3be8aa1a2ef084a9af8754bdbc3c0a, type: 2}
+  - {fileID: 11400000, guid: 2fd0ce0cbe996494b8d0d3e2682753d0, type: 2}
+  - {fileID: 11400000, guid: 2887b550224fbc84a8940e835502903e, type: 2}
+  - {fileID: 11400000, guid: cc5f4fcb6104da24aa5a490ad2bdeca9, type: 2}
+  - {fileID: 11400000, guid: 6cffc84ea7d35b84d8992e24bdcdbfcd, type: 2}
+  - {fileID: 11400000, guid: 77b9ba45bcd7ca74ebc1a9d1b33deb81, type: 2}
+  - {fileID: 11400000, guid: f8c0b4f279992a341b44bab77fd90174, type: 2}
+  - {fileID: 11400000, guid: 144737204d3ab3b4189fa8e340837122, type: 2}
+  - {fileID: 11400000, guid: 1c79a43cb9a5b0d42bf9f4257cf134f1, type: 2}
+  - {fileID: 11400000, guid: 006958db5f4ac1f41aca090a66f5a1c5, type: 2}
+  - {fileID: 11400000, guid: d764a0ba22e37994e8a007efd1c383b9, type: 2}
+  - {fileID: 11400000, guid: 39cfd81551f0ac743ad8aab6cf568401, type: 2}
+  - {fileID: 11400000, guid: 423aaa8ef9a15b146b631b3a7820e1ee, type: 2}
+  - {fileID: 11400000, guid: 888ad18c98524b5419cd8ae785456e08, type: 2}
+  - {fileID: 11400000, guid: f824796aade03cc4bbd33a0112f3db0c, type: 2}
+  DatabaseName: Organic
+  DataType: 4

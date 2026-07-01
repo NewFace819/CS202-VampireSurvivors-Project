@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -701280273, guid: 4d426826c48d7417bda07e2fb7028f22, type: 3}
+  m_Name: Rotate
+  m_EditorClassIdentifier:
+  AnimationNames:
+  - BounceLeft
+  - BounceRight
+  - BounceToLeft
+  - BounceToRight
+  - ClickAndRotate
+  - ElasticDownLeft
+  - ElasticDownRight
+  - ElasticLeft
+  - ElasticRight
+  - FlipLeft
+  - FlipRight
+  - HammerLeft
+  - HammerRight
+  - JumpyLeft
+  - JumpyRight
+  - NipLeft
+  - NipRight
+  - QuakeLeft
+  - QuakeRight
+  - ScrewToLeft
+  - ScrewToRight
+  - Spin
+  - SpinAndGrow
+  - SpinAndShrink
+  - TwitchLeft
+  - TwitchRight
+  - WaveLeft
+  - WaveRight
+  Database:
+  - {fileID: 11400000, guid: d3acec158adfbf2438e1977c3316622f, type: 2}
+  - {fileID: 11400000, guid: d3aa50119eb718e439b7c99d7b76c226, type: 2}
+  - {fileID: 11400000, guid: c38cc885bca13564199d92f052a28293, type: 2}
+  - {fileID: 11400000, guid: aeaf53c8631b3464c8899b2cd540f324, type: 2}
+  - {fileID: 11400000, guid: cdda54e5402d1f24a881533c1e77f094, type: 2}
+  - {fileID: 11400000, guid: af3ba102fd317b842bae9cabd8a91155, type: 2}
+  - {fileID: 11400000, guid: a123fbc451b01e04e81374f2d8f2f15c, type: 2}
+  - {fileID: 11400000, guid: 3c684190fe2b1ca4590e69a2bd1f2b54, type: 2}
+  - {fileID: 11400000, guid: 6e9be7b8a43b28743bce3d064006044b, type: 2}
+  - {fileID: 11400000, guid: c398ea0bf3c45714fb1909361500bda3, type: 2}
+  - {fileID: 11400000, guid: f496e184e3c21364cbdb92067bf57787, type: 2}
+  - {fileID: 11400000, guid: ac0afeb89bb086e47a5cde7f834ed6c0, type: 2}
+  - {fileID: 11400000, guid: 4831c117495a8b3489b3941523f0f7e2, type: 2}
+  - {fileID: 11400000, guid: 9ae8bcc1239749248948e7b696c75f1c, type: 2}
+  - {fileID: 11400000, guid: 3e39bc31b64518b4abd9a0c332b9db94, type: 2}
+  - {fileID: 11400000, guid: 6483fc6fb8e69634dbbaf1f2ab42c13a, type: 2}
+  - {fileID: 11400000, guid: 50b29c7e9159fb648ae86abc992bd7d1, type: 2}
+  - {fileID: 11400000, guid: 968244b79ebf27b4f9487068439c4cb4, type: 2}
+  - {fileID: 11400000, guid: c092733b8f895384f8ed0c48f94be11c, type: 2}
+  - {fileID: 11400000, guid: b6454c3bd067ce445b789c76a4576286, type: 2}
+  - {fileID: 11400000, guid: fa66369e716f046448044c4b468ec26b, type: 2}
+  - {fileID: 11400000, guid: f7fe6a1873b1176498c9aa181d502cf9, type: 2}
+  - {fileID: 11400000, guid: f6becb4b9c7e02247bb952a8776f0aac, type: 2}
+  - {fileID: 11400000, guid: e8574b1e2d88a3e488fa1424587aab82, type: 2}
+  - {fileID: 11400000, guid: 168776e6666f55f49be256695a07deb6, type: 2}
+  - {fileID: 11400000, guid: 49df9764dc41f0e4a95ba10cac1400c5, type: 2}
+  - {fileID: 11400000, guid: dc0794b11b906154daa7e00e680afd87, type: 2}
+  - {fileID: 11400000, guid: 9df86a56a367fb0438249cd42f29979c, type: 2}
+  DatabaseName: Rotate
+  DataType: 4

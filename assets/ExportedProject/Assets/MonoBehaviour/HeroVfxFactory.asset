@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 181047587, guid: 361d993a59a3ee483fbe6b04a31f86b4, type: 3}
+  m_Name: HeroVfxFactory
+  m_EditorClassIdentifier:
+  serializationData:
+    SerializedFormat: 0
+    SerializedBytes:
+    ReferencedUnityObjects: []
+    SerializedBytesString:
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  _DefaultPool: {fileID: 0}
+  _Pools:
+    keyData: 000000000100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000f0000001200000013000000140000001500000018000000
+    valueData:
+    - {fileID: 11400000, guid: fd2f33b24bf61994b8607dc5a5d56e5a, type: 2}
+    - {fileID: 11400000, guid: 980622f4fe0b16b4b9e1d3e32597ca6a, type: 2}
+    - {fileID: 11400000, guid: 5cd952d55b55c494b89fce4431ecb059, type: 2}
+    - {fileID: 11400000, guid: ba91fa55c9b81d344a69f250db080671, type: 2}
+    - {fileID: 11400000, guid: 958b6b54f2eb9e44896dfb904861ee93, type: 2}
+    - {fileID: 11400000, guid: cba4a25ffe018b046b60acb072e38dd7, type: 2}
+    - {fileID: 11400000, guid: 5bcbe8fd91f30e542a2cf772b4c6de7a, type: 2}
+    - {fileID: 11400000, guid: b0f182413f79a2a4899e8fe0d5da2808, type: 2}
+    - {fileID: 11400000, guid: f379d9673ac20a746ac019b84e7b5383, type: 2}
+    - {fileID: 11400000, guid: d030e2515fe11ba4b955ffcea0897df0, type: 2}
+    - {fileID: 11400000, guid: a84df7fefc1584f4995ef380945907fe, type: 2}
+    - {fileID: 11400000, guid: af2130c255e4cb64f94828af543c60cf, type: 2}
+    - {fileID: 11400000, guid: bad956abd436fa740a29b4ed4f61d59b, type: 2}
+    - {fileID: 11400000, guid: fc140e6216ce51149aaca3e4af93025f, type: 2}
+    - {fileID: 11400000, guid: 6a1479e18a03f2f4d9584b4925ef6b42, type: 2}
+    - {fileID: 11400000, guid: 4caeaccffa0e1c24cb40dc59239631dc, type: 2}
+    - {fileID: 11400000, guid: e9cd49af71ccee34f9d1b3d5a9434c9c, type: 2}
+    - {fileID: 11400000, guid: 4ac2ed98d121f644b8f306df898e1098, type: 2}
+    - {fileID: 11400000, guid: b6969e50b3fc2a54b83090eaf2a57d2d, type: 2}
+  _PoolRefs:
+    keyData:
+    valueData: []
+  _LinkedFactories: []

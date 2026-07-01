@@ -1,0 +1,102 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -701280273, guid: 4d426826c48d7417bda07e2fb7028f22, type: 3}
+  m_Name: Rotate
+  m_EditorClassIdentifier:
+  AnimationNames:
+  - Back10
+  - Back10Slow
+  - Back35
+  - Back35Slow
+  - Back5
+  - Back5Slow
+  - ExtremleySlow
+  - Fast5
+  - Lock10
+  - Lock10Slow
+  - Lock35
+  - Lock35Fast
+  - Lock35Slow
+  - Lock5
+  - Lock5Fast
+  - Lock5Slow
+  - Normal5
+  - Quick10
+  - Quick10Fast
+  - Quick10Slow
+  - Quick35
+  - Quick35Fast
+  - Quick35Slow
+  - Quick5
+  - Quick5Fast
+  - Quick5Slow
+  - Slow5
+  - Spin720Fast
+  - Spin720Normal
+  - Spin720Slow
+  - Spin720VeryFast
+  - SpinAndScale720Fast
+  - SpinAndScale720Normal
+  - SpinAndScale720Slow
+  - Swing10
+  - Swing10Slow
+  - Swing5
+  - Swing5Fast
+  - Swing5Slow
+  - SwingMove5
+  - VeryFast5
+  - VerySlow5
+  Database:
+  - {fileID: 11400000, guid: 8a45b8ad6acfef84b9e058ec413439b5, type: 2}
+  - {fileID: 11400000, guid: a411aa1dea48ea941b6677e6a082f0d2, type: 2}
+  - {fileID: 11400000, guid: c64a75b8cad33c84e9182606bd1678de, type: 2}
+  - {fileID: 11400000, guid: a6d48bd082b5a75478fedb313603781a, type: 2}
+  - {fileID: 11400000, guid: 5786fdb0739272d4d8c445b9e1abff4d, type: 2}
+  - {fileID: 11400000, guid: c548194db78b9014db57915e8a8b4011, type: 2}
+  - {fileID: 11400000, guid: a959df56874c93b48ae6425e8af40425, type: 2}
+  - {fileID: 11400000, guid: d58c1a8f315fdb9439885415036198b4, type: 2}
+  - {fileID: 11400000, guid: 248dce94546b55046b09321771673039, type: 2}
+  - {fileID: 11400000, guid: 81bcce84f7e1a9c43a1589623fef5cd4, type: 2}
+  - {fileID: 11400000, guid: 8a64ff0db8f59c149ac87182ece679cc, type: 2}
+  - {fileID: 11400000, guid: 87b74ebd50bae65418414f31f6c30705, type: 2}
+  - {fileID: 11400000, guid: 053f2ff51ff730a45aaffbf527c6db43, type: 2}
+  - {fileID: 11400000, guid: cff8efa0328a0bc4d91e09d67cc3f130, type: 2}
+  - {fileID: 11400000, guid: 8c658cc0bc72e5845906469703c7c14f, type: 2}
+  - {fileID: 11400000, guid: 3174a5b6b85dc1847996926694a9f446, type: 2}
+  - {fileID: 11400000, guid: a89c40b7e2b745648a81198d8f95edd9, type: 2}
+  - {fileID: 11400000, guid: 3b48b31a4f8a889458b3d72c4aa264b7, type: 2}
+  - {fileID: 11400000, guid: 509bc2c40ae7f4748912c6a4a8689314, type: 2}
+  - {fileID: 11400000, guid: c26fc4082e6be06409bb7b908030440a, type: 2}
+  - {fileID: 11400000, guid: a1f04a45c5a04af4898847f2c658d4b4, type: 2}
+  - {fileID: 11400000, guid: 0bc7179d2eba229428c98e0f0a53eb8e, type: 2}
+  - {fileID: 11400000, guid: 68d1049a122ee094e93175d0beb003a7, type: 2}
+  - {fileID: 11400000, guid: 65049974b1e73434990c052f1b0b98ee, type: 2}
+  - {fileID: 11400000, guid: a96def4836afdec4a9ffefda09414d51, type: 2}
+  - {fileID: 11400000, guid: f0c2da8aaf9bf6d409c794ea8667bbca, type: 2}
+  - {fileID: 11400000, guid: 42753045b9359034eaadfb65ebc52176, type: 2}
+  - {fileID: 11400000, guid: 80ed6252b7189184dbf0c4e6ce41b1f6, type: 2}
+  - {fileID: 11400000, guid: faa9012f216097347a45a8012eb74312, type: 2}
+  - {fileID: 11400000, guid: 15eb5cefc64c90943845ee4a8bb9148e, type: 2}
+  - {fileID: 11400000, guid: 09eba35ca2a63cb4b80e375719fc0cd7, type: 2}
+  - {fileID: 11400000, guid: 55cbf859e51928f4085b54d5a1067ed0, type: 2}
+  - {fileID: 11400000, guid: b427fad754d19e3438629fc9523e5dd7, type: 2}
+  - {fileID: 11400000, guid: a3d143d5ac0db074c809043c89786734, type: 2}
+  - {fileID: 11400000, guid: da197b9f8c893624297dc672f374315e, type: 2}
+  - {fileID: 11400000, guid: 2c1b7e6bc4fe1af4792da60827457277, type: 2}
+  - {fileID: 11400000, guid: 43dbe3f9e906c044aa354060967aa516, type: 2}
+  - {fileID: 11400000, guid: 45c3599c9f6410c499e2d38125ee5f13, type: 2}
+  - {fileID: 11400000, guid: 81335a4c2cfca40458476af64fc8a22d, type: 2}
+  - {fileID: 11400000, guid: 7dbca68188f1511419cc236cd2dca206, type: 2}
+  - {fileID: 11400000, guid: cff587cca608dd84896b2e0247848a50, type: 2}
+  - {fileID: 11400000, guid: 9a4f336c3edd38f43a79633fea05c449, type: 2}
+  DatabaseName: Rotate
+  DataType: 3

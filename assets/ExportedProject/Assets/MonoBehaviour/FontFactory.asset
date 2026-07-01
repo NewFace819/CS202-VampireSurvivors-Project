@@ -1,0 +1,154 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1331597272, guid: 361d993a59a3ee483fbe6b04a31f86b4, type: 3}
+  m_Name: FontFactory
+  m_EditorClassIdentifier:
+  serializationData:
+    SerializedFormat: 0
+    SerializedBytes:
+    ReferencedUnityObjects: []
+    SerializedBytesString:
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  _Fonts:
+    keyData:
+    - titleFont-white
+    - titleFont-export
+    - Skullboy-export2x
+    - RuneFont-export
+    - GoldenFinger_Numbers-export
+    - damNum-export
+    - LanaPixel
+    - arial
+    - Courier_HintedSmooth
+    - Arial Unicode MS Font
+    valueData:
+    - _UnityFontRef:
+        m_AssetGUID: ccc5427fadf8b2d4faa5a70b6bb85a4f
+        m_SubObjectName:
+        m_SubObjectType:
+    - _UnityFontRef:
+        m_AssetGUID: d14b433eb534ec042b72f0de3518ef85
+        m_SubObjectName:
+        m_SubObjectType:
+    - _UnityFontRef:
+        m_AssetGUID: 6682c1b44e814384eba52c360d1e6449
+        m_SubObjectName:
+        m_SubObjectType:
+    - _UnityFontRef:
+        m_AssetGUID: 9fa291b70180ba940bb7624749f65722
+        m_SubObjectName:
+        m_SubObjectType:
+    - _UnityFontRef:
+        m_AssetGUID: 6f4b5728633f28c4bb99c9ce9f232729
+        m_SubObjectName:
+        m_SubObjectType:
+    - _UnityFontRef:
+        m_AssetGUID: a82e91270b44e924dbcab489239c931a
+        m_SubObjectName:
+        m_SubObjectType:
+    - _UnityFontRef:
+        m_AssetGUID: fbcdf4fa78fc9443ba8301273da62413
+        m_SubObjectName:
+        m_SubObjectType:
+    - _UnityFontRef:
+        m_AssetGUID: 1dcdd337639584e42af180473bb95df8
+        m_SubObjectName:
+        m_SubObjectType:
+    - _UnityFontRef:
+        m_AssetGUID: 4c17800ad31244b45be57caa3b8fee3a
+        m_SubObjectName:
+        m_SubObjectType:
+    - _UnityFontRef:
+        m_AssetGUID: 88f55e9422107bb459c8c3036f43058e
+        m_SubObjectName:
+        m_SubObjectType:
+  _TMPFonts:
+    keyData:
+    - LanaPixel SDF
+    - LanaPixel SDF ExtendedAscii
+    - LanaPixel SDF 9000-9FFF
+    - LanaPixel SDF 8000-8FFF
+    - LanaPixel SDF 7000-7FFF
+    - LanaPixel SDF 6000-6FFF
+    - LanaPixel SDF 4E00-5FFF
+    - DamageNumbers
+    - Courier_HintedSmooth SDF8
+    - Arial Unicode MS Font SDF
+    - Arial Unicode MS Font SDF 8000-8FFF
+    - Arial Unicode MS Font SDF 7000-7FFF
+    - Arial Unicode MS Font SDF 6000-6FFF
+    - Arial Unicode MS Font SDF 4E00-5FFF
+    - Arial Unicode MS Font SDF 2000-3FFF
+    valueData:
+    - _TMPFontRef:
+        m_AssetGUID: 1bc005e73282041e9bc5a7eff302ba26
+        m_SubObjectName:
+        m_SubObjectType:
+    - _TMPFontRef:
+        m_AssetGUID: ac0a7202a6f7e49eb895c9d9e3bf41b2
+        m_SubObjectName:
+        m_SubObjectType:
+    - _TMPFontRef:
+        m_AssetGUID: 0105cd804650f429ab604c512d8d4566
+        m_SubObjectName:
+        m_SubObjectType:
+    - _TMPFontRef:
+        m_AssetGUID: 88ca9a9da0c8041f7812cd31d9f1e9b7
+        m_SubObjectName:
+        m_SubObjectType:
+    - _TMPFontRef:
+        m_AssetGUID: 831c817a0c32740debfc28b5a786b188
+        m_SubObjectName:
+        m_SubObjectType:
+    - _TMPFontRef:
+        m_AssetGUID: 25b4c3d62c01040c9bd563f72d01451a
+        m_SubObjectName:
+        m_SubObjectType:
+    - _TMPFontRef:
+        m_AssetGUID: d47fcf5721b784d42a658efd7ec88b87
+        m_SubObjectName:
+        m_SubObjectType:
+    - _TMPFontRef:
+        m_AssetGUID: 1a93c8298b975c9468135428a34a8a67
+        m_SubObjectName:
+        m_SubObjectType:
+    - _TMPFontRef:
+        m_AssetGUID: 82b2c823d8e69394bbf9fc73a41150c1
+        m_SubObjectName:
+        m_SubObjectType:
+    - _TMPFontRef:
+        m_AssetGUID: 07be57539bd8a99439041e9ef3afdaab
+        m_SubObjectName:
+        m_SubObjectType:
+    - _TMPFontRef:
+        m_AssetGUID: 8c88511817a341a45b51109f521b662a
+        m_SubObjectName:
+        m_SubObjectType:
+    - _TMPFontRef:
+        m_AssetGUID: 0d8c56a5ddb374f4faf33c52bbbc73d4
+        m_SubObjectName:
+        m_SubObjectType:
+    - _TMPFontRef:
+        m_AssetGUID: d045d340a9815a24a867db1ca8eb2464
+        m_SubObjectName:
+        m_SubObjectType:
+    - _TMPFontRef:
+        m_AssetGUID: a640e94e5439e9f4c9041b62784a903e
+        m_SubObjectName:
+        m_SubObjectType:
+    - _TMPFontRef:
+        m_AssetGUID: 8b1566f75b0f9ca418cb16d135c580f8
+        m_SubObjectName:
+        m_SubObjectType:

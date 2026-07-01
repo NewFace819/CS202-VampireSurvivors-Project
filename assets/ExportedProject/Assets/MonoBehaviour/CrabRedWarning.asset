@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1278840893, guid: 5ffa94cb023a8fb26ca49816c3313744, type: 3}
+  m_Name: CrabRedWarning
+  m_EditorClassIdentifier:
+  _name: CrabRedWarning
+  _template: {fileID: 1709254077376921, guid: c93ec116dde233a46a23d8543331ee43, type: 2}
+  _defaultSize: 1
+  _maxSize: -1
+  _incrementalInstanceNames: 1
+  _repopulateOnSceneChange: 0

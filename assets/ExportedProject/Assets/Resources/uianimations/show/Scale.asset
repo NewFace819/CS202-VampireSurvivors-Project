@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -701280273, guid: 4d426826c48d7417bda07e2fb7028f22, type: 3}
+  m_Name: Scale
+  m_EditorClassIdentifier:
+  AnimationNames:
+  - DropAndGrow
+  - DropAndGrowAlt
+  - DropAndHit
+  - DwindleHorizontal
+  - DwindleVertical
+  - ElasticFast
+  - ElasticSlow
+  - FadeFast
+  - FadeSlow
+  - PopRotateLeft
+  - PopRotateRight
+  - RiseAndGrow
+  - RiseAndGrowAlt
+  - RotateAndShow
+  - RotateLeftFast
+  - RotateLeftSlow
+  - RotateRightFast
+  - RotateRightSlow
+  - SimpleFast
+  - SimpleSlow
+  - SlenderDown
+  - SlenderLeft
+  - SlenderRight
+  - SlenderUp
+  Database:
+  - {fileID: 11400000, guid: c5fa71d7b4c8d8b4baffafe437ac9776, type: 2}
+  - {fileID: 11400000, guid: d272ef686d53b3d458286919ef095243, type: 2}
+  - {fileID: 11400000, guid: 5c23154167b93994882e604385192815, type: 2}
+  - {fileID: 11400000, guid: 84e61eba71d5aef4faf0fa40d8c92fbe, type: 2}
+  - {fileID: 11400000, guid: e3238d4fc6d314a44adda2bc95c3c63f, type: 2}
+  - {fileID: 11400000, guid: 529e9f2990220054893a73f4814264ba, type: 2}
+  - {fileID: 11400000, guid: 5467b3f8633c3bd46a7b56a2590f6034, type: 2}
+  - {fileID: 11400000, guid: 27427e7facb2a944187bd3fee3da716e, type: 2}
+  - {fileID: 11400000, guid: 566a8d235492a2247ae649b7352b3ecc, type: 2}
+  - {fileID: 11400000, guid: bb8a3a9414af0f3499123fa88b84370e, type: 2}
+  - {fileID: 11400000, guid: 37f809ffc7671dc4e94571db8934554d, type: 2}
+  - {fileID: 11400000, guid: be94107cb2f6bc349b55f71b1a04413d, type: 2}
+  - {fileID: 11400000, guid: 5851dbf391ed8d840ba3dfdcd364307b, type: 2}
+  - {fileID: 11400000, guid: b61d02f1b8ac34b4e88cd545f38cd86f, type: 2}
+  - {fileID: 11400000, guid: 1f96cae45aa7ce5458c83af10318482f, type: 2}
+  - {fileID: 11400000, guid: dcfbfed9c11c9f443802a8475afac404, type: 2}
+  - {fileID: 11400000, guid: 23175c1ae6263614cab621efa8c8ee30, type: 2}
+  - {fileID: 11400000, guid: 4e88f98adaa5f7b4bbd30a4311733e2e, type: 2}
+  - {fileID: 11400000, guid: a530f04df80c4c94b91c127a4c138af6, type: 2}
+  - {fileID: 11400000, guid: 0e9243484d4d0d34f9e521a01eae8baf, type: 2}
+  - {fileID: 11400000, guid: ff3c0b38e1447e248997e1c27dc3f3e5, type: 2}
+  - {fileID: 11400000, guid: 8386af27cda5f484cb63e33dfc9c374b, type: 2}
+  - {fileID: 11400000, guid: 0a42c218abd428143b553ad987f72ee3, type: 2}
+  - {fileID: 11400000, guid: 4627b9e2d285ce949bd9e99d4f19bf5f, type: 2}
+  DatabaseName: Scale
+  DataType: 1

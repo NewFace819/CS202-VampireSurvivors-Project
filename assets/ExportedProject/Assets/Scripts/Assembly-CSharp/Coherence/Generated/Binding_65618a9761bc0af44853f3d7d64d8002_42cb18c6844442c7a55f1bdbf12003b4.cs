@@ -1,0 +1,52 @@
+using System;
+using Coherence.Entities;
+using Coherence.SimulationFrame;
+using Coherence.Toolkit.Bindings.ValueBindings;
+using UnityEngine;
+using UnityEngine.Scripting;
+using VampireSurvivors.Objects.Characters;
+
+namespace Coherence.Generated
+{
+	[Preserve]
+	public class Binding_65618a9761bc0af44853f3d7d64d8002_42cb18c6844442c7a55f1bdbf12003b4 : UIntBinding
+	{
+		private FB_Lance CastedUnityComponent;
+
+		public override Type CoherenceComponentType => null;
+
+		public override string CoherenceComponentName => null;
+
+		public override uint FieldMask => 0u;
+
+		public override uint Value
+		{
+			get
+			{
+				return 0u;
+			}
+			set
+			{
+			}
+		}
+
+		protected override void OnBindingCloned()
+		{
+		}
+
+		protected override (uint, AbsoluteSimulationFrame) ReadComponentData(ICoherenceComponentData coherenceComponent, Vector3 floatingOriginDelta)
+		{
+			return default((uint, AbsoluteSimulationFrame));
+		}
+
+		public override ICoherenceComponentData WriteComponentData(ICoherenceComponentData coherenceComponent, AbsoluteSimulationFrame simFrame)
+		{
+			return null;
+		}
+
+		public override ICoherenceComponentData CreateComponentData()
+		{
+			return null;
+		}
+	}
+}

@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -701280273, guid: 4d426826c48d7417bda07e2fb7028f22, type: 3}
+  m_Name: Elastic
+  m_EditorClassIdentifier:
+  AnimationNames:
+  - BlinkFast
+  - BlinkNormal
+  - BlinkSlow
+  - DeepScaleFast
+  - DeepScaleNormal
+  - DeepScaleSlow
+  - ElasticHorizontalFast
+  - ElasticHorizontalNormal
+  - ElasticHorizontalSlow
+  - ElasticVerticalFast
+  - ElasticVerticalNormal
+  - ElasticVerticalSlow
+  - PressedVerticalFast
+  - PressedVerticalNormal
+  - PressedVerticalSlow
+  - Rotate10
+  - Rotate5
+  - ScaleFast
+  - ScaleNormal
+  - ScaleSlow
+  - SlideHorizontal
+  - SlideVertical
+  - StretchAndShrinkHorizontalFast
+  - StretchAndShrinkHorizontalNormal
+  - StretchAndShrinkHorizontalSlow
+  - StretchAndShrinkVerticalFast
+  - StretchAndShrinkVerticalNormal
+  - StretchAndShrinkVerticalSlow
+  Database:
+  - {fileID: 11400000, guid: 23522266ce51c894d9ae1f47fd9a49e4, type: 2}
+  - {fileID: 11400000, guid: c31af9974c799eb459780fac1e06d0e4, type: 2}
+  - {fileID: 11400000, guid: fe225348b6990f040a299e650ee66e3c, type: 2}
+  - {fileID: 11400000, guid: 62541dc0effba4c439e2fc88f9bb5e3d, type: 2}
+  - {fileID: 11400000, guid: 71248b1410bc93047bd8899e0115a3b9, type: 2}
+  - {fileID: 11400000, guid: 3868f6fa80304364c8acfbfbbf02b901, type: 2}
+  - {fileID: 11400000, guid: 481f8908763ddc74096635615618a64f, type: 2}
+  - {fileID: 11400000, guid: fcfc8a8c56d3de34989d7e2cca016dd2, type: 2}
+  - {fileID: 11400000, guid: 9378c39e88e18364a8adf59712589d26, type: 2}
+  - {fileID: 11400000, guid: a3a0665a5adcb474f848ed8abec5a06d, type: 2}
+  - {fileID: 11400000, guid: efbe41a99c1db954981e9c8bed004a46, type: 2}
+  - {fileID: 11400000, guid: 6dd3ada2adbb9704bad1bf767e73bfb3, type: 2}
+  - {fileID: 11400000, guid: 90d2b80241b9bc245ad0b3bebe9155e2, type: 2}
+  - {fileID: 11400000, guid: ee716cfaf03c64a4ba43ea9bf6042b33, type: 2}
+  - {fileID: 11400000, guid: 031a6ecfd4be81c48aad59738b4f0c60, type: 2}
+  - {fileID: 11400000, guid: 0865a62455992d74782314879ecf884a, type: 2}
+  - {fileID: 11400000, guid: ddfcbf94b96b5f545ad1db5f7befc8f6, type: 2}
+  - {fileID: 11400000, guid: e606f44dc1b7da946b88588896b74571, type: 2}
+  - {fileID: 11400000, guid: 0e114013d921cb04f87677185432e50a, type: 2}
+  - {fileID: 11400000, guid: 572e526f421c2c74caf2a3d1cbd3e542, type: 2}
+  - {fileID: 11400000, guid: 6eebed03550be2146959175d9b3110b1, type: 2}
+  - {fileID: 11400000, guid: 873054a4714cb6a4b80c6ab608da3b12, type: 2}
+  - {fileID: 11400000, guid: 16eb677532f4a01468aac5773da436b5, type: 2}
+  - {fileID: 11400000, guid: 517165080cf3e2b489a6c11784dfb47d, type: 2}
+  - {fileID: 11400000, guid: 10884753f67f8894d9fcab9e5171b54a, type: 2}
+  - {fileID: 11400000, guid: d363d21a189754a4c95366f47b078d82, type: 2}
+  - {fileID: 11400000, guid: 5263fd34495ef544a8e2025ec992934c, type: 2}
+  - {fileID: 11400000, guid: 55b6b24883981e14398ac5c9e095a40a, type: 2}
+  DatabaseName: Elastic
+  DataType: 3

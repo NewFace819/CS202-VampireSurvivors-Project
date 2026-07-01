@@ -1,0 +1,96 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1839958006, guid: 361d993a59a3ee483fbe6b04a31f86b4, type: 3}
+  m_Name: BestiaryFactory
+  m_EditorClassIdentifier:
+  serializationData:
+    SerializedFormat: 0
+    SerializedBytes:
+    ReferencedUnityObjects: []
+    SerializedBytesString:
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  _BestiaryEnemyPools:
+    keyData:
+    valueData: []
+  _BestiaryEnemyRefs:
+    keyData: 1300000063000000a7000000a8000000be000000bf000000c0000000c1000000c2000000c7000000c8000000c9000000ca000000ff000000d4010000ec010000
+    valueData:
+    - _PrefabRef:
+        m_AssetGUID: 542312ed2c818324fa55b523e9ebd058
+        m_SubObjectName:
+        m_SubObjectType:
+    - _PrefabRef:
+        m_AssetGUID: 102fd8954d20d374da6b07bf2fa692ac
+        m_SubObjectName:
+        m_SubObjectType:
+    - _PrefabRef:
+        m_AssetGUID: 102fd8954d20d374da6b07bf2fa692ac
+        m_SubObjectName:
+        m_SubObjectType:
+    - _PrefabRef:
+        m_AssetGUID: 102fd8954d20d374da6b07bf2fa692ac
+        m_SubObjectName:
+        m_SubObjectType:
+    - _PrefabRef:
+        m_AssetGUID: 40130f4de86331e46be4d51e15dcde4e
+        m_SubObjectName:
+        m_SubObjectType:
+    - _PrefabRef:
+        m_AssetGUID: 40130f4de86331e46be4d51e15dcde4e
+        m_SubObjectName:
+        m_SubObjectType:
+    - _PrefabRef:
+        m_AssetGUID: 40130f4de86331e46be4d51e15dcde4e
+        m_SubObjectName:
+        m_SubObjectType:
+    - _PrefabRef:
+        m_AssetGUID: 40130f4de86331e46be4d51e15dcde4e
+        m_SubObjectName:
+        m_SubObjectType:
+    - _PrefabRef:
+        m_AssetGUID: 40130f4de86331e46be4d51e15dcde4e
+        m_SubObjectName:
+        m_SubObjectType:
+    - _PrefabRef:
+        m_AssetGUID: 40130f4de86331e46be4d51e15dcde4e
+        m_SubObjectName:
+        m_SubObjectType:
+    - _PrefabRef:
+        m_AssetGUID: 40130f4de86331e46be4d51e15dcde4e
+        m_SubObjectName:
+        m_SubObjectType:
+    - _PrefabRef:
+        m_AssetGUID: 40130f4de86331e46be4d51e15dcde4e
+        m_SubObjectName:
+        m_SubObjectType:
+    - _PrefabRef:
+        m_AssetGUID: 40130f4de86331e46be4d51e15dcde4e
+        m_SubObjectName:
+        m_SubObjectType:
+    - _PrefabRef:
+        m_AssetGUID: e8ce80e180bbd1c4ba11988dd0f4591e
+        m_SubObjectName:
+        m_SubObjectType:
+    - _PrefabRef:
+        m_AssetGUID: 21257caa8d53f9b4a8831ab88a674f10
+        m_SubObjectName:
+        m_SubObjectType:
+    - _PrefabRef:
+        m_AssetGUID: c5c43b8c1b7472d4499be9a47c8cc027
+        m_SubObjectName:
+        m_SubObjectType:
+  _LinkedFactories: []
+  CACHE_GROUP: Bestiary
+  CACHE_GROUP_UI: BestiaryUI

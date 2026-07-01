@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -701280273, guid: 4d426826c48d7417bda07e2fb7028f22, type: 3}
+  m_Name: Flip
+  m_EditorClassIdentifier:
+  AnimationNames:
+  - Balance10Horizontal
+  - Balance10HorizontalAndScale
+  - Balance10Vertical
+  - Balance10VerticalAndScale
+  - Balance70Horizontal
+  - Balance70Vertical
+  - Flip90Horizontal
+  - Flip90HorizontalFade
+  - Flip90Vertical
+  - Flip90VerticalFade
+  - FlipHorizontalAlt
+  - FlipHorizontalAndScale
+  - FlipVerticalAndScale
+  Database:
+  - {fileID: 11400000, guid: 262b0622ccf15f241973855d3d7d00d2, type: 2}
+  - {fileID: 11400000, guid: b29eeccbfb74586428ac226f39f9a29e, type: 2}
+  - {fileID: 11400000, guid: f5121d700555f5a40b5d38ca2f0f7d61, type: 2}
+  - {fileID: 11400000, guid: 2e81dc57155a389459eefbf2af7d8070, type: 2}
+  - {fileID: 11400000, guid: ed6c65f2eef1450448a4f2db26496ce4, type: 2}
+  - {fileID: 11400000, guid: 68f1302a74cb5f34382b73268e2444e3, type: 2}
+  - {fileID: 11400000, guid: 37b0df85bd14c46469773d4c672f718b, type: 2}
+  - {fileID: 11400000, guid: 6543aa5499b25c748b834b3d2ed5b4f0, type: 2}
+  - {fileID: 11400000, guid: 9e2d2f050fcb2d84c89372f9cde922d5, type: 2}
+  - {fileID: 11400000, guid: dea76ca27c6a394498a5d23f4552ea60, type: 2}
+  - {fileID: 11400000, guid: 4978caebd92024b4c9c38c5778ebe27a, type: 2}
+  - {fileID: 11400000, guid: 4e0337ebe100c5d4b97a29b50767bf02, type: 2}
+  - {fileID: 11400000, guid: 4254e0be1253d3d4c90efa7cbd27a082, type: 2}
+  DatabaseName: Flip
+  DataType: 3

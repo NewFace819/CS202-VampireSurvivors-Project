@@ -1,0 +1,119 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -899935205, guid: 4d426826c48d7417bda07e2fb7028f22, type: 3}
+  m_Name: UINode
+  m_EditorClassIdentifier:
+  m_inputSockets:
+  - m_connectionMode: 1
+    m_connections:
+    - m_inputConnectionPoint: {x: 202, y: 4}
+      m_outputConnectionPoint: {x: -2, y: 4}
+      m_id: cbc70ea5-1dec-4aa4-9f00-1cddc16b4f8a
+      m_inputNodeId: 1aed4315-d343-46f7-bd8f-3168798d1617
+      m_inputSocketId: 0888b33d-f418-48f9-8c2f-e32792bf7844
+      m_outputNodeId: 943303f2-7b3e-4f1b-9d79-aec442a4d4f8
+      m_outputSocketId: 6af1577f-cfd0-4e43-aa04-4a74dfa261a8
+    m_connectionPoints:
+    - {x: -2, y: 4}
+    - {x: 202, y: 4}
+    m_direction: 0
+    m_canBeDeleted: 0
+    m_canBeReordered: 0
+    m_curveModifier: 0
+    m_height: 24
+    m_width: 216
+    m_x: 0
+    m_y: 38
+    m_id: 0888b33d-f418-48f9-8c2f-e32792bf7844
+    m_nodeId: 1aed4315-d343-46f7-bd8f-3168798d1617
+    m_socketName: InputSocket_0
+    m_value: '{"ButtonCategory":"General","ButtonName":"Unnamed","GameEvent":"","TimeDelay":3.0,"Trigger":0}'
+    m_valueTypeQualifiedName: Doozy.Engine.UI.Connections.UIConnection, Doozy, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_outputSockets:
+  - m_connectionMode: 0
+    m_connections:
+    - m_inputConnectionPoint: {x: -2, y: 4}
+      m_outputConnectionPoint: {x: 202, y: 4}
+      m_id: eb86b2a2-6037-4d0a-9526-bfc631fd1c8a
+      m_inputNodeId: 943303f2-7b3e-4f1b-9d79-aec442a4d4f8
+      m_inputSocketId: c9cd6927-7a8c-40ee-a57b-7e484988dada
+      m_outputNodeId: 1aed4315-d343-46f7-bd8f-3168798d1617
+      m_outputSocketId: 6218c25b-bb0f-41b2-b5dd-07199be78104
+    m_connectionPoints:
+    - {x: -2, y: 4}
+    - {x: 202, y: 4}
+    m_direction: 1
+    m_canBeDeleted: 1
+    m_canBeReordered: 1
+    m_curveModifier: 0
+    m_height: 24
+    m_width: 216
+    m_x: 0
+    m_y: 62
+    m_id: 6218c25b-bb0f-41b2-b5dd-07199be78104
+    m_nodeId: 1aed4315-d343-46f7-bd8f-3168798d1617
+    m_socketName: OutputSocket_0
+    m_value: '{"ButtonCategory":"General","ButtonName":"Back","GameEvent":"RETURN_TO_GAME","TimeDelay":3.0,"Trigger":3}'
+    m_valueTypeQualifiedName: Doozy.Engine.UI.Connections.UIConnection, Doozy, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - m_connectionMode: 0
+    m_connections:
+    - m_inputConnectionPoint: {x: -2, y: 4}
+      m_outputConnectionPoint: {x: 202, y: 4}
+      m_id: 8dca596a-54fc-421b-a937-31d7a72e3d2d
+      m_inputNodeId: 94888fa0-6372-4bfa-a2b7-5a096c9f6ca0
+      m_inputSocketId: cb70c599-4337-4e24-b3dc-d5c3ec9483f7
+      m_outputNodeId: 1aed4315-d343-46f7-bd8f-3168798d1617
+      m_outputSocketId: 4e3f4702-a167-4a91-9aa2-755993510a1d
+    m_connectionPoints:
+    - {x: -2, y: 4}
+    - {x: 202, y: 4}
+    m_direction: 1
+    m_canBeDeleted: 1
+    m_canBeReordered: 1
+    m_curveModifier: 0
+    m_height: 24
+    m_width: 216
+    m_x: 0
+    m_y: 86
+    m_id: 4e3f4702-a167-4a91-9aa2-755993510a1d
+    m_nodeId: 1aed4315-d343-46f7-bd8f-3168798d1617
+    m_socketName: OutputSocket_1
+    m_value: '{"ButtonCategory":"General","ButtonName":"Unnamed","GameEvent":"CONNECTION_ERROR","TimeDelay":3.0,"Trigger":3}'
+    m_valueTypeQualifiedName: Doozy.Engine.UI.Connections.UIConnection, Doozy, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_nodeType: 4
+  m_allowDuplicateNodeName: 0
+  m_allowEmptyNodeName: 0
+  m_canBeDeleted: 1
+  m_debugMode: 0
+  m_useFixedUpdate: 0
+  m_useLateUpdate: 0
+  m_useUpdate: 0
+  m_height: 152
+  m_width: 216
+  m_x: -228
+  m_y: 1500
+  m_minimumInputSocketsCount: 1
+  m_minimumOutputSocketsCount: 1
+  m_graphId: 3e257f58-be37-4350-b44e-7bc79409d993
+  m_id: 1aed4315-d343-46f7-bd8f-3168798d1617
+  m_name: Healer
+  m_notes:
+  m_onEnterShowViews:
+  - Category: Game
+    InstantAction: 0
+    Name: Healer
+  m_onEnterHideViews: []
+  m_onExitShowViews: []
+  m_onExitHideViews:
+  - Category: Game
+    InstantAction: 0
+    Name: Healer

@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -701280273, guid: 4d426826c48d7417bda07e2fb7028f22, type: 3}
+  m_Name: Flip
+  m_EditorClassIdentifier:
+  AnimationNames:
+  - Flip60Left
+  - Flip60LeftReset
+  - Flip60Right
+  - Flip60RightReset
+  - FlipHorizontal
+  - FlipHorizontalAndScale
+  - FlipHorizontalAndScaleReset
+  - FlipHorizontalFade
+  - FlipHorizontalFadeReset
+  - FlipHorizontalReset
+  - FlipVertical
+  - FlipVerticalAndScale
+  - FlipVerticalAndScaleReset
+  - FlipVerticalFade
+  - FlipVerticalFadeReset
+  - FlipVerticalReset
+  - Vertical180
+  - Vertical180Reset
+  Database:
+  - {fileID: 11400000, guid: 05d733e60201fad4895c6e5eeeca7dda, type: 2}
+  - {fileID: 11400000, guid: fc682971448012f4d9ad84e1713405df, type: 2}
+  - {fileID: 11400000, guid: 9d22dd0c48919ce4985036ec9f10b272, type: 2}
+  - {fileID: 11400000, guid: 8878a43d9b914844f8222f5f47b9116f, type: 2}
+  - {fileID: 11400000, guid: f16f6ab07d6bac0458a8ce6fed1b3789, type: 2}
+  - {fileID: 11400000, guid: eea9d5c0d117d494c806644ce6715ec1, type: 2}
+  - {fileID: 11400000, guid: a708fa6856fc85a4cb12388675c462c3, type: 2}
+  - {fileID: 11400000, guid: e31449e32dc45c542864a26cc6377ec4, type: 2}
+  - {fileID: 11400000, guid: 14a8e41dc845c684885767f57440b8bd, type: 2}
+  - {fileID: 11400000, guid: 80da73c3e0d894a4497d7f746c388998, type: 2}
+  - {fileID: 11400000, guid: b34f9e0b1c4e8904db59f4237caf8950, type: 2}
+  - {fileID: 11400000, guid: 728e7eeee65ba8448849d1fa3a910d15, type: 2}
+  - {fileID: 11400000, guid: 61e330f847416564486cf7908c251832, type: 2}
+  - {fileID: 11400000, guid: fd9c2d49b8d59594397810311e26bc78, type: 2}
+  - {fileID: 11400000, guid: ca59e645eac83a84dbac8aefdf7e5092, type: 2}
+  - {fileID: 11400000, guid: e48a6ac73de5b0543b95c5a062a8c914, type: 2}
+  - {fileID: 11400000, guid: 5b1d33b40fa8dfb4888c91e3a51442aa, type: 2}
+  - {fileID: 11400000, guid: a04d835e42bf9694b99be33b19fd13c6, type: 2}
+  DatabaseName: Flip
+  DataType: 5

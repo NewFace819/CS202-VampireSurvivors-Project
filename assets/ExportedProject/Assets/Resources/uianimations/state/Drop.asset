@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -701280273, guid: 4d426826c48d7417bda07e2fb7028f22, type: 3}
+  m_Name: Drop
+  m_EditorClassIdentifier:
+  AnimationNames:
+  - DownAndShrink
+  - DownAndShrinkReset
+  - DownHorizontalPressed
+  - DownHorizontalPressedReset
+  - DownVerticalPressed
+  - DownVerticalPressedReset
+  - Fall
+  - FallFromLeft
+  - FallFromLeftReset
+  - FallFromRight
+  - FallFromRightReset
+  - FallReset
+  - LeafFallLeft
+  - LeafFallLeftReset
+  - LeafFallRight
+  - LeafFallRightReset
+  - UpHorizontalPressed
+  - UpHorizontalPressedReset
+  - UpVerticalPressed
+  - UpVerticalPressedReset
+  Database:
+  - {fileID: 11400000, guid: 3f27f71a08c19104b989e3180cc228b2, type: 2}
+  - {fileID: 11400000, guid: 9d6ddfda7a3965447981da3612a6d464, type: 2}
+  - {fileID: 11400000, guid: 8c7a749c11b669e46a49cf3b8dfa6607, type: 2}
+  - {fileID: 11400000, guid: f44be9ff9b3094b42ad20c7d101e3620, type: 2}
+  - {fileID: 11400000, guid: 98cd3c1dd134b7a4ca7677d59a503dcc, type: 2}
+  - {fileID: 11400000, guid: 551e5773d2feebc48be1fd4775366f1b, type: 2}
+  - {fileID: 11400000, guid: 5eefcddfca0351048a44e28d4d718bef, type: 2}
+  - {fileID: 11400000, guid: 58027299e69b3b240906758353787a1b, type: 2}
+  - {fileID: 11400000, guid: dead93dacb7c1bf40a996cc5fd132d0f, type: 2}
+  - {fileID: 11400000, guid: a736c5c48d9c8d840b1e20fa9bcc6f68, type: 2}
+  - {fileID: 11400000, guid: 5f11aff5c3f93104896f2e6b4e9bbad0, type: 2}
+  - {fileID: 11400000, guid: 15a2e9729def9c74abb656d52b1b7cf8, type: 2}
+  - {fileID: 11400000, guid: fc73c75f36771c349b5d20bfbb65c5c7, type: 2}
+  - {fileID: 11400000, guid: b3c4a734be7d7914da14e383a7d5d4a5, type: 2}
+  - {fileID: 11400000, guid: 6704db5547672514482e440a708cbffd, type: 2}
+  - {fileID: 11400000, guid: aba4f2f9cd9f0ed4790ab7507fc87c1b, type: 2}
+  - {fileID: 11400000, guid: e5d0285e79122e9489ae5d11b9f4d446, type: 2}
+  - {fileID: 11400000, guid: 0ac0fc40eb47370499de7ffab6bb62db, type: 2}
+  - {fileID: 11400000, guid: 91865358b5a02074c9e3753ffb0a7a78, type: 2}
+  - {fileID: 11400000, guid: f832bc5c6dc99844e83b0277e57fc846, type: 2}
+  DatabaseName: Drop
+  DataType: 5

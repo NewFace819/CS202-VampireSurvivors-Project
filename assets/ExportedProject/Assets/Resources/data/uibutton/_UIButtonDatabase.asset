@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1630725965, guid: 4d426826c48d7417bda07e2fb7028f22, type: 3}
+  m_Name: _UIButtonDatabase
+  m_EditorClassIdentifier:
+  DatabaseType: 0
+  CategoryNames:
+  - Custom
+  - Example
+  - General
+  Categories:
+  - {fileID: 11400000, guid: 757f00befd5d4204283c1bc51c5b0ca1, type: 2}
+  - {fileID: 11400000, guid: 8055b4282eaf366449bd6c3cb097ec30, type: 2}

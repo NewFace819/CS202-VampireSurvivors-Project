@@ -13,9 +13,14 @@
 
 class GameManager;
 
+enum class CharacterType {
+    Antonio,
+    Imelda
+};
+
 class PlayingState : public GameState {
 public:
-    PlayingState(GameManager* manager);
+    PlayingState(GameManager* manager, CharacterType charType);
     void enter() override;
     void update(float dt) override;
     void draw(sf::RenderWindow& window) override;
@@ -34,9 +39,4 @@ private:
     std::vector<ExpGem> m_activeGems;
 
     float m_spawnTimer = 0.f;
-    float m_survivalTime = 0.f;
-    bool m_bossSpawned = false;
-
-    sf::Font m_font;
-    sf::Text m_timerText;
 };

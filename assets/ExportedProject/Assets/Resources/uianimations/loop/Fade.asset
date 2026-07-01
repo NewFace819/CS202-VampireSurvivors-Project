@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -701280273, guid: 4d426826c48d7417bda07e2fb7028f22, type: 3}
+  m_Name: Fade
+  m_EditorClassIdentifier:
+  AnimationNames:
+  - ExtremelySlow
+  - FadeSlightyHorizontalMove
+  - FadeSlightyMoveVertical
+  - Fast
+  - Normal
+  - SineFast
+  - SineNormal
+  - SineSlow
+  - Slow
+  - SoftFast
+  - SoftNormal
+  - SoftSlow
+  - SoftVeryFast
+  - SoftVerySlow
+  - VeryFast
+  - VerySlow
+  Database:
+  - {fileID: 11400000, guid: fa26af6f4ed25d44ab7adb38b37dd312, type: 2}
+  - {fileID: 11400000, guid: fcccf08bd31825b4e90bffe969a5ff20, type: 2}
+  - {fileID: 11400000, guid: 88de2c722ff9a6742894892dfbec7eac, type: 2}
+  - {fileID: 11400000, guid: e50a771e4222b8446b230d99c50e9d76, type: 2}
+  - {fileID: 11400000, guid: d19d73fdc78ed8841983fd0cdf68ffe1, type: 2}
+  - {fileID: 11400000, guid: 103aa38cdbf226f4e8b89f44f1be9862, type: 2}
+  - {fileID: 11400000, guid: f8e1d5a336180ea44a908b34f955ad19, type: 2}
+  - {fileID: 11400000, guid: f8746f36392da0a43a9068295079a063, type: 2}
+  - {fileID: 11400000, guid: e6e5c0cc9fa13bf46aa027554c8654f6, type: 2}
+  - {fileID: 11400000, guid: dc230f68717650b4ea2386404938424c, type: 2}
+  - {fileID: 11400000, guid: f0ef12c9cfbd1424cae8b182fdbb22f6, type: 2}
+  - {fileID: 11400000, guid: 4733214e930749a4c8de0e327d6acce0, type: 2}
+  - {fileID: 11400000, guid: 76651049536d0994e80bd2789b379af4, type: 2}
+  - {fileID: 11400000, guid: 240da0962a8afd149bdf4a1def8cd951, type: 2}
+  - {fileID: 11400000, guid: f3d0dbe51e4c8204aa4aa4d980c64557, type: 2}
+  - {fileID: 11400000, guid: 72c6ebf111afc38428931991c3d8e6c5, type: 2}
+  DatabaseName: Fade
+  DataType: 3

@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1565582399, guid: 48e2a2bbdf27d9639db3355676641881, type: 3}
+  m_Name: Plant2.tmx_Walls
+  m_EditorClassIdentifier:
+  hash:
+    bytes[0]: 14
+    bytes[1]: 197
+    bytes[2]: 87
+    bytes[3]: 229
+    bytes[4]: 31
+    bytes[5]: 235
+    bytes[6]: 105
+    bytes[7]: 61
+    bytes[8]: 23
+    bytes[9]: 103
+    bytes[10]: 181
+    bytes[11]: 236
+    bytes[12]: 210
+    bytes[13]: 185
+    bytes[14]: 246
+    bytes[15]: 139
+  combine:
+    bound1: 3
+    bound2: 5
+  allBounds:
+  - m_Position: {x: 12, y: -52, z: 0}
+    m_Size: {x: 10, y: 7, z: 1}
+  - m_Position: {x: 32, y: -47, z: 0}
+    m_Size: {x: 32, y: 12, z: 1}
+  - m_Position: {x: 18, y: -25, z: 0}
+    m_Size: {x: 8, y: 7, z: 1}
+  - m_Position: {x: 6, y: -12, z: 0}
+    m_Size: {x: 8, y: 7, z: 1}
+  - m_Position: {x: 42, y: -11, z: 0}
+    m_Size: {x: 12, y: 10, z: 1}

@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -701280273, guid: 4d426826c48d7417bda07e2fb7028f22, type: 3}
+  m_Name: Flip
+  m_EditorClassIdentifier:
+  AnimationNames:
+  - FlipAndResizeBottom
+  - FlipAndResizeLeft
+  - FlipAndResizeRight
+  - FlipAndResizeTop
+  - MoveFromBottomAndFlip
+  - MoveFromLeftAndFlip
+  - MoveFromRightAndFlip
+  - MoveFromTopAndFlip
+  - ThrowFromBottom
+  - ThrowFromLeft
+  - ThrowFromRight
+  - ThrowFromTop
+  Database:
+  - {fileID: 11400000, guid: 40dd793d7b6106c40b8234798cd60581, type: 2}
+  - {fileID: 11400000, guid: 733bcb9887e9ecb42844137145afc73c, type: 2}
+  - {fileID: 11400000, guid: ef84d81afbce8a64782960ab1d5d4c38, type: 2}
+  - {fileID: 11400000, guid: 9105aa5e32eacca4cba49cb10a245218, type: 2}
+  - {fileID: 11400000, guid: ac65e9115dd477144bbacc8a563671f9, type: 2}
+  - {fileID: 11400000, guid: 7b4b112f930f4f74eb609c97db310e46, type: 2}
+  - {fileID: 11400000, guid: 83ea6b8c54f226346a4bb4451657d2dc, type: 2}
+  - {fileID: 11400000, guid: 41cc90831785e4648a825b47bd261af7, type: 2}
+  - {fileID: 11400000, guid: 3926041e401df9e4383bdecbb5789d85, type: 2}
+  - {fileID: 11400000, guid: 99152787a59589f4892f12afb77ef6e2, type: 2}
+  - {fileID: 11400000, guid: bfcd07761c389cc49829a26d504c682d, type: 2}
+  - {fileID: 11400000, guid: c9a01309f414e4d4488d411ef20e8ed7, type: 2}
+  DatabaseName: Flip
+  DataType: 1
