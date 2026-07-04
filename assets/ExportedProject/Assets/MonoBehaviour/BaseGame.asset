@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1945623734, guid: 361d993a59a3ee483fbe6b04a31f86b4, type: 3}
+  m_Name: BaseGame
+  m_EditorClassIdentifier:
+  _BuildMeta:
+    BuildPlatform: 0
+    BuildNumber: 63587693
+    BuildAgent: Poe20
+    VcsHash: 7bd445604944d9aa2c87054a8fdd0c0faf96f18c
+    VcsBranch: otc-V2-CrawlersButton
+  _Steam:
+    _AppID: 1794680
+    _WindowsDepotID: 1794681
+    _OSXDepotID: 1794684
+    _LinuxDepotID: 1794685
+  _EpicGamesStore:
+    _ArtifactId: 1136763135c0482cbbb4b2d45e978156
+    _BundledDlcInBuild: 0
+  _Xbox:
+    _StoreID: 9PD5BM2Z8C4L
+    _StorePackageIdentifier: poncle.VampireSurvivors
+  _Switch:
+    _ApplicationId: 010089A0197E4000
+    _ReleaseVersion: 23
+  _PS4:
+    _MasterVersion: 01.00
+    _ApplicationVersion: 01.22
+    _TrophyPacks:
+    - Assets/BuildResources/PlayStation/PS4/Trophies/trophy00.trp
+    - Assets/BuildResources/PlayStation/PS4/Trophies/trophy01.trp
+    _TrophyIdMappingFiles:
+    - _NpLabel: 0
+      _TrophyDescriptionFile: Assets/BuildResources/PlayStation/PS4/Trophies/TrophyDescriptionFiles/trp00/trophy00.trx
+      _MappingFile: {fileID: 4900000, guid: 8bfaa94d4cf491944a1002db2c83de9c, type: 3}
+    - _NpLabel: 1
+      _TrophyDescriptionFile: Assets/BuildResources/PlayStation/PS4/Trophies/TrophyDescriptionFiles/trp01/trophy01.trx
+      _MappingFile: {fileID: 4900000, guid: 5bfa3eb95c12a774dbf7eda244e894d1, type: 3}
+  _PS5:
+    _MasterVersion: 01.00
+  _IOS:
+    _AppName: Vampire Survivors
+    _BundleIdentifier: com.poncle.VampireSurvivors
+  _AppleArcade:
+    _AppName: Vampire Survivors+
+    _BundleIdentifier: com.poncle.VampireSurvivors.AppleArcade

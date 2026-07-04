@@ -1,0 +1,52 @@
+using System;
+using Coherence.Entities;
+using Coherence.SimulationFrame;
+using Coherence.Toolkit.Bindings.ValueBindings;
+using UnityEngine;
+using UnityEngine.Scripting;
+using VampireSurvivors.Objects.Characters;
+
+namespace Coherence.Generated
+{
+	[Preserve]
+	public class Binding_20bcb04d7eca75d4791a6b8471eb2720_c16381d7670e40c1af8a9acd4e4d8e72 : FloatBinding
+	{
+		private TP_FakeTrevor_Solo_Character CastedUnityComponent;
+
+		public override Type CoherenceComponentType => null;
+
+		public override string CoherenceComponentName => null;
+
+		public override uint FieldMask => 0u;
+
+		public override float Value
+		{
+			get
+			{
+				return 0f;
+			}
+			set
+			{
+			}
+		}
+
+		protected override void OnBindingCloned()
+		{
+		}
+
+		protected override (float, AbsoluteSimulationFrame) ReadComponentData(ICoherenceComponentData coherenceComponent, Vector3 floatingOriginDelta)
+		{
+			return default((float, AbsoluteSimulationFrame));
+		}
+
+		public override ICoherenceComponentData WriteComponentData(ICoherenceComponentData coherenceComponent, AbsoluteSimulationFrame simFrame)
+		{
+			return null;
+		}
+
+		public override ICoherenceComponentData CreateComponentData()
+		{
+			return null;
+		}
+	}
+}

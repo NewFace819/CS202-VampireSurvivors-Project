@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -701280273, guid: 4d426826c48d7417bda07e2fb7028f22, type: 3}
+  m_Name: Slide
+  m_EditorClassIdentifier:
+  AnimationNames:
+  - BounceFromLeft
+  - BounceFromRight
+  - CardDown
+  - CardLeft
+  - CardRight
+  - CardUp
+  - ElegantLeft
+  - ElegantRight
+  - FromLeftAndBounce
+  - FromRightAndBounce
+  - RotateDown
+  - RotateLeft
+  - RotateRight
+  - RotateUp
+  - RushFromBottom
+  - RushFromLeft
+  - RushFromRight
+  - RushFromTop
+  - SlideAndShakeBottom
+  - SlideAndShakeLeft
+  - SlideAndShakeRight
+  - SlideAndShakeTop
+  - SlideFromBottomFastShake
+  - SlideFromLeftFastShake
+  - SlideFromRightFastShake
+  - SlideFromTopFastShake
+  Database:
+  - {fileID: 11400000, guid: 49f2686fe1815d640b22ff6839548372, type: 2}
+  - {fileID: 11400000, guid: 9594d3927c5c5cb4599e14dcfadbecd7, type: 2}
+  - {fileID: 11400000, guid: 77f3fcedb60e14a4b8a0ec251b1b0082, type: 2}
+  - {fileID: 11400000, guid: 712b2721bbadc8546a74439b6990ca92, type: 2}
+  - {fileID: 11400000, guid: 29746ea71c6c99d4d8ebfe0bea79e2fd, type: 2}
+  - {fileID: 11400000, guid: 8b7537b20fae05342b4ab0e9dce72635, type: 2}
+  - {fileID: 11400000, guid: 9bcef963430556642b59457a5a125d19, type: 2}
+  - {fileID: 11400000, guid: 3b557792c25c6e943939ef9a0d6f221d, type: 2}
+  - {fileID: 11400000, guid: 28f717fdbde424549bf06dba1fa98006, type: 2}
+  - {fileID: 11400000, guid: 1e7a6e93ab4a509468c94c3053ed0059, type: 2}
+  - {fileID: 11400000, guid: a3799138ef9f9024d9152842d8000641, type: 2}
+  - {fileID: 11400000, guid: 374f88d176083c54fb0a632bb1103a0c, type: 2}
+  - {fileID: 11400000, guid: ed7010f536570a441a68d50673916447, type: 2}
+  - {fileID: 11400000, guid: 2c3e82aa387a0fc469c982239d8cd2df, type: 2}
+  - {fileID: 11400000, guid: c5b78390dfa23b447bac7bdfa2587948, type: 2}
+  - {fileID: 11400000, guid: 7acda4b7cf3989943b8eabdc2d49d904, type: 2}
+  - {fileID: 11400000, guid: 873a89b233a5e8945bfecc09415e990e, type: 2}
+  - {fileID: 11400000, guid: 31b32043789a57e44aa705df7f6525fe, type: 2}
+  - {fileID: 11400000, guid: 90268f55be0dbdf43884946c76c2caee, type: 2}
+  - {fileID: 11400000, guid: 99ab9198f3229244bb76ff071ca42cfd, type: 2}
+  - {fileID: 11400000, guid: 37299f63061e0e74fa0f299b3a82c35e, type: 2}
+  - {fileID: 11400000, guid: 0c37acf6d8eb9024c992882f876e6e81, type: 2}
+  - {fileID: 11400000, guid: 1e84a4ada76544945bd129e02fbd1d1f, type: 2}
+  - {fileID: 11400000, guid: 7ab2ce0ac59888141bf5377d40b7210d, type: 2}
+  - {fileID: 11400000, guid: 0139a2505c22db14dbe826cd2357f030, type: 2}
+  - {fileID: 11400000, guid: 4cdc6ca2c0b805b45af0170db356185d, type: 2}
+  DatabaseName: Slide
+  DataType: 1

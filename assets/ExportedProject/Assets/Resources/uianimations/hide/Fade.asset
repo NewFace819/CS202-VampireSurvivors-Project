@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -701280273, guid: 4d426826c48d7417bda07e2fb7028f22, type: 3}
+  m_Name: Fade
+  m_EditorClassIdentifier:
+  AnimationNames:
+  - FoldHorizontal
+  - FoldVertical
+  - GrowOut
+  - OutFast
+  - OutNormal
+  - OutSlow
+  - Pop
+  - PopLeft
+  - PopRight
+  - SoftGrow
+  - SoftShrink
+  - TwistLeft
+  - TwistRight
+  Database:
+  - {fileID: 11400000, guid: 280cca6742ae93d4abaa9e44dc9764f9, type: 2}
+  - {fileID: 11400000, guid: d42f82da8742d444381abd151e34f8b6, type: 2}
+  - {fileID: 11400000, guid: d133f965714a4504fb47bb937c867774, type: 2}
+  - {fileID: 11400000, guid: d52962c275cd73b4bbd87642da27b795, type: 2}
+  - {fileID: 11400000, guid: 080fc6da70e6ab9498d48f83418f05e6, type: 2}
+  - {fileID: 11400000, guid: 143be84b49e095f4fb87ade83982f0f5, type: 2}
+  - {fileID: 11400000, guid: cce23f54e33960349b5e314da96d8504, type: 2}
+  - {fileID: 11400000, guid: 1902dca85a87547419f87cbe3ce8c2a6, type: 2}
+  - {fileID: 11400000, guid: a68caf23395bee44fb01a8e48823d784, type: 2}
+  - {fileID: 11400000, guid: afca61f74b57792459aca5bfc98c75d1, type: 2}
+  - {fileID: 11400000, guid: 6b0d1833df188ce409de152a4b563e11, type: 2}
+  - {fileID: 11400000, guid: 380cc782479010446b3b37b762aded56, type: 2}
+  - {fileID: 11400000, guid: 7588b6b9cd0d109418f43b25fddeb20c, type: 2}
+  DatabaseName: Fade
+  DataType: 2

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1735530472, guid: 7eb40476d4df66d28dbcfa057c92f8df, type: 3}
+  m_Name: st2u_x192y704-w32h32
+  m_EditorClassIdentifier:
+  m_TileId: 216
+  m_Sprite: {fileID: 21300000, guid: 8e81ee67684732846b38c71678d33483, type: 2}
+  m_AnimationSprites: []
+  m_Type:
+  m_Width: 32
+  m_Height: 32
+  m_TileOffsetX: 0
+  m_TileOffsetY: 0
+  m_ObjectAlignment: 0
+  m_TileRenderSize: 0
+  m_FillMode: 0
+  m_ColliderType: 0
+  m_CustomProperties: []
+  m_CollisionObjects: []

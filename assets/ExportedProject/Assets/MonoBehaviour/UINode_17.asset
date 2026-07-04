@@ -1,0 +1,113 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -899935205, guid: 4d426826c48d7417bda07e2fb7028f22, type: 3}
+  m_Name: UINode
+  m_EditorClassIdentifier:
+  m_inputSockets:
+  - m_connectionMode: 1
+    m_connections:
+    - m_inputConnectionPoint: {x: -2, y: 4}
+      m_outputConnectionPoint: {x: 106, y: 4}
+      m_id: 3bc4216f-196b-47ef-9d20-bfb55aab3e31
+      m_inputNodeId: 8cc654e9-5995-4eb4-accf-9b2d7343a5f3
+      m_inputSocketId: a5b6acb2-95f4-4e25-bfe5-74005cd8e1a6
+      m_outputNodeId: d0ceb895-86e8-49d3-9e39-4c9ab32cee2c
+      m_outputSocketId: fc0eb3c2-f22a-4e9d-b92a-cc011ea10ed3
+    m_connectionPoints:
+    - {x: -2, y: 4}
+    - {x: 202, y: 4}
+    m_direction: 0
+    m_canBeDeleted: 0
+    m_canBeReordered: 0
+    m_curveModifier: 0
+    m_height: 24
+    m_width: 216
+    m_x: 0
+    m_y: 38
+    m_id: a5b6acb2-95f4-4e25-bfe5-74005cd8e1a6
+    m_nodeId: 8cc654e9-5995-4eb4-accf-9b2d7343a5f3
+    m_socketName: InputSocket_0
+    m_value: '{"ButtonCategory":"General","ButtonName":"Unnamed","GameEvent":"","TimeDelay":3.0,"Trigger":0}'
+    m_valueTypeQualifiedName: Doozy.Engine.UI.Connections.UIConnection, Doozy, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_outputSockets:
+  - m_connectionMode: 0
+    m_connections:
+    - m_inputConnectionPoint: {x: -2, y: 4}
+      m_outputConnectionPoint: {x: 202, y: 4}
+      m_id: 3f9640ac-b41a-482a-ac15-4aea651eafa3
+      m_inputNodeId: 2519510c-af54-4413-ac06-99e03bb658f2
+      m_inputSocketId: 2f71bccb-fe27-4a68-af1c-fa03ca638ab6
+      m_outputNodeId: 8cc654e9-5995-4eb4-accf-9b2d7343a5f3
+      m_outputSocketId: 6e5af59c-327a-4c2f-873f-2e563f543793
+    m_connectionPoints:
+    - {x: -2, y: 4}
+    - {x: 202, y: 4}
+    m_direction: 1
+    m_canBeDeleted: 1
+    m_canBeReordered: 1
+    m_curveModifier: 0
+    m_height: 24
+    m_width: 216
+    m_x: 0
+    m_y: 62
+    m_id: 6e5af59c-327a-4c2f-873f-2e563f543793
+    m_nodeId: 8cc654e9-5995-4eb4-accf-9b2d7343a5f3
+    m_socketName: OutputSocket_0
+    m_value: '{"ButtonCategory":"General","ButtonName":"Back","GameEvent":"SHOW_WARNING","TimeDelay":3.0,"Trigger":3}'
+    m_valueTypeQualifiedName: Doozy.Engine.UI.Connections.UIConnection, Doozy, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - m_connectionMode: 0
+    m_connections:
+    - m_inputConnectionPoint: {x: -2, y: 4}
+      m_outputConnectionPoint: {x: 202, y: 4}
+      m_id: 962c53d0-5ec8-4aba-8c15-c993c9cd382f
+      m_inputNodeId: fbd07fa6-bdaa-45f0-bd0d-e27b574e044a
+      m_inputSocketId: 93fe723c-9ac6-45cb-9f57-02e352d1e986
+      m_outputNodeId: 8cc654e9-5995-4eb4-accf-9b2d7343a5f3
+      m_outputSocketId: 0c827e51-16fb-4701-b3a8-e8507de1b4d4
+    m_connectionPoints:
+    - {x: -2, y: 4}
+    - {x: 202, y: 4}
+    m_direction: 1
+    m_canBeDeleted: 1
+    m_canBeReordered: 1
+    m_curveModifier: 0
+    m_height: 24
+    m_width: 216
+    m_x: 0
+    m_y: 86
+    m_id: 0c827e51-16fb-4701-b3a8-e8507de1b4d4
+    m_nodeId: 8cc654e9-5995-4eb4-accf-9b2d7343a5f3
+    m_socketName: OutputSocket_1
+    m_value: '{"ButtonCategory":"General","ButtonName":"Unnamed","GameEvent":"OPEN_TPCREDITS","TimeDelay":3.0,"Trigger":3}'
+    m_valueTypeQualifiedName: Doozy.Engine.UI.Connections.UIConnection, Doozy, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_nodeType: 4
+  m_allowDuplicateNodeName: 0
+  m_allowEmptyNodeName: 0
+  m_canBeDeleted: 1
+  m_debugMode: 0
+  m_useFixedUpdate: 0
+  m_useLateUpdate: 0
+  m_useUpdate: 0
+  m_height: 152
+  m_width: 216
+  m_x: -828
+  m_y: 0
+  m_minimumInputSocketsCount: 1
+  m_minimumOutputSocketsCount: 1
+  m_graphId: a59b379d-9a9f-4ed4-9867-8caf79e18b7c
+  m_id: 8cc654e9-5995-4eb4-accf-9b2d7343a5f3
+  m_name: WaitNode
+  m_notes:
+  m_onEnterShowViews: []
+  m_onEnterHideViews: []
+  m_onExitShowViews: []
+  m_onExitHideViews: []

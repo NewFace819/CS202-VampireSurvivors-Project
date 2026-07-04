@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 18985879, guid: c08228709d97fc1886fc1370832c6f3d, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  mTarget: {fileID: 6449, guid: ef25f63be2e3b0d49927d460d52b3afb, type: 2}
+  mAlignment_RTL: 2049
+  mAlignment_LTR: 2052
+  mAlignmentWasRTL: 0
+  mInitializeAlignment: 0

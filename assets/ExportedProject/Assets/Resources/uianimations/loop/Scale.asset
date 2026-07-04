@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -701280273, guid: 4d426826c48d7417bda07e2fb7028f22, type: 3}
+  m_Name: Scale
+  m_EditorClassIdentifier:
+  AnimationNames:
+  - BoldScaleFast
+  - BoldScaleNormal
+  - BoldScaleSlow
+  - BoldScaleVeryFast
+  - DownFast
+  - DownNormal
+  - DownSlow
+  - ExtremelySlow
+  - Fast
+  - LeftFast
+  - LeftNormal
+  - LeftSlow
+  - Normal
+  - RightFast
+  - RightNormal
+  - RightSlow
+  - Slow
+  - UpFast
+  - UpNormal
+  - UpSlow
+  - VeryFast
+  - VerySlow
+  Database:
+  - {fileID: 11400000, guid: 75b692747813e634d8ca282ecfee1d5f, type: 2}
+  - {fileID: 11400000, guid: 65420f16722981844a6e4a62cb7226f4, type: 2}
+  - {fileID: 11400000, guid: 3ae1d584bdc274f489d2b5e225602fcd, type: 2}
+  - {fileID: 11400000, guid: 8bbf40edbecb3484f977cd273ff2f7ee, type: 2}
+  - {fileID: 11400000, guid: 8d43b4fd3cf8c784ca2618559cd83624, type: 2}
+  - {fileID: 11400000, guid: 9cb55b5bc301b7e41b4a9f5be9b5271b, type: 2}
+  - {fileID: 11400000, guid: fdafb26f0a5a86744a755b8a3ed54f9b, type: 2}
+  - {fileID: 11400000, guid: a4bd757f7b0c9004fb14370b4f4632c7, type: 2}
+  - {fileID: 11400000, guid: c346fe812d9701b40802a613deb4f811, type: 2}
+  - {fileID: 11400000, guid: c561fa9543443e44d9aa5454678d68a3, type: 2}
+  - {fileID: 11400000, guid: eb1ceadedaa089440a7f3851cbb6352d, type: 2}
+  - {fileID: 11400000, guid: 506f14ebade89374ea7711c12188993d, type: 2}
+  - {fileID: 11400000, guid: c56a730ed3b1d414eb9c69ed9caec145, type: 2}
+  - {fileID: 11400000, guid: 94a13ae3ec064374aa428d3c1132006f, type: 2}
+  - {fileID: 11400000, guid: f9772b4a905c1ac4f8eeadcbe33daba3, type: 2}
+  - {fileID: 11400000, guid: c0af740a152c1a84dba83b76a2fb1049, type: 2}
+  - {fileID: 11400000, guid: ac22042aed263f44d98ddf5320dbb1b3, type: 2}
+  - {fileID: 11400000, guid: b4bbc7fd1b881bd40a4bb8637431ad53, type: 2}
+  - {fileID: 11400000, guid: abf21e7f94cb22745b85927a3e28e74c, type: 2}
+  - {fileID: 11400000, guid: d64a9038fe50e4641b9ea65bc866636e, type: 2}
+  - {fileID: 11400000, guid: 098cb84ae40c4224aa8463a320a578db, type: 2}
+  - {fileID: 11400000, guid: 0139ad722d39d30469b7bf2ba8d9220b, type: 2}
+  DatabaseName: Scale
+  DataType: 3

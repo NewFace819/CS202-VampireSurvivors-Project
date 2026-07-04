@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -701280273, guid: 4d426826c48d7417bda07e2fb7028f22, type: 3}
+  m_Name: Slide
+  m_EditorClassIdentifier:
+  AnimationNames:
+  - BumpLeft
+  - BumpRight
+  - FlopLeft
+  - FlopRight
+  - GrowLeft
+  - GrowLeftAlt
+  - GrowRight
+  - GrowRightAlt
+  - RotateLeft
+  - RotateRight
+  - RushLeft
+  - RushRight
+  - SimpleLeftFast
+  - SimpleLeftNormal
+  - SimpleRightFast
+  - SimpleRightNormal
+  - SoftRotateLeft
+  - SoftRotateRight
+  - VibrateFromCenter
+  - VibrateLeft
+  - VibrateRight
+  - WiggleLeft
+  - WiggleRight
+  Database:
+  - {fileID: 11400000, guid: 457ccd6167809b044b404d7573eb509b, type: 2}
+  - {fileID: 11400000, guid: 7a16dc1fedb03a143bdd03c2b2ca0a8a, type: 2}
+  - {fileID: 11400000, guid: d0fa86ae5e99c0942b5683e3a63ee00a, type: 2}
+  - {fileID: 11400000, guid: b368c20c79c38554ba6602a272c77cbb, type: 2}
+  - {fileID: 11400000, guid: 41cd0eff6208cc44886aec08fdb563e0, type: 2}
+  - {fileID: 11400000, guid: 58b3dba3ed1dc974bbcfb9323fd94835, type: 2}
+  - {fileID: 11400000, guid: cf4506b505e275e42ae326e2e519bd68, type: 2}
+  - {fileID: 11400000, guid: cf802c28e5782064cb1b40ad4f68f29e, type: 2}
+  - {fileID: 11400000, guid: 2544fd8401e0cb646b1412d9af8eefbf, type: 2}
+  - {fileID: 11400000, guid: e75e18cbb43f75c48ad4ccc8ee62d46f, type: 2}
+  - {fileID: 11400000, guid: b96f5d154facc8444a5f3449e99ab350, type: 2}
+  - {fileID: 11400000, guid: f86fd630f01433b4c8b63f4082917519, type: 2}
+  - {fileID: 11400000, guid: 75775a261b918b643b030d15453aa710, type: 2}
+  - {fileID: 11400000, guid: 38978b956f5154e4a87eac3de60dc8cf, type: 2}
+  - {fileID: 11400000, guid: a67d0d3ff4c6f5c4a82e8b7495ce048c, type: 2}
+  - {fileID: 11400000, guid: bc2e87669d290f0448d152f2e1b0b5dd, type: 2}
+  - {fileID: 11400000, guid: 41a01375206cf074e9b6702ede59bcc2, type: 2}
+  - {fileID: 11400000, guid: c40d381d9b73d674083de5db63fbe98d, type: 2}
+  - {fileID: 11400000, guid: 508e4a6bc845ae742b801adf04891c8c, type: 2}
+  - {fileID: 11400000, guid: 5299f43fc05b4b449a458819c8b75988, type: 2}
+  - {fileID: 11400000, guid: f44b0610440bd42408c273ad3c8c9947, type: 2}
+  - {fileID: 11400000, guid: add2316bc61e1904d80e7384ba34ce55, type: 2}
+  - {fileID: 11400000, guid: ec85d08100994f4418c32ce547906569, type: 2}
+  DatabaseName: Slide
+  DataType: 4

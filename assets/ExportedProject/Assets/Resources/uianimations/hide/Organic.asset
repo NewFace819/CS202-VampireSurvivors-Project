@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -701280273, guid: 4d426826c48d7417bda07e2fb7028f22, type: 3}
+  m_Name: Organic
+  m_EditorClassIdentifier:
+  AnimationNames:
+  - DescentToBottom
+  - DropAndGrow
+  - JumpDown
+  - PopAndDrop
+  - RoadRunnerBottom
+  - RoadRunnerLeft
+  - RoadRunnerRight
+  - RoadRunnerTop
+  - SlideToBottomFast
+  - SlideToLeftFast
+  - SlideToRightFast
+  - SlideToTopFast
+  - SmoothToBottom
+  - SmoothToLeft
+  - SmoothToRight
+  - SmoothToTop
+  - Squinch
+  - StretchToBottom
+  - StretchToLeft
+  - StretchToRight
+  - StretchToTop
+  - ToCenterAndBounce
+  - ToDownAndBounce
+  - ToLeftAndBounce
+  - ToRightAndBounce
+  - ToTopAndBounce
+  - Wiggle
+  Database:
+  - {fileID: 11400000, guid: 17b3e6a9875fdb44c9cb9af7399cd5b8, type: 2}
+  - {fileID: 11400000, guid: 001a265960e6c4444833848d1613ce87, type: 2}
+  - {fileID: 11400000, guid: 128dae74692b60a4d9fc60a15dbf20fe, type: 2}
+  - {fileID: 11400000, guid: dcaad255f9a193546a4fd7a049cccef5, type: 2}
+  - {fileID: 11400000, guid: a4a6fb379afa4ba469163b508d62189a, type: 2}
+  - {fileID: 11400000, guid: ce8a74a1c0875924f9e57ef8a8950a44, type: 2}
+  - {fileID: 11400000, guid: 6f61f1c3e9d26d24e93d704292888915, type: 2}
+  - {fileID: 11400000, guid: c24d52613b60ab44983598f19863278b, type: 2}
+  - {fileID: 11400000, guid: 2c5f1939e9893c7408bc26cbb1a4939d, type: 2}
+  - {fileID: 11400000, guid: 1208675ca13d9224789c2c0c8cdbd1bd, type: 2}
+  - {fileID: 11400000, guid: 94a0c0ba4b2af1d47b00548160a4ee2b, type: 2}
+  - {fileID: 11400000, guid: 487894d6fed3a1c4e80da7d92a6551cf, type: 2}
+  - {fileID: 11400000, guid: 2fd6058437037c04a99bfe72bf892caa, type: 2}
+  - {fileID: 11400000, guid: 9122ea6b06214cd4da39ecb356165b18, type: 2}
+  - {fileID: 11400000, guid: 246373c5dfe4be94c8bf68d21ae9899a, type: 2}
+  - {fileID: 11400000, guid: b74d57439158ce44482204a547bcc635, type: 2}
+  - {fileID: 11400000, guid: 59d242a1f69e4ef40a835c730cd5f8a7, type: 2}
+  - {fileID: 11400000, guid: 4dbb0e6d1fe198c48a9031a2163c85fa, type: 2}
+  - {fileID: 11400000, guid: df9bd0b5ca678e5478f5a5119912700d, type: 2}
+  - {fileID: 11400000, guid: 97458d60847377b42b458c0b817a54c9, type: 2}
+  - {fileID: 11400000, guid: b949bf8ac0fbbd94cb956cb5250425fd, type: 2}
+  - {fileID: 11400000, guid: dd0310f8a4a599d409ae32a40c06c2c1, type: 2}
+  - {fileID: 11400000, guid: 1a9b49556c85112448ddc687b2655131, type: 2}
+  - {fileID: 11400000, guid: b8becdefc0ae2e04a845545db05ee85b, type: 2}
+  - {fileID: 11400000, guid: 4a749d74d9934d843a9b184f1a046ff4, type: 2}
+  - {fileID: 11400000, guid: ba4365894d201be49906cd5ea157866f, type: 2}
+  - {fileID: 11400000, guid: 653a590b9f7ba364da61114514623b33, type: 2}
+  DatabaseName: Organic
+  DataType: 2

@@ -2,7 +2,7 @@
 #include "State/MainMenuState.h"
 
 GameManager::GameManager() 
-    : m_window(sf::VideoMode::getDesktopMode(), "Vampire Survivors Clone", sf::Style::Fullscreen) {
+    : m_window(sf::VideoMode(1280, 720), "Vampire Survivors Clone") {
     m_window.setFramerateLimit(60);
     // Initially push the main menu state
     pushState(std::make_unique<MainMenuState>(this));

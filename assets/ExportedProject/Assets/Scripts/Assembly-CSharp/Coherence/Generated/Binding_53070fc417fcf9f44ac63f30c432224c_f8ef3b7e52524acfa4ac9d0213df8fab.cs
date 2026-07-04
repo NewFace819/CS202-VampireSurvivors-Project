@@ -1,0 +1,52 @@
+using System;
+using Coherence.Entities;
+using Coherence.SimulationFrame;
+using Coherence.Toolkit.Bindings.ValueBindings;
+using UnityEngine;
+using UnityEngine.Scripting;
+using VampireSurvivors.Objects.Items;
+
+namespace Coherence.Generated
+{
+	[Preserve]
+	public class Binding_53070fc417fcf9f44ac63f30c432224c_f8ef3b7e52524acfa4ac9d0213df8fab : BoolBinding
+	{
+		private PickupMoongate CastedUnityComponent;
+
+		public override Type CoherenceComponentType => null;
+
+		public override string CoherenceComponentName => null;
+
+		public override uint FieldMask => 0u;
+
+		public override bool Value
+		{
+			get
+			{
+				return false;
+			}
+			set
+			{
+			}
+		}
+
+		protected override void OnBindingCloned()
+		{
+		}
+
+		protected override (bool, AbsoluteSimulationFrame) ReadComponentData(ICoherenceComponentData coherenceComponent, Vector3 floatingOriginDelta)
+		{
+			return default((bool, AbsoluteSimulationFrame));
+		}
+
+		public override ICoherenceComponentData WriteComponentData(ICoherenceComponentData coherenceComponent, AbsoluteSimulationFrame simFrame)
+		{
+			return null;
+		}
+
+		public override ICoherenceComponentData CreateComponentData()
+		{
+			return null;
+		}
+	}
+}

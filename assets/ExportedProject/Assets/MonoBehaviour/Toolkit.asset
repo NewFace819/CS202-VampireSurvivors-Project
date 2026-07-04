@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 472546098, guid: 9fbb6dbb5ade9bbe673200d2e7f59636, type: 3}
+  m_Name: Toolkit
+  m_EditorClassIdentifier:
+  raw: "component AssetId [id \"16\"]\r\n  value Int \r\n  isFromGroup Bool \r\n\r\ncomponent GenericScale [id \"17\"]\r\n  value Vector3 [compression \"None\", sim-frames \"true\"]\r\n"
+  identifier: Toolkit.schema
+  SchemaDefinition:
+    SchemaId: d5d69a6647203fba2d9342f8476adecfaf7c2329
+    ComponentDefinitions:
+    - id: 16
+      name: AssetId
+      bitMasks: 00000000000000000000000000000011
+      members:
+      - variableName: value
+        cSharpVariableName: value
+        typeName: Int
+        cSharpTypeName: System.Int32
+        bitMask: 00000000000000000000000000000001
+        fieldOffset: 0
+        overrides:
+          keys: []
+          values: []
+      - variableName: isFromGroup
+        cSharpVariableName: isFromGroup
+        typeName: Bool
+        cSharpTypeName: System.Boolean
+        bitMask: 00000000000000000000000000000010
+        fieldOffset: 4
+        overrides:
+          keys: []
+          values: []
+      overrides:
+        keys: []
+        values: []
+      totalSize: 5
+      baseComponentName:
+      generatedByArchetype: 0
+      bakeConditional:
+    - id: 17
+      name: GenericScale
+      bitMasks: 00000000000000000000000000000001
+      members:
+      - variableName: value
+        cSharpVariableName: value
+        typeName: Vector3
+        cSharpTypeName: Vector3
+        bitMask: 00000000000000000000000000000001
+        fieldOffset: 0
+        overrides:
+          keys:
+          - compression
+          - sim-frames
+          values:
+          - None
+          - true
+      overrides:
+        keys: []
+        values: []
+      totalSize: 12
+      baseComponentName:
+      generatedByArchetype: 0
+      bakeConditional:
+    CommandDefinitions: []
+    ArchetypeDefinitions: []
+    InputDefinitions: []

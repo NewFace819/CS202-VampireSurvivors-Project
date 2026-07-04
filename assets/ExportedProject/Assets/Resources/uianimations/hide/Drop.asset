@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -701280273, guid: 4d426826c48d7417bda07e2fb7028f22, type: 3}
+  m_Name: Drop
+  m_EditorClassIdentifier:
+  AnimationNames:
+  - Blitz
+  - Bonk
+  - BounceAndDropFast
+  - BounceAndDropNormal
+  - Fade
+  - Flick
+  - Flutter
+  - Jolt
+  - OnLeftCorner
+  - OnRightCorner
+  - Rebound
+  - Shake
+  - Sling
+  - Walk
+  Database:
+  - {fileID: 11400000, guid: 35a9ac5056658ed48a6afa3ac5b9d81c, type: 2}
+  - {fileID: 11400000, guid: 355cb77a35ff9ad4cb39628e0f6506a5, type: 2}
+  - {fileID: 11400000, guid: 39b8e55e374ab6644998dbba407eb04d, type: 2}
+  - {fileID: 11400000, guid: 410d28bf062b58e419ba0444a07663e4, type: 2}
+  - {fileID: 11400000, guid: 4e359b75cfc39aa4fb051a9c9d41b7aa, type: 2}
+  - {fileID: 11400000, guid: a438698acd2357e46817340ce8e9dd64, type: 2}
+  - {fileID: 11400000, guid: 2927dd050367a3f46b7a35c569516557, type: 2}
+  - {fileID: 11400000, guid: a46e36325ac32774999bd53533bb8ab9, type: 2}
+  - {fileID: 11400000, guid: 3ed3e8f2bab079743b047c58436620b1, type: 2}
+  - {fileID: 11400000, guid: 6ff1f0b62f0301d47b5376a03af70c03, type: 2}
+  - {fileID: 11400000, guid: 21371684f9f497548a7ba031ad5382f8, type: 2}
+  - {fileID: 11400000, guid: 0483cda7e26eb914086cdf22ad72e12e, type: 2}
+  - {fileID: 11400000, guid: 49d2ae844e918eb4cbd160ca348e633d, type: 2}
+  - {fileID: 11400000, guid: 38c52c15259464e4080d833882afa6f1, type: 2}
+  DatabaseName: Drop
+  DataType: 2

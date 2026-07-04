@@ -1,21 +1,18 @@
 #include "EnemyBase.h"
-#include <cmath>
+
 EnemyBase::EnemyBase()
     : m_hp(0), m_maxHp(0), m_target(nullptr) {
-    m_shape.setRadius(20.f);
+    m_shape.setRadius(10.f);
     m_shape.setFillColor(sf::Color::Red);
-    m_shape.setOrigin(20.f, 20.f);
+    m_shape.setOrigin(10.f, 10.f);
 }
 
-void EnemyBase::init(const sf::Vector2f& startPos, float hp, float speed, float radius, sf::Color color) {
+void EnemyBase::init(const sf::Vector2f& startPos, float hp, float speed) {
     m_position = startPos;
     m_hp = hp;
     m_maxHp = hp;
     m_speed = speed;
     m_isActive = true;
-    m_shape.setRadius(radius);
-    m_shape.setOrigin(radius, radius);
-    m_shape.setFillColor(color);
     m_shape.setPosition(m_position);
 }
 

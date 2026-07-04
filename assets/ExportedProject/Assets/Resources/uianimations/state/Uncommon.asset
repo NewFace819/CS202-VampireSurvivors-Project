@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -701280273, guid: 4d426826c48d7417bda07e2fb7028f22, type: 3}
+  m_Name: Uncommon
+  m_EditorClassIdentifier:
+  AnimationNames:
+  - DiagonalMoveLeft
+  - DiagonalMoveLeftReset
+  - DiagonalMoveRight
+  - DiagonalMoveRightReset
+  - DiagonalMoveTopLeft
+  - DiagonalMoveTopLeftReset
+  - DiagonalMoveTopRight
+  - DiagonalMoveTopRightReset
+  - FadeMirror
+  - FadeMirrorReset
+  - Mirror
+  - MirrorReset
+  - TrembleAndFade
+  - TrembleAndFadeReset
+  Database:
+  - {fileID: 11400000, guid: c7150e0c40f0c4645be96e90e34b7e25, type: 2}
+  - {fileID: 11400000, guid: 90a6113522f54db4fa75f221e7cefd6a, type: 2}
+  - {fileID: 11400000, guid: 2ec966e2aa82e864ebf105abf4e2f234, type: 2}
+  - {fileID: 11400000, guid: 0e997021938776b4c93be1e94459dc93, type: 2}
+  - {fileID: 11400000, guid: 0d2d3f5eeaa65e840be6df7e81331828, type: 2}
+  - {fileID: 11400000, guid: 0a2413e7a6f46454a9eda4580f06ab25, type: 2}
+  - {fileID: 11400000, guid: 0c855ead0a1c4334c9d90b0568eec1d4, type: 2}
+  - {fileID: 11400000, guid: 1d20a4bb57851194f9b6e332ce16c8b8, type: 2}
+  - {fileID: 11400000, guid: 6184ccd107340524d90af32c0a680889, type: 2}
+  - {fileID: 11400000, guid: 42d5005a4be7c714aab3ab89f10a7804, type: 2}
+  - {fileID: 11400000, guid: 404b6d83d5f1b7946bd77f0cb870bba7, type: 2}
+  - {fileID: 11400000, guid: f0fa0b7b23eaf5f49ac7f426cd1acd01, type: 2}
+  - {fileID: 11400000, guid: 356c41a19bb739e49a5650c935d795f2, type: 2}
+  - {fileID: 11400000, guid: aa39e6aa02b9c4b4983558d397670eb3, type: 2}
+  DatabaseName: Uncommon
+  DataType: 5
