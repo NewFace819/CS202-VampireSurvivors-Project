@@ -1,29 +1,37 @@
 #include "Player.h"
-
 #include <iostream>
 
 Player::Player() {
     m_position = sf::Vector2f(1280.f / 2.f, 720.f / 2.f);
     m_speed = 200.f;
-    m_sprite.setPosition(m_position);
     m_facingDir = sf::Vector2f(1.f, 0.f);
     m_isActive = true;
+
+    // Fallback blue rectangle if no sprite loaded
+    m_fallbackShape.setSize(sf::Vector2f(20.f, 40.f));
+    m_fallbackShape.setFillColor(sf::Color::Blue);
+    m_fallbackShape.setOrigin(10.f, 20.f);
+    m_fallbackShape.setPosition(m_position);
 }
 
-void Player::setSprite(const std::string& texturePath) {
-    if (m_texture.loadFromFile(texturePath)) {
-        m_sprite.setTexture(m_texture);
-        m_sprite.setTextureRect(sf::IntRect(0, 0, 32, 32)); // Slice first frame
-        m_sprite.setOrigin(16.f, 16.f); // Half of 32x32
-        m_sprite.setScale(2.f, 2.f); // Scale up for gameplay visibility
-    } else {
-        std::cerr << "Failed to load player sprite: " << texturePath << std::endl;
+void Player::setSprite(const std::string& texturePath,
+                       const std::vector<sf::IntRect>& walkFrames) {
+    if (!m_texture.loadFromFile(texturePath)) {
+        std::cerr << "Failed to load player sprite: " << texturePath << "\n";
+        return;
     }
+    m_walkFrames = walkFrames;
+    m_animSprite.setTexture(m_texture);
+    m_animSprite.setFrames(m_walkFrames, 8.f);
+    m_animSprite.pause(); // Start paused (idle pose)
+    m_animSprite.setOrigin(16.f, 16.f);
+    m_animSprite.setScale(2.f, 2.f);
+    m_animSprite.setPosition(m_position);
+    m_hasSprite = true;
 }
 
 void Player::update(float dt) {
     sf::Vector2f dir(0.f, 0.f);
-    
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) dir.y -= 1.f;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) dir.y += 1.f;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) dir.x -= 1.f;
@@ -35,23 +43,47 @@ void Player::update(float dt) {
         dir.y *= 0.7071f;
     }
 
-    if (dir.x != 0.f || dir.y != 0.f) {
-        m_facingDir = dir;
-        
-        // Flip sprite based on direction
-        if (dir.x < 0) m_sprite.setScale(-2.f, 2.f);
-        else if (dir.x > 0) m_sprite.setScale(2.f, 2.f);
+    bool wasMoving = m_isMoving;
+    m_isMoving = (dir.x != 0.f || dir.y != 0.f);
+
+    if (m_hasSprite) {
+        // Switch animation state when movement changes
+        if (m_isMoving != wasMoving) {
+            if (m_isMoving) {
+                m_animSprite.resume(); // Start walking animation
+            } else {
+                m_animSprite.pause(); // Freeze on current frame as idle pose
+            }
+        }
+
+        // Flip sprite when moving left/right
+        if (dir.x < 0)
+            m_animSprite.setScale(-2.f, 2.f);
+        else if (dir.x > 0)
+            m_animSprite.setScale(2.f, 2.f);
+
+        if (m_isMoving) m_facingDir = dir;
+        m_animSprite.update(dt);
     }
 
     m_velocity = dir * m_speed;
     m_position += m_velocity * dt;
-    m_sprite.setPosition(m_position);
+
+    if (m_hasSprite)
+        m_animSprite.setPosition(m_position);
+    else
+        m_fallbackShape.setPosition(m_position);
 }
 
 void Player::draw(sf::RenderWindow& window) {
-    window.draw(m_sprite);
+    if (m_hasSprite)
+        m_animSprite.draw(window);
+    else
+        window.draw(m_fallbackShape);
 }
 
 sf::FloatRect Player::getBounds() const {
-    return m_sprite.getGlobalBounds();
+    if (m_hasSprite)
+        return m_animSprite.getGlobalBounds();
+    return m_fallbackShape.getGlobalBounds();
 }

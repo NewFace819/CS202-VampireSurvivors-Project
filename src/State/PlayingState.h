@@ -10,12 +10,18 @@
 #include "Entities/ExpGem.h"
 #include <memory>
 #include <vector>
+#include <string>
+#include <set>
 
 class GameManager;
 
 enum class CharacterType {
     Antonio,
-    Imelda
+    Imelda,
+    Gennaro,
+    Arca,
+    Lama,
+    Sigma
 };
 
 class PlayingState : public GameState {
@@ -25,6 +31,15 @@ public:
     void update(float dt) override;
     void draw(sf::RenderWindow& window) override;
     void exit() override;
+
+    // Called by LevelUpState to grant a new weapon by name
+    void addWeapon(const std::string& weaponName);
+
+    // Query which weapon type strings are currently owned
+    std::set<std::string> getOwnedWeaponNames() const;
+
+    // Raw pointers into m_weapons for LevelUpState to call levelUp() on
+    std::vector<WeaponBase*> getUpgradeableWeapons();
 
 private:
     GameManager* m_manager;
@@ -39,4 +54,5 @@ private:
     std::vector<ExpGem> m_activeGems;
 
     float m_spawnTimer = 0.f;
+    int   m_lastLevel  = 1; // Track StatsManager level to detect level-ups
 };

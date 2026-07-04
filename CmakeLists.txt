@@ -10,7 +10,6 @@ include(FetchContent)
 FetchContent_Declare(
     SFML
     URL https://github.com/SFML/SFML/archive/refs/tags/2.6.1.zip
-    DOWNLOAD_EXTRACT_TIMESTAMP true
 )
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(SFML)
@@ -30,13 +29,12 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     sfml-window
     sfml-system
     sfml-audio
-    sfml-main
 )
 
-# Automatically copy the assets folder to the executable directory after building  
-
+# Create a directory junction (symlink) to assets instead of copying ~1GB every build.
+# This runs only if the junction does not already exist.
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_SOURCE_DIR}/assets"
-        "$<TARGET_FILE_DIR:${PROJECT_NAME}>/assets"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+    COMMAND cmd /C "if not exist \"$<TARGET_FILE_DIR:${PROJECT_NAME}>/assets\" mklink /J \"$<TARGET_FILE_DIR:${PROJECT_NAME}>/assets\" \"${CMAKE_SOURCE_DIR}/assets\""
+    COMMENT "Linking assets directory (junction) if not already linked"
 )

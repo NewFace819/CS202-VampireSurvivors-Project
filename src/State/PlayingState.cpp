@@ -1,21 +1,55 @@
 #include "State/PlayingState.h"
 #include "State/PauseState.h"
+#include "State/LevelUpState.h"
 #include "Engine/GameManager.h"
 #include "Engine/StatsManager.h"
 #include "Weapons/MagicWand.h"
 #include "Weapons/Whip.h"
+#include "Weapons/Knife.h"
+#include "Weapons/FireWand.h"
+#include "Weapons/Axe.h"
 #include "Physics/Physics.h"
 #include <cstdlib>
+#include <algorithm>
 
 PlayingState::PlayingState(GameManager* manager, CharacterType charType) 
     : m_manager(manager), m_grid(100.0f), m_enemyPool(500) { 
-    // Initialize weapons and player sprite based on CharacterType
-    if (charType == CharacterType::Antonio) {
-        m_weapons.push_back(std::make_unique<Whip>(1.2f, 15.f)); // Antonio starts with Whip
-        m_player.setSprite("assets/ExportedProject/Assets/App/Art/Sprites/Addressable/characters/character_antonio.png");
-    } else if (charType == CharacterType::Imelda) {
-        m_weapons.push_back(std::make_unique<MagicWand>(0.5f, 25.f, 400.f)); // Imelda starts with Magic Wand
-        m_player.setSprite("assets/ExportedProject/Assets/App/Art/Sprites/Addressable/characters/character_imelda.png");
+
+    switch (charType) {
+        case CharacterType::Antonio:
+            m_player.setSprite("assets/ExportedProject/Assets/App/Art/Sprites/Addressable/characters/character_antonio.png", 
+                               {{0,0,32,32}, {32,0,32,32}, {64,0,32,32}, {96,0,32,32}});
+            m_weapons.push_back(std::make_unique<Whip>());
+            break;
+        case CharacterType::Imelda:
+            m_player.setSprite("assets/ExportedProject/Assets/App/Art/Sprites/Addressable/characters/character_imelda.png", 
+                               {{0,0,32,32}, {32,0,32,32}, {64,0,32,32}, {96,0,32,32}});
+            m_weapons.push_back(std::make_unique<MagicWand>());
+            break;
+        case CharacterType::Gennaro:
+            m_player.setSprite("assets/ExportedProject/Assets/App/Art/Sprites/Addressable/characters/character_gennaro.png", 
+                               {{0,0,32,32}, {32,0,32,32}, {64,0,32,32}, {96,0,32,32}});
+            m_weapons.push_back(std::make_unique<Knife>());
+            break;
+        case CharacterType::Arca:
+            m_player.setSprite("assets/ExportedProject/Assets/App/Art/Sprites/Addressable/characters/character_arca.png", 
+                               {{0,0,32,32}, {32,0,32,32}, {64,0,32,32}, {96,0,32,32}});
+            m_weapons.push_back(std::make_unique<FireWand>());
+            break;
+        case CharacterType::Lama:
+            m_player.setSprite("assets/ExportedProject/Assets/App/Art/Sprites/Addressable/characters/character_lama.png", 
+                               {{0,0,32,32}, {32,0,32,32}, {64,0,32,32}});
+            m_weapons.push_back(std::make_unique<Axe>());
+            break;
+        case CharacterType::Sigma:
+            m_player.setSprite("assets/ExportedProject/Assets/App/Art/Sprites/Addressable/characters/character_sigma.png", 
+                               {{0,0,32,32}, {32,0,32,32}});
+            m_weapons.push_back(std::make_unique<Whip>());
+            m_weapons.push_back(std::make_unique<MagicWand>());
+            m_weapons.push_back(std::make_unique<Knife>());
+            m_weapons.push_back(std::make_unique<FireWand>());
+            m_weapons.push_back(std::make_unique<Axe>());
+            break;
     }
 }
 
@@ -111,6 +145,13 @@ void PlayingState::update(float dt) {
     // Clean up dead projectiles
     m_activeProjectiles.erase(std::remove_if(m_activeProjectiles.begin(), m_activeProjectiles.end(),
         [](const Projectile& p) { return !p.isActive(); }), m_activeProjectiles.end());
+
+    // Detect player level-up and show the upgrade screen
+    int currentLevel = StatsManager::GetInstance().getLevel();
+    if (currentLevel > m_lastLevel) {
+        m_lastLevel = currentLevel;
+        m_manager->pushState(std::make_unique<LevelUpState>(m_manager, this));
+    }
 }
 
 void PlayingState::draw(sf::RenderWindow& window) {
@@ -169,4 +210,30 @@ void PlayingState::draw(sf::RenderWindow& window) {
 }
 
 void PlayingState::exit() {
+}
+
+void PlayingState::addWeapon(const std::string& weaponName) {
+    if (weaponName == "Whip")      m_weapons.push_back(std::make_unique<Whip>());
+    else if (weaponName == "Magic Wand")  m_weapons.push_back(std::make_unique<MagicWand>());
+    else if (weaponName == "Knife")     m_weapons.push_back(std::make_unique<Knife>());
+    else if (weaponName == "Fire Wand")  m_weapons.push_back(std::make_unique<FireWand>());
+    else if (weaponName == "Axe")       m_weapons.push_back(std::make_unique<Axe>());
+}
+
+std::set<std::string> PlayingState::getOwnedWeaponNames() const {
+    std::set<std::string> names;
+    for (const auto& w : m_weapons) {
+        names.insert(w->getName());
+    }
+    return names;
+}
+
+std::vector<WeaponBase*> PlayingState::getUpgradeableWeapons() {
+    std::vector<WeaponBase*> result;
+    for (auto& w : m_weapons) {
+        if (!w->isMaxLevel()) {
+            result.push_back(w.get());
+        }
+    }
+    return result;
 }

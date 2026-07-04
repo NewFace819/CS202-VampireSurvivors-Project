@@ -28,7 +28,26 @@ void GameManager::run() {
         m_window.clear(sf::Color::Black);
         
         if (!m_states.empty()) {
-            m_states.top()->draw(m_window);
+            // If the top state is transparent (overlay), draw the one below first
+            if (m_states.top()->isTransparent() && m_states.size() >= 2) {
+                // Temporarily get second-from-top: use a copy of the stack adapter
+                // We can't iterate std::stack directly, so we draw top-1 by peeking via swap trick
+                // Simpler: store as vector-based approach via a temporary draw queue
+                std::vector<GameState*> drawQueue;
+                // Collect states that need drawing (bottom-up, just top 2)
+                auto& top = m_states.top();
+                drawQueue.push_back(top.get()); // will draw second
+                // Access second state: pop/peek/push (safe since we're not in update)
+                auto topState = std::move(const_cast<std::unique_ptr<GameState>&>(m_states.top()));
+                m_states.pop();
+                if (!m_states.empty()) {
+                    m_states.top()->draw(m_window); // draw PlayingState first
+                }
+                m_states.push(std::move(topState));
+                m_states.top()->draw(m_window); // draw overlay on top
+            } else {
+                m_states.top()->draw(m_window);
+            }
         }
 
         m_window.display();

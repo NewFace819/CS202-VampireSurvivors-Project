@@ -44,3 +44,23 @@
 - **Objective:** Create StatsManager, EXP gem collection, and Observer Pattern UI.
 - **Solution/Implementation:** Implemented the `Observer` pattern to decouple UI from gameplay logic. Built `StatsManager` to handle player progression, level-ups, and trigger the `LevelUpUI` pause state when EXP thresholds are met.
 - **Affected Files:** `src/Engine/Observer.h`, `src/Engine/StatsManager.h/cpp`, `src/State/LevelUpState.h/cpp`, `src/Entities/ExpGem.h`
+
+### Prompt: Character Animation Sync and Weapon VFX Fix
+- **Objective:** Fix the character walk animation frames and correct the VFX sprites for the Axe, Magic Wand, Knife, and Whip.
+- **Solution/Implementation:** Use correct dynamically sized `sf::IntRect` walkFrames per character. Point weapons to their accurate icon representations in `items.png` and `vfx.png`.
+- **Affected Files:** `src/State/PlayingState.cpp`, `src/Weapons/Axe.h`, `src/Weapons/Knife.h`, `src/Weapons/MagicWand.h`, `src/Weapons/Whip.h`
+
+### Prompt: Fix Character Select Skip & Inverted Weapon Sprites
+- **Objective:** Fix the immediate click-through bug on Character Select, and fix the inverted Y-coordinates for weapon textures.
+- **Solution/Implementation:** Added a `m_timeInState` delay to `CharacterSelectState` to prevent mouse events from bleeding over from `MainMenuState`. Fixed the SFML texture Y-coordinates (Top-Left) against Unity's `.asset` values (Bottom-Left) for Axe, Knife, MagicWand, and Whip.
+- **Affected Files:** `src/State/CharacterSelectState.h`, `src/State/CharacterSelectState.cpp`, `src/Weapons/Axe.h`, `src/Weapons/Knife.h`, `src/Weapons/MagicWand.h`, `src/Weapons/Whip.h`
+
+### Prompt: Weapon Projectile VFX Adjustments
+- **Objective:** Change the projectile visual representation of Whip and Magic Wand from their UI icons to their actual VFX sprites (slash and sparkle).
+- **Solution/Implementation:** Reverted Whip to use `vfx.png` with `slash.asset` and Magic Wand to use `vfx.png` with `ProjectileBlue1.asset`, applying the proper SFML Y-coordinate conversion (SFML top-left vs Unity bottom-left).
+- **Affected Files:** `src/Weapons/Whip.h`, `src/Weapons/MagicWand.h`
+
+### Prompt: Level-Up Weapon Choice System
+- **Objective:** Implement a full level-up screen where the player can choose to upgrade an owned weapon or acquire a new one.
+- **Solution/Implementation:** Added `getName()`, `getUpgradeDescription()`, and wiki-accurate `levelUp()` overrides to all 5 weapons. Added `m_amount` multi-fire burst support to `WeaponBase`. Rewrote `LevelUpState` to display up to 3 styled cards drawn from a pool of upgradeable owned weapons and unowned new weapons (shuffled). `PlayingState` detects `StatsManager` level-ups each frame and pushes `LevelUpState` with a pointer to itself. `LevelUpState::isTransparent()` enables `GameManager` to draw `PlayingState` behind the overlay. The `GameManager` draw loop was updated to render the state below when the top is transparent.
+- **Affected Files:** `src/Weapons/WeaponBase.h`, `src/Weapons/Whip.h`, `src/Weapons/MagicWand.h`, `src/Weapons/Knife.h`, `src/Weapons/FireWand.h`, `src/Weapons/Axe.h`, `src/State/PlayingState.h`, `src/State/PlayingState.cpp`, `src/State/LevelUpState.h`, `src/State/LevelUpState.cpp`, `src/State/GameState.h`, `src/Engine/GameManager.cpp`

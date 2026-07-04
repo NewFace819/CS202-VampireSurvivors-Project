@@ -1,5 +1,9 @@
 #pragma once
 #include "Entity.h"
+#include "Engine/AnimatedSprite.h"
+#include <string>
+#include <vector>
+#include <SFML/Graphics.hpp>
 
 class Player : public Entity {
 public:
@@ -9,10 +13,17 @@ public:
     void draw(sf::RenderWindow& window) override;
     sf::FloatRect getBounds() const override;
     sf::Vector2f getFacingDir() const { return m_facingDir; }
-    void setSprite(const std::string& texturePath);
+    void setSprite(const std::string& texturePath,
+                   const std::vector<sf::IntRect>& walkFrames);
 
 private:
     sf::Texture m_texture;
-    sf::Sprite m_sprite;
+    AnimatedSprite m_animSprite;
     sf::Vector2f m_facingDir;
+    bool m_hasSprite = false;
+    bool m_isMoving = false;
+    std::vector<sf::IntRect> m_walkFrames;
+
+    // Fallback rectangle for when no sprite is set
+    sf::RectangleShape m_fallbackShape;
 };

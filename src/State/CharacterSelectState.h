@@ -2,6 +2,8 @@
 #include "State/GameState.h"
 #include <SFML/Graphics.hpp>
 
+#include "State/PlayingState.h"
+
 class GameManager;
 
 class CharacterSelectState : public GameState {
@@ -18,17 +20,15 @@ private:
     sf::Font m_font;
     sf::Text m_titleText;
 
-    // Antonio
-    sf::Texture m_antonioTex;
-    sf::Sprite m_antonioSprite;
-    sf::Text m_antonioName;
-    sf::Text m_antonioWeapon;
-    sf::RectangleShape m_antonioPanel;
+    struct CharacterPanel {
+        CharacterType type;
+        sf::RectangleShape panel;
+        sf::Texture tex;
+        sf::Sprite sprite;
+        sf::Text name;
+        sf::Text weapon;
+    };
 
-    // Imelda
-    sf::Texture m_imeldaTex;
-    sf::Sprite m_imeldaSprite;
-    sf::Text m_imeldaName;
-    sf::Text m_imeldaWeapon;
-    sf::RectangleShape m_imeldaPanel;
+    std::vector<CharacterPanel> m_panels;
+    float m_timeInState = 0.f;
 };

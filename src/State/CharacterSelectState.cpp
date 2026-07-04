@@ -3,6 +3,13 @@
 #include "Engine/GameManager.h"
 #include <iostream>
 
+struct CharConfig {
+    CharacterType type;
+    std::string name;
+    std::string weapon;
+    std::string texturePath;
+};
+
 CharacterSelectState::CharacterSelectState(GameManager* manager) : m_manager(manager) {
     if (!m_font.loadFromFile("C:/Windows/Fonts/arial.ttf")) {
         std::cerr << "Could not load Arial font!\n";
@@ -12,55 +19,54 @@ CharacterSelectState::CharacterSelectState(GameManager* manager) : m_manager(man
     m_titleText.setString("Select Your Character");
     m_titleText.setCharacterSize(40);
     m_titleText.setFillColor(sf::Color::White);
-    m_titleText.setPosition(1280.f / 2.f - m_titleText.getGlobalBounds().width / 2.f, 100.f);
+    m_titleText.setPosition(1280.f / 2.f - m_titleText.getGlobalBounds().width / 2.f, 50.f);
 
-    // Setup Antonio Panel
-    m_antonioPanel.setSize(sf::Vector2f(300.f, 400.f));
-    m_antonioPanel.setPosition(250.f, 200.f);
-    m_antonioPanel.setFillColor(sf::Color(50, 50, 50));
-    m_antonioPanel.setOutlineThickness(5.f);
-    m_antonioPanel.setOutlineColor(sf::Color::White);
+    std::vector<CharConfig> configs = {
+        { CharacterType::Antonio, "Antonio", "Whip", "character_antonio.png" },
+        { CharacterType::Imelda, "Imelda", "Magic Wand", "character_imelda.png" },
+        { CharacterType::Gennaro, "Gennaro", "Knife", "character_gennaro.png" },
+        { CharacterType::Arca, "Arca", "Fire Wand", "character_arca.png" },
+        { CharacterType::Lama, "Lama", "Axe", "character_lama.png" },
+        { CharacterType::Sigma, "Queen Sigma", "ALL", "character_sigma.png" }
+    };
 
-    if (m_antonioTex.loadFromFile("assets/ExportedProject/Assets/App/Art/Sprites/Addressable/characters/character_antonio.png")) {
-        m_antonioSprite.setTexture(m_antonioTex);
-        m_antonioSprite.setTextureRect(sf::IntRect(0, 0, 32, 32)); // Use first frame
-        m_antonioSprite.setScale(4.f, 4.f); // Scale up more since it's only 32x32 now
-        m_antonioSprite.setPosition(400.f - m_antonioSprite.getGlobalBounds().width / 2.f, 250.f);
+    float startX = 150.f;
+    float startY = 150.f;
+    float spacingX = 350.f;
+    float spacingY = 280.f;
+
+    for (size_t i = 0; i < configs.size(); ++i) {
+        float x = startX + (i % 3) * spacingX;
+        float y = startY + (i / 3) * spacingY;
+
+        CharacterPanel panel;
+        panel.type = configs[i].type;
+        
+        panel.panel.setSize(sf::Vector2f(300.f, 250.f));
+        panel.panel.setPosition(x, y);
+        panel.panel.setFillColor(sf::Color(50, 50, 50));
+        panel.panel.setOutlineThickness(5.f);
+        panel.panel.setOutlineColor(sf::Color::White);
+
+        if (panel.tex.loadFromFile("assets/ExportedProject/Assets/App/Art/Sprites/Addressable/characters/" + configs[i].texturePath)) {
+            panel.sprite.setTexture(panel.tex);
+            panel.sprite.setTextureRect(sf::IntRect(0, 0, 32, 32));
+            panel.sprite.setScale(3.f, 3.f);
+            panel.sprite.setPosition(x + 150.f - panel.sprite.getGlobalBounds().width / 2.f, y + 20.f);
+        }
+
+        panel.name.setFont(m_font);
+        panel.name.setString(configs[i].name);
+        panel.name.setCharacterSize(24);
+        panel.name.setPosition(x + 150.f - panel.name.getGlobalBounds().width / 2.f, y + 150.f);
+
+        panel.weapon.setFont(m_font);
+        panel.weapon.setString("Weapon: " + configs[i].weapon);
+        panel.weapon.setCharacterSize(16);
+        panel.weapon.setPosition(x + 150.f - panel.weapon.getGlobalBounds().width / 2.f, y + 190.f);
+
+        m_panels.push_back(std::move(panel));
     }
-
-    m_antonioName.setFont(m_font);
-    m_antonioName.setString("Antonio");
-    m_antonioName.setCharacterSize(30);
-    m_antonioName.setPosition(400.f - m_antonioName.getGlobalBounds().width / 2.f, 450.f);
-
-    m_antonioWeapon.setFont(m_font);
-    m_antonioWeapon.setString("Weapon: Whip");
-    m_antonioWeapon.setCharacterSize(20);
-    m_antonioWeapon.setPosition(400.f - m_antonioWeapon.getGlobalBounds().width / 2.f, 500.f);
-
-    // Setup Imelda Panel
-    m_imeldaPanel.setSize(sf::Vector2f(300.f, 400.f));
-    m_imeldaPanel.setPosition(730.f, 200.f);
-    m_imeldaPanel.setFillColor(sf::Color(50, 50, 50));
-    m_imeldaPanel.setOutlineThickness(5.f);
-    m_imeldaPanel.setOutlineColor(sf::Color::White);
-
-    if (m_imeldaTex.loadFromFile("assets/ExportedProject/Assets/App/Art/Sprites/Addressable/characters/character_imelda.png")) {
-        m_imeldaSprite.setTexture(m_imeldaTex);
-        m_imeldaSprite.setTextureRect(sf::IntRect(0, 0, 32, 32)); // Use first frame
-        m_imeldaSprite.setScale(4.f, 4.f); // Scale up more since it's only 32x32 now
-        m_imeldaSprite.setPosition(880.f - m_imeldaSprite.getGlobalBounds().width / 2.f, 250.f);
-    }
-
-    m_imeldaName.setFont(m_font);
-    m_imeldaName.setString("Imelda");
-    m_imeldaName.setCharacterSize(30);
-    m_imeldaName.setPosition(880.f - m_imeldaName.getGlobalBounds().width / 2.f, 450.f);
-
-    m_imeldaWeapon.setFont(m_font);
-    m_imeldaWeapon.setString("Weapon: Magic Wand");
-    m_imeldaWeapon.setCharacterSize(20);
-    m_imeldaWeapon.setPosition(880.f - m_imeldaWeapon.getGlobalBounds().width / 2.f, 500.f);
 }
 
 void CharacterSelectState::enter() {
@@ -70,23 +76,16 @@ void CharacterSelectState::update(float dt) {
     sf::Vector2i mousePos = sf::Mouse::getPosition(m_manager->getWindow());
     sf::Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 
-    // Hover effects
-    if (m_antonioPanel.getGlobalBounds().contains(mousePosF)) {
-        m_antonioPanel.setFillColor(sf::Color(80, 80, 80));
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-            m_manager->changeState(std::make_unique<PlayingState>(m_manager, CharacterType::Antonio));
+    m_timeInState += dt;
+    for (auto& panel : m_panels) {
+        if (panel.panel.getGlobalBounds().contains(mousePosF)) {
+            panel.panel.setFillColor(sf::Color(80, 80, 80));
+            if (m_timeInState > 0.2f && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                m_manager->changeState(std::make_unique<PlayingState>(m_manager, panel.type));
+            }
+        } else {
+            panel.panel.setFillColor(sf::Color(50, 50, 50));
         }
-    } else {
-        m_antonioPanel.setFillColor(sf::Color(50, 50, 50));
-    }
-
-    if (m_imeldaPanel.getGlobalBounds().contains(mousePosF)) {
-        m_imeldaPanel.setFillColor(sf::Color(80, 80, 80));
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-            m_manager->changeState(std::make_unique<PlayingState>(m_manager, CharacterType::Imelda));
-        }
-    } else {
-        m_imeldaPanel.setFillColor(sf::Color(50, 50, 50));
     }
 }
 
@@ -94,15 +93,12 @@ void CharacterSelectState::draw(sf::RenderWindow& window) {
     window.clear(sf::Color(20, 20, 20));
     window.draw(m_titleText);
     
-    window.draw(m_antonioPanel);
-    window.draw(m_antonioSprite);
-    window.draw(m_antonioName);
-    window.draw(m_antonioWeapon);
-
-    window.draw(m_imeldaPanel);
-    window.draw(m_imeldaSprite);
-    window.draw(m_imeldaName);
-    window.draw(m_imeldaWeapon);
+    for (auto& panel : m_panels) {
+        window.draw(panel.panel);
+        window.draw(panel.sprite);
+        window.draw(panel.name);
+        window.draw(panel.weapon);
+    }
 }
 
 void CharacterSelectState::exit() {
