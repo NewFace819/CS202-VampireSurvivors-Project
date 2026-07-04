@@ -10,6 +10,7 @@ include(FetchContent)
 FetchContent_Declare(
     SFML
     URL https://github.com/SFML/SFML/archive/refs/tags/2.6.1.zip
+    DOWNLOAD_EXTRACT_TIMESTAMP true
 )
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(SFML)
@@ -29,6 +30,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     sfml-window
     sfml-system
     sfml-audio
+    sfml-main
 )
 
 # Automatically copy the assets folder to the executable directory after building 
