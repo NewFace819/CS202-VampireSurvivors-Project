@@ -95,10 +95,12 @@ void PlayingState::update(float dt) {
     for (auto it = m_activeEnemies.begin(); it != m_activeEnemies.end(); ) {
         EnemyBase* enemy = *it;
         if (!enemy->isActive()) {
-            // Spawn an ExpGem when an enemy dies
-            ExpGem gem;
-            gem.init(enemy->getPosition(), 10.f); // 10 EXP per gem
-            m_activeGems.push_back(gem);
+            // Spawn an ExpGem when an enemy dies (80% drop rate)
+            if (std::rand() % 100 < 80) {
+                ExpGem gem;
+                gem.init(enemy->getPosition(), 1.f); // 1 EXP per gem for early game
+                m_activeGems.push_back(gem);
+            }
 
             m_enemyPool.release(enemy);
             it = m_activeEnemies.erase(it);

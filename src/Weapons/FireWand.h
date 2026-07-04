@@ -80,7 +80,7 @@ protected:
         p.init(startPos, fireDir, m_damage, m_speed, 800.0f, 5.0f, false);
         
         if (m_hasVfxTex) {
-            p.setSprite(m_vfxTex, m_fireballFrame, 2.f);
+            p.setSprite(m_vfxTex, m_fireballFrame, 1.0f);
         } else {
             p.setCustomShape(sf::Vector2f(20.f, 20.f), sf::Color::Red);
         }

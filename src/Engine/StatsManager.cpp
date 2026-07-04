@@ -19,7 +19,7 @@ void StatsManager::addExp(float amount) {
     m_exp += amount;
     notify(GameEvent::PlayerGainedExp);
 
-    if (m_exp >= m_expToNext) {
+    while (m_exp >= m_expToNext) {
         m_exp -= m_expToNext;
         m_level++;
         calculateNextLevelExp();
@@ -41,6 +41,6 @@ void StatsManager::heal(float amount) {
 }
 
 void StatsManager::calculateNextLevelExp() {
-    // Standard RPG curve
-    m_expToNext = 10.f + (m_level * 5.f) * std::pow(1.1f, m_level);
+    // Vampire Survivors formula: 5 + (level - 1) * 10
+    m_expToNext = 5.f + (m_level - 1) * 10.f;
 }

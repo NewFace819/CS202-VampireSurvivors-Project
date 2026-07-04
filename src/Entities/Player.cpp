@@ -25,7 +25,7 @@ void Player::setSprite(const std::string& texturePath,
     m_animSprite.setFrames(m_walkFrames, 8.f);
     m_animSprite.pause(); // Start paused (idle pose)
     m_animSprite.setOrigin(16.f, 16.f);
-    m_animSprite.setScale(2.f, 2.f);
+    m_animSprite.setScale(1.3f, 1.3f);
     m_animSprite.setPosition(m_position);
     m_hasSprite = true;
 }
@@ -58,9 +58,9 @@ void Player::update(float dt) {
 
         // Flip sprite when moving left/right
         if (dir.x < 0)
-            m_animSprite.setScale(-2.f, 2.f);
+            m_animSprite.setScale(-1.3f, 1.3f);
         else if (dir.x > 0)
-            m_animSprite.setScale(2.f, 2.f);
+            m_animSprite.setScale(1.3f, 1.3f);
 
         if (m_isMoving) m_facingDir = dir;
         m_animSprite.update(dt);
