@@ -15,25 +15,41 @@ static const std::vector<std::string> ALL_WEAPON_NAMES = {
 LevelUpState::LevelUpState(GameManager* manager, PlayingState* playing)
     : m_manager(manager), m_playing(playing) {
 
-    if (!m_font.loadFromFile("C:/Windows/Fonts/arial.ttf")) {
+    if (!m_font.loadFromFile("assets/ExportedProject/Assets/Font/Courier_HintedSmooth.ttf")) {
         std::cerr << "LevelUpState: Could not load font!\n";
     }
+    
+    if (!m_itemsTex.loadFromFile("assets/ExportedProject/Assets/Resources/spritesheets/items.png")) {
+        std::cerr << "LevelUpState: Could not load items texture!\n";
+    }
+
+    sf::Vector2u windowSize = m_manager->getWindow().getSize();
 
     // Dark semi-transparent overlay
-    m_overlay.setSize(sf::Vector2f(1280.f, 720.f));
+    m_overlay.setSize(sf::Vector2f(static_cast<float>(windowSize.x), static_cast<float>(windowSize.y)));
     m_overlay.setFillColor(sf::Color(0, 0, 0, 160));
 
-    // "LEVEL UP!" title
+    // Main Panel Background (size and pos set in buildOptions)
+    m_mainPanel.setFillColor(sf::Color(76, 81, 130)); // Purplish blue
+    m_mainPanel.setOutlineThickness(4.f);
+    m_mainPanel.setOutlineColor(sf::Color(228, 199, 109)); // Gold
+
+    // "Level Up!" title
     m_titleText.setFont(m_font);
-    m_titleText.setString("LEVEL UP!");
+    m_titleText.setString("Level Up!");
     m_titleText.setCharacterSize(52);
+    m_titleText.setFillColor(sf::Color::White);
     m_titleText.setStyle(sf::Text::Bold);
-    m_titleText.setFillColor(sf::Color(255, 220, 50));
-    m_titleText.setOutlineColor(sf::Color(120, 60, 0));
-    m_titleText.setOutlineThickness(3.f);
-    // Centered - will position after text width is known
-    m_titleText.setPosition(
-        1280.f / 2.f - m_titleText.getGlobalBounds().width / 2.f, 50.f);
+    
+    // Footer text
+    m_footerText.setFont(m_font);
+    m_footerText.setString("Increase your Luck\nfor a chance to get 4\nchoices.");
+    m_footerText.setCharacterSize(26);
+    m_footerText.setFillColor(sf::Color::White);
+    m_footerText.setStyle(sf::Text::Bold);
+    // Center text alignment visually by setting origin? SFML doesn't have native text align center.
+    // The spaces/newlines will just be left aligned. We can format the string carefully.
+    m_footerText.setString("      Increase your Luck\n    for a chance to get 4\n             choices.");
 }
 
 void LevelUpState::buildOptions() {
@@ -64,11 +80,11 @@ void LevelUpState::buildOptions() {
             opt.isNew          = true;
             opt.currentLevel   = 0;
             // Description for brand-new weapons
-            if (name == "Whip")        opt.description = "Attacks horizontally,\npasses through enemies.";
-            else if (name == "Magic Wand") opt.description = "Fires a magic missile\nat the nearest enemy.";
-            else if (name == "Knife")   opt.description = "Throws a fast knife\nin your facing direction.";
-            else if (name == "Fire Wand") opt.description = "Hurls a slow fireball\nat a random enemy.";
-            else if (name == "Axe")     opt.description = "Throws an axe in an arc,\npierces through enemies.";
+            if (name == "Whip")        opt.description = "Attacks horizontally, passes through enemies.";
+            else if (name == "Magic Wand") opt.description = "Fires a magic missile at the nearest enemy.";
+            else if (name == "Knife")   opt.description = "Throws a fast knife in your facing direction.";
+            else if (name == "Fire Wand") opt.description = "Hurls a slow fireball at a random enemy.";
+            else if (name == "Axe")     opt.description = "Throws an axe in an arc, pierces through enemies.";
             pool.push_back(opt);
         }
     }
@@ -83,71 +99,99 @@ void LevelUpState::buildOptions() {
 
     // --- Build card UI ---
     m_cards.clear();
-    const float cardW   = 280.f;
-    const float cardH   = 320.f;
-    const float spacing = 40.f;
-    float totalW = count * cardW + (count - 1) * spacing;
-    float startX = (1280.f - totalW) / 2.f;
-    float cardY  = (720.f - cardH) / 2.f + 20.f;
+    sf::Vector2u windowSize = m_manager->getWindow().getSize();
 
-    // Accent colors per weapon
-    auto accentColor = [](const std::string& name) -> sf::Color {
-        if (name == "Whip")       return sf::Color(200, 80,  80);
-        if (name == "Magic Wand") return sf::Color(60,  140, 230);
-        if (name == "Knife")      return sf::Color(180, 180, 60);
-        if (name == "Fire Wand")  return sf::Color(230, 100, 30);
-        if (name == "Axe")        return sf::Color(90,  170, 90);
-        return sf::Color(130, 130, 130);
-    };
+    const float panelW  = 650.f;
+    const float cardW   = 610.f;
+    const float cardH   = 140.f;
+    const float spacing = 15.f;
+    
+    float totalCardH = count * cardH + (count - 1) * spacing;
+    float panelH = 150.f + totalCardH + 200.f; // 150 top, 200 bottom
+
+    float panelX = (windowSize.x - panelW) / 2.f;
+    float panelY = (windowSize.y - panelH) / 2.f;
+    m_mainPanel.setSize(sf::Vector2f(panelW, panelH));
+    m_mainPanel.setPosition(panelX, panelY);
+
+    m_titleText.setPosition(panelX + (panelW - m_titleText.getGlobalBounds().width) / 2.f, panelY + 30.f);
+
+    float startY = panelY + 130.f;
+    float cardX  = panelX + (panelW - cardW) / 2.f;
 
     for (int i = 0; i < count; ++i) {
         Card card;
-        float x = startX + i * (cardW + spacing);
+        float y = startY + i * (cardH + spacing);
 
         // Card background
         card.bg.setSize(sf::Vector2f(cardW, cardH));
-        card.bg.setPosition(x, cardY);
-        card.bg.setFillColor(sf::Color(30, 30, 45));
+        card.bg.setPosition(cardX, y);
+        card.bg.setFillColor(sf::Color(136, 136, 136));
         card.bg.setOutlineThickness(3.f);
-        card.bg.setOutlineColor(accentColor(m_options[i].weaponName));
+        card.bg.setOutlineColor(sf::Color(228, 199, 109));
 
-        // Header bar
-        card.header.setSize(sf::Vector2f(cardW, 60.f));
-        card.header.setPosition(x, cardY);
-        card.header.setFillColor(accentColor(m_options[i].weaponName));
+        // Icon Box placeholder
+        float iconSize = 64.f;
+        card.iconBg.setSize(sf::Vector2f(iconSize, iconSize));
+        card.iconBg.setPosition(cardX + 20.f, y + 20.f);
+        card.iconBg.setFillColor(sf::Color::Black);
+        card.iconBg.setOutlineThickness(2.f);
+        card.iconBg.setOutlineColor(sf::Color(228, 199, 109));
+
+        // Weapon Icon Sprite
+        card.iconSprite.setTexture(m_itemsTex);
+        sf::IntRect texRect;
+        if (m_options[i].weaponName == "Whip")            texRect = sf::IntRect(396, 790, 16, 16);
+        else if (m_options[i].weaponName == "Magic Wand") texRect = sf::IntRect(472, 793, 16, 16);
+        else if (m_options[i].weaponName == "Knife")      texRect = sf::IntRect(116, 858, 16, 11);
+        else if (m_options[i].weaponName == "Fire Wand")  texRect = sf::IntRect(434, 788, 16, 16);
+        else if (m_options[i].weaponName == "Axe")        texRect = sf::IntRect(485, 660, 16, 16);
+        else texRect = sf::IntRect(0, 0, 16, 16); // Default fallback
+        card.iconSprite.setTextureRect(texRect);
+        
+        // Scale to fit the 64x64 box
+        float scaleX = iconSize / texRect.width;
+        float scaleY = iconSize / texRect.height;
+        float scale = std::min(scaleX, scaleY); // Maintain aspect ratio
+        card.iconSprite.setScale(scale, scale);
+        
+        // Center inside the box
+        float iconW = texRect.width * scale;
+        float iconH = texRect.height * scale;
+        card.iconSprite.setPosition(
+            cardX + 20.f + (iconSize - iconW) / 2.f, 
+            y + 20.f + (iconSize - iconH) / 2.f
+        );
 
         // Title
         card.titleText.setFont(m_font);
         card.titleText.setString(m_options[i].weaponName);
-        card.titleText.setCharacterSize(20);
-        card.titleText.setStyle(sf::Text::Bold);
+        card.titleText.setCharacterSize(24);
         card.titleText.setFillColor(sf::Color::White);
-        card.titleText.setPosition(
-            x + cardW / 2.f - card.titleText.getGlobalBounds().width / 2.f,
-            cardY + 10.f);
+        card.titleText.setStyle(sf::Text::Bold);
+        card.titleText.setPosition(cardX + 110.f, y + 20.f);
 
         // Level indicator
-        std::string lvlStr = m_options[i].isNew
-            ? "NEW WEAPON"
-            : "Lv " + std::to_string(m_options[i].currentLevel)
-              + " -> " + std::to_string(m_options[i].currentLevel + 1);
+        std::string lvlStr = m_options[i].isNew ? "New!" : "Lv " + std::to_string(m_options[i].currentLevel + 1);
         card.levelText.setFont(m_font);
         card.levelText.setString(lvlStr);
-        card.levelText.setCharacterSize(14);
-        card.levelText.setFillColor(m_options[i].isNew ? sf::Color(80, 255, 120) : sf::Color(220, 220, 220));
-        card.levelText.setPosition(
-            x + cardW / 2.f - card.levelText.getGlobalBounds().width / 2.f,
-            cardY + 36.f);
+        card.levelText.setCharacterSize(22);
+        card.levelText.setFillColor(sf::Color(255, 230, 80));
+        card.levelText.setStyle(sf::Text::Bold);
+        card.levelText.setPosition(cardX + cardW - card.levelText.getGlobalBounds().width - 20.f, y + 20.f);
 
         // Description
         card.descText.setFont(m_font);
         card.descText.setString(m_options[i].description);
-        card.descText.setCharacterSize(16);
-        card.descText.setFillColor(sf::Color(210, 210, 210));
-        card.descText.setPosition(x + 16.f, cardY + 80.f);
+        card.descText.setCharacterSize(20);
+        card.descText.setFillColor(sf::Color(240, 240, 240));
+        card.descText.setStyle(sf::Text::Bold);
+        card.descText.setPosition(cardX + 110.f, y + 55.f);
 
         m_cards.push_back(std::move(card));
     }
+    
+    m_footerText.setPosition(panelX + (panelW - m_footerText.getGlobalBounds().width) / 2.f, startY + totalCardH + 50.f);
 }
 
 void LevelUpState::enter() {
@@ -167,7 +211,7 @@ void LevelUpState::update(float dt) {
 
         // Highlight on hover
         if (m_cards[i].hovered) {
-            m_cards[i].bg.setFillColor(sf::Color(50, 50, 75));
+            m_cards[i].bg.setFillColor(sf::Color(170, 170, 170)); // Lighter grey
             m_cards[i].bg.setOutlineThickness(5.f);
 
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
@@ -176,7 +220,7 @@ void LevelUpState::update(float dt) {
                 return;
             }
         } else {
-            m_cards[i].bg.setFillColor(sf::Color(30, 30, 45));
+            m_cards[i].bg.setFillColor(sf::Color(136, 136, 136));
             m_cards[i].bg.setOutlineThickness(3.f);
         }
     }
@@ -185,11 +229,14 @@ void LevelUpState::update(float dt) {
 void LevelUpState::draw(sf::RenderWindow& window) {
     // Draw the overlay (PlayingState is still drawn under via stack)
     window.draw(m_overlay);
+    window.draw(m_mainPanel);
     window.draw(m_titleText);
+    window.draw(m_footerText);
 
     for (auto& card : m_cards) {
         window.draw(card.bg);
-        window.draw(card.header);
+        window.draw(card.iconBg);
+        window.draw(card.iconSprite);
         window.draw(card.titleText);
         window.draw(card.levelText);
         window.draw(card.descText);

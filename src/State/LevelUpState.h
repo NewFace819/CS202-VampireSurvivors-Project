@@ -44,14 +44,19 @@ private:
     // One card per option
     struct Card {
         sf::RectangleShape bg;
-        sf::RectangleShape header;
+        sf::RectangleShape iconBg; // The placeholder box for the weapon icon
+        sf::Sprite         iconSprite; // The weapon icon
         sf::Text           titleText;
         sf::Text           levelText;
         sf::Text           descText;
-        sf::Text           newBadge;
         bool               hovered = false;
     };
     std::vector<Card> m_cards;
+    
+    sf::RectangleShape m_mainPanel;
     sf::Text          m_titleText;
+    sf::Text          m_footerText;
     sf::RectangleShape m_overlay;
+
+    sf::Texture       m_itemsTex;
 };

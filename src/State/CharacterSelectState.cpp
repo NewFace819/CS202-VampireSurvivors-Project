@@ -11,15 +11,18 @@ struct CharConfig {
 };
 
 CharacterSelectState::CharacterSelectState(GameManager* manager) : m_manager(manager) {
-    if (!m_font.loadFromFile("C:/Windows/Fonts/arial.ttf")) {
-        std::cerr << "Could not load Arial font!\n";
+    if (!m_font.loadFromFile("assets/ExportedProject/Assets/Font/Courier_HintedSmooth.ttf")) {
+        std::cerr << "CharacterSelectState: Could not load font!\n";
     }
+
+    sf::Vector2u windowSize = m_manager->getWindow().getSize();
 
     m_titleText.setFont(m_font);
     m_titleText.setString("Select Your Character");
     m_titleText.setCharacterSize(40);
     m_titleText.setFillColor(sf::Color::White);
-    m_titleText.setPosition(1280.f / 2.f - m_titleText.getGlobalBounds().width / 2.f, 50.f);
+    m_titleText.setStyle(sf::Text::Bold);
+    m_titleText.setPosition(windowSize.x / 2.f - m_titleText.getGlobalBounds().width / 2.f, 50.f);
 
     std::vector<CharConfig> configs = {
         { CharacterType::Antonio, "Antonio", "Whip", "character_antonio.png" },
@@ -30,10 +33,13 @@ CharacterSelectState::CharacterSelectState(GameManager* manager) : m_manager(man
         { CharacterType::Sigma, "Queen Sigma", "ALL", "character_sigma.png" }
     };
 
-    float startX = 150.f;
-    float startY = 150.f;
     float spacingX = 350.f;
     float spacingY = 280.f;
+    float totalW = 3 * spacingX - (spacingX - 300.f); // 3 panels per row, panel width 300
+    float totalH = 2 * spacingY - (spacingY - 250.f); // 2 rows, panel height 250
+    
+    float startX = (windowSize.x - totalW) / 2.f;
+    float startY = (windowSize.y - totalH) / 2.f + 40.f; // Slightly offset downwards
 
     for (size_t i = 0; i < configs.size(); ++i) {
         float x = startX + (i % 3) * spacingX;
@@ -58,11 +64,13 @@ CharacterSelectState::CharacterSelectState(GameManager* manager) : m_manager(man
         panel.name.setFont(m_font);
         panel.name.setString(configs[i].name);
         panel.name.setCharacterSize(24);
+        panel.name.setStyle(sf::Text::Bold);
         panel.name.setPosition(x + 150.f - panel.name.getGlobalBounds().width / 2.f, y + 150.f);
 
         panel.weapon.setFont(m_font);
         panel.weapon.setString("Weapon: " + configs[i].weapon);
         panel.weapon.setCharacterSize(16);
+        panel.weapon.setStyle(sf::Text::Bold);
         panel.weapon.setPosition(x + 150.f - panel.weapon.getGlobalBounds().width / 2.f, y + 190.f);
 
         m_panels.push_back(std::move(panel));
