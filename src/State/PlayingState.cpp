@@ -1,6 +1,7 @@
 #include "State/PlayingState.h"
 #include "State/PauseState.h"
 #include "State/LevelUpState.h"
+#include "State/MainMenuState.h"
 #include "Engine/GameManager.h"
 #include "Engine/StatsManager.h"
 #include "Weapons/MagicWand.h"
@@ -18,32 +19,33 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType)
     switch (charType) {
         case CharacterType::Antonio:
             m_player.setSprite("assets/ExportedProject/Assets/App/Art/Sprites/Addressable/characters/character_antonio.png", 
-                               {{0,0,32,32}, {32,0,32,32}, {64,0,32,32}, {96,0,32,32}});
+                               {{38,38,32,34}, {74,38,32,34}, {2,74,32,34}});
             m_weapons.push_back(std::make_unique<Whip>());
             break;
         case CharacterType::Imelda:
             m_player.setSprite("assets/ExportedProject/Assets/App/Art/Sprites/Addressable/characters/character_imelda.png", 
-                               {{0,0,32,32}, {32,0,32,32}, {64,0,32,32}, {96,0,32,32}});
+                               {{36,36,36,36}, {72,36,36,36}, {36,108,36,36}, {72,108,36,36}});
             m_weapons.push_back(std::make_unique<MagicWand>());
             break;
         case CharacterType::Gennaro:
             m_player.setSprite("assets/ExportedProject/Assets/App/Art/Sprites/Addressable/characters/character_gennaro.png", 
-                               {{0,0,32,32}, {32,0,32,32}, {64,0,32,32}, {96,0,32,32}});
+                               {{0,0,34,34}, {34,0,34,34}, {70,0,34,34}, {0,34,34,34}});
             m_weapons.push_back(std::make_unique<Knife>());
             break;
         case CharacterType::Arca:
             m_player.setSprite("assets/ExportedProject/Assets/App/Art/Sprites/Addressable/characters/character_arca.png", 
-                               {{0,0,32,32}, {32,0,32,32}, {64,0,32,32}, {96,0,32,32}});
+                               {{34,1,34,34}, {1,38,34,34}, {66,38,34,34}, {0,108,34,34}});
             m_weapons.push_back(std::make_unique<FireWand>());
             break;
         case CharacterType::Lama:
             m_player.setSprite("assets/ExportedProject/Assets/App/Art/Sprites/Addressable/characters/character_lama.png", 
-                               {{0,0,32,32}, {32,0,32,32}, {64,0,32,32}});
+                               {{0,0,34,34}, {36,0,34,34}, {70,34,34,34}, {68,68,34,34}});
+                               //{{0, 0, 32, 32}, {32, 0, 32, 32}, {64, 32, 32, 32}, {64, 64, 32, 32}});
             m_weapons.push_back(std::make_unique<Axe>());
             break;
         case CharacterType::Sigma:
             m_player.setSprite("assets/ExportedProject/Assets/App/Art/Sprites/Addressable/characters/character_sigma.png", 
-                               {{0,0,32,32}, {32,0,32,32}});
+                               {{0,0,34,34}, {32,0,34,34}});
             m_weapons.push_back(std::make_unique<Whip>());
             m_weapons.push_back(std::make_unique<MagicWand>());
             m_weapons.push_back(std::make_unique<Knife>());
@@ -58,7 +60,7 @@ void PlayingState::enter() {
 
 void PlayingState::update(float dt) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-        m_manager->pushState(std::make_unique<PauseState>(m_manager));
+        m_manager->changeState(std::make_unique<MainMenuState>(m_manager));
         return; 
     }
 
