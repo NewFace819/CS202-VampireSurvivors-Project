@@ -12,16 +12,26 @@
 #include "Physics/Physics.h"
 #include <cstdlib>
 #include <algorithm>
+#include <iostream>
 
 PlayingState::PlayingState(GameManager* manager, CharacterType charType) 
     : m_manager(manager), m_grid(100.0f), m_enemyPool(500) { 
 
-    if (!m_font.loadFromFile("C:\\Windows\\Fonts\\arial.ttf")) {
-        // Fallback handled gracefully by SFML (just won't render text)
+    if (!m_font.loadFromFile("assets/ExportedProject/Assets/Font/Courier_HintedSmooth.ttf")) {
+        std::cerr << "PlayingState: Could not load font!\n";
     }
+    
+    if (!m_itemsTex.loadFromFile("assets/ExportedProject/Assets/Resources/spritesheets/items.png")) {
+        std::cerr << "PlayingState: Could not load items texture!\n";
+    }
+    m_enemiesTex.loadFromFile("assets/ExportedProject/Assets/Resources/spritesheets/enemies.png");
+    m_enemiesTex.setSmooth(false);
+
     m_timerText.setFont(m_font);
     m_timerText.setCharacterSize(40);
     m_timerText.setFillColor(sf::Color::White);
+    m_timerText.setStyle(sf::Text::Bold);
+    m_timerText.setPosition(m_manager->getWindow().getSize().x / 2.0f - 50.0f, 20.0f);
 
     switch (charType) {
         case CharacterType::Antonio:
@@ -111,7 +121,7 @@ void PlayingState::update(float dt) {
 
     // Normal Waves
     if (m_survivalTime < 60.f) {
-        // Wave 1: 0:00 - 1:00 (Small orange enemies)
+        // Wave 1: 0:00 - 1:00 (Pipestrello 2 - brown bat)
         if (m_spawnTimer >= 0.2f) {
             m_spawnTimer = 0.f;
             for (int i = 0; i < 2; ++i) {
@@ -120,14 +130,22 @@ void PlayingState::update(float dt) {
                     float angle = static_cast<float>(rand() % 360) * 3.14159f / 180.f;
                     float spawnX = m_player.getPosition().x + std::cos(angle) * 800.f;
                     float spawnY = m_player.getPosition().y + std::sin(angle) * 800.f;
-                    enemy->init(sf::Vector2f(spawnX, spawnY), 10.f, 40.f, 15.f, sf::Color(255, 165, 0)); 
+                    std::vector<sf::IntRect> moving = {
+                        {805, 1030, 25, 24}, {1336, 1052, 21, 24}, 
+                        {1011, 917, 19, 24}, {1336, 1052, 21, 24}
+                    };
+                    std::vector<sf::IntRect> death = {
+                        {247, 1169, 27, 26}, {189, 1120, 27, 29}, {477, 904, 31, 33},
+                        {1697, 1224, 34, 37}, {1269, 1047, 31, 40}, {496, 738, 33, 41}
+                    };
+                    enemy->init(sf::Vector2f(spawnX, spawnY), 10.f, 40.f, 8.f, sf::Color::White, &m_enemiesTex, moving, death); 
                     enemy->setTarget(&m_player);
                     m_activeEnemies.push_back(enemy);
                 }
             }
         }
     } else {
-        // Wave 2: 1:00+ (Fast red enemies swarm)
+        // Wave 2: 1:00+ (Pipestrello 4 - blue bat)
         if (m_spawnTimer >= 0.1f) {
             m_spawnTimer = 0.f;
             for (int i = 0; i < 5; ++i) {
@@ -136,7 +154,15 @@ void PlayingState::update(float dt) {
                     float angle = static_cast<float>(rand() % 360) * 3.14159f / 180.f;
                     float spawnX = m_player.getPosition().x + std::cos(angle) * 800.f;
                     float spawnY = m_player.getPosition().y + std::sin(angle) * 800.f;
-                    enemy->init(sf::Vector2f(spawnX, spawnY), 20.f, 70.f, 20.f, sf::Color::Red); 
+                    std::vector<sf::IntRect> moving = {
+                        {805, 1030, 25, 24}, {1336, 1052, 21, 24}, 
+                        {1011, 917, 19, 24}, {1336, 1052, 21, 24}
+                    };
+                    std::vector<sf::IntRect> death = {
+                        {247, 1169, 27, 26}, {189, 1120, 27, 29}, {477, 904, 31, 33},
+                        {1697, 1224, 34, 37}, {1269, 1047, 31, 40}, {496, 738, 33, 41}
+                    };
+                    enemy->init(sf::Vector2f(spawnX, spawnY), 20.f, 70.f, 6.f, sf::Color(100, 100, 255), &m_enemiesTex, moving, death); 
                     enemy->setTarget(&m_player);
                     m_activeEnemies.push_back(enemy);
                 }
@@ -174,21 +200,19 @@ void PlayingState::update(float dt) {
         sf::Vector2f toPlayer = enemy->getPosition() - m_player.getPosition();
         float distToPlayerSq = toPlayer.x * toPlayer.x + toPlayer.y * toPlayer.y;
         
-        if (distToPlayerSq > 2500.f) { // 50 * 50 = 2500 (Ignore collision if within 50 pixels of player)
-            // --- Enemy-Enemy Soft Collision (Separation) ---
-            auto neighbors = m_grid.getNeighbors(enemy->getPosition());
-            for (EnemyBase* other : neighbors) {
-                if (other != enemy && other->isActive()) {
-                    sf::Vector2f diff = enemy->getPosition() - other->getPosition();
-                    float distSq = diff.x * diff.x + diff.y * diff.y;
-                    float combinedRadius = 20.f + 20.f; // enemy->getRadius() not available, fallback to 20.f
-                    if (distSq > 0.0001f && distSq < (combinedRadius * combinedRadius)) {
-                        float dist = std::sqrt(distSq);
-                        float overlap = combinedRadius - dist;
-                        // Push them apart
-                        sf::Vector2f pushDir = diff / dist;
-                        enemy->setPosition(enemy->getPosition() + pushDir * (overlap * 0.5f));
-                    }
+        // --- Enemy-Enemy Soft Collision (Separation) ---
+        auto neighbors = m_grid.getNeighbors(enemy->getPosition());
+        for (EnemyBase* other : neighbors) {
+            if (other != enemy && other->isActive()) {
+                sf::Vector2f diff = enemy->getPosition() - other->getPosition();
+                float distSq = diff.x * diff.x + diff.y * diff.y;
+                float combinedRadius = enemy->getRadius() + other->getRadius();
+                if (distSq > 0.0001f && distSq < (combinedRadius * combinedRadius)) {
+                    float dist = std::sqrt(distSq);
+                    float overlap = combinedRadius - dist;
+                    // Push them apart
+                    sf::Vector2f pushDir = diff / dist;
+                    enemy->setPosition(enemy->getPosition() + pushDir * (overlap * 0.5f));
                 }
             }
         }
@@ -196,9 +220,20 @@ void PlayingState::update(float dt) {
         // Simple O(N*M) collision check for now (Grid will be wired later)
         sf::FloatRect enemyBounds = enemy->getBounds();
         
-        // Check collision with Player
+        // Check collision with Player (Damage)
         if (enemyBounds.intersects(m_player.getBounds())) {
             StatsManager::GetInstance().takeDamage(10.f * dt); // 10 damage per second while touching
+        }
+
+        // Enemy-Player Physical Collision (Separation)
+        float playerRadius = 15.f;
+        float enemyRadius = enemy->getRadius();
+        float combinedRadiusPlayer = playerRadius + enemyRadius;
+        if (distToPlayerSq > 0.0001f && distToPlayerSq < (combinedRadiusPlayer * combinedRadiusPlayer)) {
+            float dist = std::sqrt(distToPlayerSq);
+            float overlap = combinedRadiusPlayer - dist;
+            sf::Vector2f pushDir = toPlayer / dist; // From player to enemy
+            enemy->setPosition(enemy->getPosition() + pushDir * overlap);
         }
 
         for (auto& proj : m_activeProjectiles) {
@@ -262,11 +297,30 @@ void PlayingState::draw(sf::RenderWindow& window) {
 
     m_player.draw(window);
 
+    // Health Bar Background (under character)
+    StatsManager& stats = StatsManager::GetInstance();
+    float hpBarWidth = 40.f;
+    float hpBarHeight = 6.f;
+    sf::Vector2f playerPos = m_player.getPosition();
+    
+    sf::RectangleShape hpBg(sf::Vector2f(hpBarWidth, hpBarHeight));
+    hpBg.setPosition(playerPos.x - hpBarWidth / 2.f, playerPos.y + 25.f);
+    hpBg.setFillColor(sf::Color(50, 0, 0));
+    hpBg.setOutlineThickness(1.f);
+    hpBg.setOutlineColor(sf::Color::Black);
+    window.draw(hpBg);
+
+    // Health Bar Fill
+    float hpPercent = std::max(0.f, stats.getHealth() / stats.getMaxHealth());
+    sf::RectangleShape hpFill(sf::Vector2f(hpBarWidth * hpPercent, hpBarHeight));
+    hpFill.setPosition(playerPos.x - hpBarWidth / 2.f, playerPos.y + 25.f);
+    hpFill.setFillColor(sf::Color::Red);
+    window.draw(hpFill);
+
     // Reset to Default View for HUD
     window.setView(window.getDefaultView());
 
     // Draw HUD
-    StatsManager& stats = StatsManager::GetInstance();
     sf::Vector2u windowSize = window.getSize();
     
     // Timer Text (Top Center)
@@ -275,18 +329,7 @@ void PlayingState::draw(sf::RenderWindow& window) {
     m_timerText.setPosition(windowSize.x / 2.0f, 40.f);
     window.draw(m_timerText);
     
-    // Health Bar Background
-    sf::RectangleShape hpBg(sf::Vector2f(200.f, 20.f));
-    hpBg.setPosition(20.f, 20.f);
-    hpBg.setFillColor(sf::Color(50, 0, 0));
-    window.draw(hpBg);
 
-    // Health Bar Fill
-    float hpPercent = std::max(0.f, stats.getHealth() / stats.getMaxHealth());
-    sf::RectangleShape hpFill(sf::Vector2f(200.f * hpPercent, 20.f));
-    hpFill.setPosition(20.f, 20.f);
-    hpFill.setFillColor(sf::Color::Red);
-    window.draw(hpFill);
 
     // EXP Bar Background (Bottom of screen)
     float expBarWidth = windowSize.x - 40.f;
@@ -294,6 +337,71 @@ void PlayingState::draw(sf::RenderWindow& window) {
     expBg.setPosition(20.f, windowSize.y - 20.f);
     expBg.setFillColor(sf::Color(0, 0, 50));
     window.draw(expBg);
+
+    // Draw HUD - Weapons
+    float startX = 20.f; 
+    float startY = 20.f;
+    float padding = 10.f;
+    float boxWidth = 38.f;
+    float boxHeight = 66.f;
+    
+    for (size_t i = 0; i < m_weapons.size(); ++i) {
+        float x = startX + i * (boxWidth + padding);
+        float y = startY; 
+        
+        // Draw weapon box (grey bg, gold border)
+        sf::RectangleShape bg(sf::Vector2f(boxWidth, boxHeight));
+        bg.setPosition(x, y);
+        bg.setFillColor(sf::Color(160, 160, 160, 220)); // Greyish with some transparency
+        bg.setOutlineThickness(2.f);
+        bg.setOutlineColor(sf::Color(228, 199, 109));
+        window.draw(bg);
+        
+        // Draw icon (at top of box)
+        sf::Sprite iconSprite;
+        iconSprite.setTexture(m_itemsTex);
+        std::string name = m_weapons[i]->getName();
+        sf::IntRect texRect;
+        if (name == "Whip")            texRect = sf::IntRect(396, 790, 16, 16);
+        else if (name == "Magic Wand") texRect = sf::IntRect(472, 793, 16, 16);
+        else if (name == "Knife")      texRect = sf::IntRect(116, 858, 16, 11);
+        else if (name == "Fire Wand")  texRect = sf::IntRect(434, 788, 16, 16);
+        else if (name == "Axe")        texRect = sf::IntRect(485, 660, 16, 16);
+        else texRect = sf::IntRect(0, 0, 16, 16);
+        
+        iconSprite.setTextureRect(texRect);
+        
+        float iconScale = 2.f; 
+        iconSprite.setScale(iconScale, iconScale);
+        float iconW = texRect.width * iconScale;
+        
+        iconSprite.setPosition(x + (boxWidth - iconW) / 2.f, y + 2.f);
+        window.draw(iconSprite);
+        
+        // Draw level grid
+        int level = m_weapons[i]->getLevel();
+        int maxLevel = 8;
+        float gridStartX = x + 5.f; 
+        float gridStartY = y + 36.f; 
+        float cellSize = 8.f;
+        float spacing = 2.f;
+        
+        for (int j = 0; j < maxLevel; ++j) {
+            int row = j / 3;
+            int col = j % 3;
+            sf::RectangleShape cell(sf::Vector2f(cellSize, cellSize));
+            cell.setPosition(gridStartX + col * (cellSize + spacing), gridStartY + row * (cellSize + spacing));
+            
+            if (j < level) {
+                cell.setFillColor(sf::Color(255, 230, 80)); // Gold/Yellow
+            } else {
+                cell.setFillColor(sf::Color::Black);
+            }
+            cell.setOutlineThickness(1.f);
+            cell.setOutlineColor(sf::Color(228, 199, 109));
+            window.draw(cell);
+        }
+    }
 
     // EXP Bar Fill
     float expPercent = std::max(0.f, stats.getExp() / stats.getExpToNextLevel());

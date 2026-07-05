@@ -61,4 +61,6 @@ private:
 
     sf::Font m_font;
     sf::Text m_timerText;
+    sf::Texture m_itemsTex;
+    sf::Texture m_enemiesTex; // enemies.png
 };
