@@ -55,4 +55,10 @@ private:
 
     float m_spawnTimer = 0.f;
     int   m_lastLevel  = 1; // Track StatsManager level to detect level-ups
+
+    float m_survivalTime = 0.f;
+    bool m_bossSpawned = false;
+
+    sf::Font m_font;
+    sf::Text m_timerText;
 };

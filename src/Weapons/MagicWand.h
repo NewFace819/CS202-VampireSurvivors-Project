@@ -1,6 +1,8 @@
 #pragma once
 #include "Weapons/WeaponBase.h"
 #include "Entities/EnemyBase.h"
+#include <cmath>
+#include <limits>
 
 // A basic weapon that shoots projectiles towards the nearest enemy
 class MagicWand : public WeaponBase {
