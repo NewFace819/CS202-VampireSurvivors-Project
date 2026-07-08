@@ -2,6 +2,7 @@
 #include "State/PlayingState.h"
 #include "Engine/GameManager.h"
 #include "Weapons/WeaponBase.h"
+#include "Items/PassiveItem.h"
 #include <iostream>
 #include <algorithm>
 #include <random>
@@ -71,13 +72,15 @@ void LevelUpState::buildOptions() {
         pool.push_back(opt);
     }
 
-    // 2) New weapons not yet owned
+    // 2) New weapons not yet owned (excluding evolved/banned ones)
+    const auto& banned = m_playing->getBannedWeapons();
     for (const auto& name : ALL_WEAPON_NAMES) {
-        if (owned.find(name) == owned.end()) {
+        if (owned.find(name) == owned.end() && banned.find(name) == banned.end()) {
             LevelUpOption opt;
             opt.existingWeapon = nullptr;
             opt.weaponName     = name;
             opt.isNew          = true;
+            opt.isPassive      = false;
             opt.currentLevel   = 0;
             // Description for brand-new weapons
             if (name == "Whip")        opt.description = "Attacks horizontally, passes through enemies.";
@@ -85,6 +88,21 @@ void LevelUpState::buildOptions() {
             else if (name == "Knife")   opt.description = "Throws a fast knife in your facing direction.";
             else if (name == "Fire Wand") opt.description = "Hurls a slow fireball at a random enemy.";
             else if (name == "Axe")     opt.description = "Throws an axe in an arc, pierces through enemies.";
+            pool.push_back(opt);
+        }
+    }
+
+    // 3) Passive items (new or upgradeable)
+    auto& passives = m_playing->getPassiveItems();
+    for (auto& p : passives) {
+        if (!p.isMaxLevel()) {
+            LevelUpOption opt;
+            opt.existingWeapon = nullptr;
+            opt.weaponName     = p.name;
+            opt.description    = p.getUpgradeDescription();
+            opt.currentLevel   = p.level;
+            opt.isNew          = !p.isOwned();
+            opt.isPassive      = true;
             pool.push_back(opt);
         }
     }
@@ -126,7 +144,11 @@ void LevelUpState::buildOptions() {
         // Card background
         card.bg.setSize(sf::Vector2f(cardW, cardH));
         card.bg.setPosition(cardX, y);
-        card.bg.setFillColor(sf::Color(136, 136, 136));
+        if (m_options[i].isPassive) {
+            card.bg.setFillColor(sf::Color(80, 120, 80)); // Green for passives
+        } else {
+            card.bg.setFillColor(sf::Color(136, 136, 136));
+        }
         card.bg.setOutlineThickness(3.f);
         card.bg.setOutlineColor(sf::Color(228, 199, 109));
 
@@ -141,7 +163,16 @@ void LevelUpState::buildOptions() {
         // Weapon Icon Sprite
         card.iconSprite.setTexture(m_itemsTex);
         sf::IntRect texRect;
-        if (m_options[i].weaponName == "Whip")            texRect = sf::IntRect(396, 790, 16, 16);
+        if (m_options[i].isPassive) {
+            // Use passive item icon from the items list
+            auto& passives = m_playing->getPassiveItems();
+            for (const auto& p : passives) {
+                if (p.name == m_options[i].weaponName) {
+                    texRect = p.iconRect;
+                    break;
+                }
+            }
+        } else if (m_options[i].weaponName == "Whip")            texRect = sf::IntRect(396, 790, 16, 16);
         else if (m_options[i].weaponName == "Magic Wand") texRect = sf::IntRect(472, 793, 16, 16);
         else if (m_options[i].weaponName == "Knife")      texRect = sf::IntRect(116, 858, 16, 11);
         else if (m_options[i].weaponName == "Fire Wand")  texRect = sf::IntRect(434, 788, 16, 16);
@@ -211,7 +242,11 @@ void LevelUpState::update(float dt) {
 
         // Highlight on hover
         if (m_cards[i].hovered) {
-            m_cards[i].bg.setFillColor(sf::Color(170, 170, 170)); // Lighter grey
+            if (m_options[i].isPassive) {
+                m_cards[i].bg.setFillColor(sf::Color(110, 160, 110));
+            } else {
+                m_cards[i].bg.setFillColor(sf::Color(170, 170, 170));
+            }
             m_cards[i].bg.setOutlineThickness(5.f);
 
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
@@ -220,7 +255,11 @@ void LevelUpState::update(float dt) {
                 return;
             }
         } else {
-            m_cards[i].bg.setFillColor(sf::Color(136, 136, 136));
+            if (m_options[i].isPassive) {
+                m_cards[i].bg.setFillColor(sf::Color(80, 120, 80));
+            } else {
+                m_cards[i].bg.setFillColor(sf::Color(136, 136, 136));
+            }
             m_cards[i].bg.setOutlineThickness(3.f);
         }
     }
@@ -247,7 +286,9 @@ void LevelUpState::exit() {
 }
 
 void LevelUpState::applyOption(const LevelUpOption& opt) {
-    if (opt.existingWeapon) {
+    if (opt.isPassive) {
+        m_playing->addOrUpgradePassive(opt.weaponName);
+    } else if (opt.existingWeapon) {
         opt.existingWeapon->levelUp();
     } else {
         m_playing->addWeapon(opt.weaponName);

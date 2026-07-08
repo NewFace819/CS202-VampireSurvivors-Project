@@ -176,6 +176,7 @@ public:
     
     float getDamage() const { return m_damage; }
     float getKnockback() const { return m_knockbackForce; }
+    void setKnockback(float force) { m_knockbackForce = force; }
     sf::FloatRect getBounds() const { 
         if (m_hasSprite) return m_animSprite.getGlobalBounds();
         if (m_useRect) return m_rectShape.getGlobalBounds();

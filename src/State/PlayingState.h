@@ -4,10 +4,12 @@
 #include "Physics/SpatialHashGrid.h"
 #include "Entities/Player.h"
 #include "Entities/EnemyBase.h"
+#include "Entities/TreasureChest.h"
 #include "Engine/ObjectPool.h"
 #include "Weapons/WeaponBase.h"
 #include "Weapons/Projectile.h"
 #include "Entities/ExpGem.h"
+#include "Items/PassiveItem.h"
 #include <memory>
 #include <vector>
 #include <string>
@@ -37,9 +39,26 @@ public:
 
     // Query which weapon type strings are currently owned
     std::set<std::string> getOwnedWeaponNames() const;
+    const std::set<std::string>& getBannedWeapons() const { return m_bannedWeapons; }
 
     // Raw pointers into m_weapons for LevelUpState to call levelUp() on
     std::vector<WeaponBase*> getUpgradeableWeapons();
+
+    // --- Passive Item Interface (for LevelUpState) ---
+    std::vector<PassiveItem>& getPassiveItems() { return m_passiveItems; }
+    const std::vector<PassiveItem>& getPassiveItems() const { return m_passiveItems; }
+    void addOrUpgradePassive(const std::string& name);
+    std::set<std::string> getOwnedPassiveNames() const;
+
+    // --- Per-run passive multipliers ---
+    float getPassiveDamageMultiplier() const;
+    float getPassiveCooldownMultiplier() const;
+    float getPassiveProjSpeedMultiplier() const;
+    float getPassiveAreaMultiplier() const;
+    float getPassiveMaxHealthMultiplier() const;
+
+    // --- Evolution ---
+    void tryEvolveWeapon();
 
 private:
     GameManager* m_manager;
@@ -52,15 +71,23 @@ private:
     std::vector<std::unique_ptr<WeaponBase>> m_weapons;
     std::vector<Projectile> m_activeProjectiles;
     std::vector<ExpGem> m_activeGems;
+    std::vector<PassiveItem> m_passiveItems;
+    std::vector<TreasureChest> m_chests;
 
     float m_spawnTimer = 0.f;
     int   m_lastLevel  = 1; // Track StatsManager level to detect level-ups
 
     float m_survivalTime = 0.f;
     bool m_bossSpawned = false;
+    bool m_bossIsDead = false;
+    EnemyBase* m_bossPtr = nullptr; // Track the boss to detect its death
 
     int m_revivalsLeft = 0;
     int m_runGold = 0;
+
+    // Cheat code state
+    bool m_cheatApplied = false;
+    std::set<std::string> m_bannedWeapons;
 
     sf::Font m_font;
     sf::Text m_timerText;
@@ -68,3 +95,4 @@ private:
     sf::Texture m_itemsTex;
     sf::Texture m_enemiesTex; // enemies.png
 };
+

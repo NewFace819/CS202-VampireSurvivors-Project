@@ -11,12 +11,14 @@ class PlayingState;
 // One option in the level-up pool:
 // - If existingWeapon != nullptr  → upgrade that weapon (call levelUp())
 // - If existingWeapon == nullptr  → grant a brand-new weapon (call PlayingState::addWeapon)
+// - If isPassive == true          → grant or upgrade a passive item
 struct LevelUpOption {
     WeaponBase*  existingWeapon = nullptr;
     std::string  weaponName;       // human-readable name for both paths
     std::string  description;      // e.g. "Fires 1 more projectile."
     int          currentLevel = 0; // 0 if new weapon
     bool         isNew        = false;
+    bool         isPassive    = false;
 };
 
 class LevelUpState : public GameState {

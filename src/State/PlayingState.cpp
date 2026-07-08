@@ -9,7 +9,9 @@
 #include "Weapons/Knife.h"
 #include "Weapons/FireWand.h"
 #include "Weapons/Axe.h"
+#include "Weapons/BloodyTear.h"
 #include "Physics/Physics.h"
+#include "Items/EvolutionRegistry.h"
 #include <cstdlib>
 #include <algorithm>
 #include <iostream>
@@ -43,6 +45,9 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType)
 
     m_revivalsLeft = ProfileManager::GetInstance().getRevivalBonus();
     m_runGold = 0;
+
+    // Initialize passive items pool
+    m_passiveItems = createDefaultPassiveItems();
 
     switch (charType) {
         case CharacterType::Antonio:
@@ -93,6 +98,28 @@ void PlayingState::update(float dt) {
         return; 
     }
 
+    // Cheat Code: Alt+E = max Whip + add Hollow Heart for evolution testing
+    if (!m_cheatApplied && sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt) && sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+        m_cheatApplied = true;
+        // Max out Whip if owned, or add it
+        bool hasWhip = false;
+        for (auto& w : m_weapons) {
+            if (w->getName() == "Whip") {
+                while (!w->isMaxLevel()) w->levelUp();
+                hasWhip = true;
+                break;
+            }
+        }
+        if (!hasWhip) {
+            m_weapons.push_back(std::make_unique<Whip>());
+            auto& w = m_weapons.back();
+            while (!w->isMaxLevel()) w->levelUp();
+        }
+        // Add Hollow Heart at level 1 if not owned
+        addOrUpgradePassive("Hollow Heart");
+        std::cout << "CHEAT: Whip maxed + Hollow Heart added! Kill the boss for evolution.\n";
+    }
+
     m_player.update(dt);
 
     // Apply Recovery Upgrade (HP regen)
@@ -124,18 +151,39 @@ void PlayingState::update(float dt) {
     // Spawn logic (Wave System)
     m_spawnTimer += dt;
     
-    // Boss Spawner (At 2:00)
-    if (m_survivalTime >= 120.f && !m_bossSpawned) {
+    // Boss Spawner (At 0:30)
+    if (m_survivalTime >= 30.f && !m_bossSpawned) {
         m_bossSpawned = true;
         EnemyBase* boss = m_enemyPool.acquire();
         if (boss) {
             float spawnX = m_player.getPosition().x;
-            float spawnY = m_player.getPosition().y - 1200.f; // Spawn above
-            boss->init(sf::Vector2f(spawnX, spawnY), 10000.f, 20.f, 100.f, sf::Color(128, 0, 128)); // Huge purple boss
+            float spawnY = m_player.getPosition().y - 600.f; // Spawn above
+            boss->init(sf::Vector2f(spawnX, spawnY), 500.f, 30.f, 60.f, sf::Color(128, 0, 128)); // Purple boss
             boss->setTarget(&m_player);
             m_activeEnemies.push_back(boss);
+            m_bossPtr = boss;
         }
     }
+
+    // Detect boss death → spawn treasure chest
+    if (m_bossPtr && !m_bossPtr->isActive() && !m_bossIsDead) {
+        m_bossIsDead = true;
+        TreasureChest chest;
+        chest.init(m_bossPtr->getPosition());
+        m_chests.push_back(chest);
+        std::cout << "Boss defeated! A treasure chest appeared!\n";
+    }
+
+    // Update & check chest pickup
+    for (auto& chest : m_chests) {
+        chest.update(dt);
+        if (chest.isActive() && chest.getBounds().intersects(m_player.getBounds())) {
+            chest.deactivate();
+            tryEvolveWeapon();
+        }
+    }
+    m_chests.erase(std::remove_if(m_chests.begin(), m_chests.end(),
+        [](const TreasureChest& c) { return !c.isActive(); }), m_chests.end());
 
     // Normal Waves
     if (m_survivalTime < 60.f) {
@@ -262,6 +310,11 @@ void PlayingState::update(float dt) {
                 enemy->takeDamage(proj.getDamage());
                 Physics::ApplyKnockback(enemy, proj.getDirection(), proj.getKnockback(), 1.0f);
                 
+                // Bloody Tear lifesteal
+                if (proj.getKnockback() == 150.f) {
+                    StatsManager::GetInstance().heal(8.f);
+                }
+                
                 if (!proj.isPiercing()) {
                     proj.deactivate();
                 }
@@ -349,6 +402,11 @@ void PlayingState::draw(sf::RenderWindow& window) {
         proj.draw(window);
     }
 
+    // Draw treasure chests
+    for (const auto& chest : m_chests) {
+        chest.draw(window);
+    }
+
     m_player.draw(window);
 
     // Health Bar Background (under character)
@@ -424,6 +482,7 @@ void PlayingState::draw(sf::RenderWindow& window) {
         else if (name == "Knife")      texRect = sf::IntRect(116, 858, 16, 11);
         else if (name == "Fire Wand")  texRect = sf::IntRect(434, 788, 16, 16);
         else if (name == "Axe")        texRect = sf::IntRect(485, 660, 16, 16);
+        else if (name == "Bloody Tear") texRect = sf::IntRect(396, 790, 16, 16); // Same as Whip icon, red tinted
         else texRect = sf::IntRect(0, 0, 16, 16);
         
         iconSprite.setTextureRect(texRect);
@@ -458,6 +517,28 @@ void PlayingState::draw(sf::RenderWindow& window) {
             cell.setOutlineColor(sf::Color(228, 199, 109));
             window.draw(cell);
         }
+    }
+
+    // Draw HUD - Passive Items (below weapons)
+    float passiveStartY = startY + boxHeight + 10.f;
+    for (size_t i = 0; i < m_passiveItems.size(); ++i) {
+        if (!m_passiveItems[i].isOwned()) continue;
+        float x = startX + i * (boxWidth + padding);
+        float y = passiveStartY;
+
+        sf::RectangleShape bg(sf::Vector2f(boxWidth, 40.f));
+        bg.setPosition(x, y);
+        bg.setFillColor(sf::Color(50, 100, 50, 220)); // Greenish
+        bg.setOutlineThickness(2.f);
+        bg.setOutlineColor(sf::Color(100, 200, 100));
+        window.draw(bg);
+
+        sf::Sprite iconSprite;
+        iconSprite.setTexture(m_itemsTex);
+        iconSprite.setTextureRect(m_passiveItems[i].iconRect);
+        iconSprite.setScale(2.f, 2.f);
+        iconSprite.setPosition(x + 3.f, y + 4.f);
+        window.draw(iconSprite);
     }
 
     // EXP Bar Fill
@@ -495,4 +576,103 @@ std::vector<WeaponBase*> PlayingState::getUpgradeableWeapons() {
         }
     }
     return result;
+}
+
+// --- Passive Item Methods ---
+
+void PlayingState::addOrUpgradePassive(const std::string& name) {
+    for (auto& p : m_passiveItems) {
+        if (p.name == name) {
+            if (p.level < p.maxLevel) {
+                p.level++;
+                std::cout << "Passive " << name << " now level " << p.level << "\n";
+            }
+            return;
+        }
+    }
+}
+
+std::set<std::string> PlayingState::getOwnedPassiveNames() const {
+    std::set<std::string> names;
+    for (const auto& p : m_passiveItems) {
+        if (p.isOwned()) names.insert(p.name);
+    }
+    return names;
+}
+
+float PlayingState::getPassiveDamageMultiplier() const {
+    float mult = 1.f;
+    for (const auto& p : m_passiveItems) {
+        if (p.isOwned() && p.statType == "damage") {
+            mult += p.level * p.bonusPerLevel;
+        }
+    }
+    return mult;
+}
+
+float PlayingState::getPassiveCooldownMultiplier() const {
+    float mult = 1.f;
+    for (const auto& p : m_passiveItems) {
+        if (p.isOwned() && p.statType == "cooldown") {
+            mult -= p.level * p.bonusPerLevel;
+        }
+    }
+    return std::max(0.1f, mult);
+}
+
+float PlayingState::getPassiveProjSpeedMultiplier() const {
+    float mult = 1.f;
+    for (const auto& p : m_passiveItems) {
+        if (p.isOwned() && p.statType == "projSpeed") {
+            mult += p.level * p.bonusPerLevel;
+        }
+    }
+    return mult;
+}
+
+float PlayingState::getPassiveAreaMultiplier() const {
+    float mult = 1.f;
+    for (const auto& p : m_passiveItems) {
+        if (p.isOwned() && p.statType == "area") {
+            mult += p.level * p.bonusPerLevel;
+        }
+    }
+    return mult;
+}
+
+float PlayingState::getPassiveMaxHealthMultiplier() const {
+    float mult = 1.f;
+    for (const auto& p : m_passiveItems) {
+        if (p.isOwned() && p.statType == "maxHealth") {
+            mult += p.level * p.bonusPerLevel;
+        }
+    }
+    return mult;
+}
+
+// --- Evolution ---
+
+void PlayingState::tryEvolveWeapon() {
+    int recipeIdx = findAvailableEvolution(m_weapons, m_passiveItems);
+    if (recipeIdx < 0) {
+        // No evolution available — give a free level-up instead
+        std::cout << "No evolution available. Granting free level-up.\n";
+        m_manager->pushState(std::make_unique<LevelUpState>(m_manager, this));
+        return;
+    }
+
+    const auto& recipe = getEvolutionRecipes()[recipeIdx];
+    std::cout << "EVOLUTION! " << recipe.baseWeapon << " -> " << recipe.evolvedWeapon << "\n";
+
+    // Remove the base weapon and ban it
+    m_weapons.erase(std::remove_if(m_weapons.begin(), m_weapons.end(),
+        [&](const std::unique_ptr<WeaponBase>& w) { return w->getName() == recipe.baseWeapon; }),
+        m_weapons.end());
+    m_bannedWeapons.insert(recipe.baseWeapon);
+
+    // Add the evolved weapon
+    if (recipe.evolvedWeapon == "Bloody Tear") {
+        m_weapons.push_back(std::make_unique<BloodyTear>());
+    }
+    // Future evolutions would go here
 }

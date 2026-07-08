@@ -56,6 +56,7 @@ public:
     int getLevel() const { return m_level; }
     virtual int getMaxLevel() const { return 8; }
     bool isMaxLevel() const { return m_level >= getMaxLevel(); }
+    virtual bool isEvolved() const { return m_isEvolved; }
 
 protected:
     // `shotIndex` = which shot in the burst (0..m_amount-1), used for spreading or alternating
@@ -98,6 +99,7 @@ protected:
     int   m_level  = 1;
     int   m_amount = 1;       // Number of projectiles fired per burst
     float m_areaScale = 1.0f; // Multiplier for hitbox / visual size
+    bool  m_isEvolved = false;
 
     // Burst firing state (sequential shots at 0.1s intervals)
     int           m_pendingBurst    = 0;
