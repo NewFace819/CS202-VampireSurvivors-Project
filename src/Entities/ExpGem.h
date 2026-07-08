@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include "Player.h"
+#include "Engine/ProfileManager.h"
 
 class ExpGem {
 public:
@@ -60,8 +61,8 @@ public:
         sf::Vector2f delta = player->getPosition() - m_position;
         float distSq = delta.x * delta.x + delta.y * delta.y;
         
-        // Magnet radius (e.g. 100 pixels)
-        float magnetRadius = 100.0f;
+        // Magnet radius (e.g. 100 pixels, boosted by Magnet powerup)
+        float magnetRadius = 100.0f * (1.f + ProfileManager::GetInstance().getMagnetBonus());
         if (distSq < magnetRadius * magnetRadius) {
             m_isMagnetized = true;
         }

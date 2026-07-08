@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "Engine/ProfileManager.h"
 #include <iostream>
 
 Player::Player() {
@@ -66,7 +67,7 @@ void Player::update(float dt) {
         m_animSprite.update(dt);
     }
 
-    m_velocity = dir * m_speed;
+    m_velocity = dir * m_speed * ProfileManager::GetInstance().getMoveSpeedMultiplier();
     m_position += m_velocity * dt;
 
     if (m_hasSprite)

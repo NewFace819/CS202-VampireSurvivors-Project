@@ -365,3 +365,10 @@ FodyWeavers.xsd
 
 build/
 build2/
+build_mingw/
+build_vs/
+Group54_04.html
+Group54_04.md
+Group54_04.pdf
+Group54_04.zip
+render.py

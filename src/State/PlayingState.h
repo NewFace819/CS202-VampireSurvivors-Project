@@ -59,8 +59,12 @@ private:
     float m_survivalTime = 0.f;
     bool m_bossSpawned = false;
 
+    int m_revivalsLeft = 0;
+    int m_runGold = 0;
+
     sf::Font m_font;
     sf::Text m_timerText;
+    sf::Text m_goldText;
     sf::Texture m_itemsTex;
     sf::Texture m_enemiesTex; // enemies.png
 };

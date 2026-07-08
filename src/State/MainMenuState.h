@@ -22,4 +22,7 @@ private:
     sf::Texture m_playTexture;
     sf::Sprite m_playSprite;
     sf::Text m_promptText;
+
+    sf::RectangleShape m_shopBtnRect;
+    sf::Text m_shopBtnText;
 };

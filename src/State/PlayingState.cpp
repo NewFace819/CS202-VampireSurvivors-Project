@@ -14,6 +14,8 @@
 #include <algorithm>
 #include <iostream>
 
+#include "Engine/ProfileManager.h"
+
 PlayingState::PlayingState(GameManager* manager, CharacterType charType) 
     : m_manager(manager), m_grid(100.0f), m_enemyPool(500) { 
 
@@ -32,6 +34,15 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType)
     m_timerText.setFillColor(sf::Color::White);
     m_timerText.setStyle(sf::Text::Bold);
     m_timerText.setPosition(m_manager->getWindow().getSize().x / 2.0f - 50.0f, 20.0f);
+
+    m_goldText.setFont(m_font);
+    m_goldText.setCharacterSize(22);
+    m_goldText.setFillColor(sf::Color(228, 199, 109)); // Gold
+    m_goldText.setStyle(sf::Text::Bold);
+    m_goldText.setPosition(m_manager->getWindow().getSize().x - 220.0f, 25.0f);
+
+    m_revivalsLeft = ProfileManager::GetInstance().getRevivalBonus();
+    m_runGold = 0;
 
     switch (charType) {
         case CharacterType::Antonio:
@@ -73,6 +84,7 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType)
 }
 
 void PlayingState::enter() {
+    StatsManager::GetInstance().reset();
 }
 
 void PlayingState::update(float dt) {
@@ -82,6 +94,12 @@ void PlayingState::update(float dt) {
     }
 
     m_player.update(dt);
+
+    // Apply Recovery Upgrade (HP regen)
+    float recovery = ProfileManager::GetInstance().getRecoveryRate();
+    if (recovery > 0.f) {
+        StatsManager::GetInstance().heal(recovery * dt);
+    }
 
     // Update weapons (firing projectiles)
     for (auto& weapon : m_weapons) {
@@ -222,7 +240,9 @@ void PlayingState::update(float dt) {
         
         // Check collision with Player (Damage)
         if (enemyBounds.intersects(m_player.getBounds())) {
-            StatsManager::GetInstance().takeDamage(10.f * dt); // 10 damage per second while touching
+            float armorRed = ProfileManager::GetInstance().getArmorReduction();
+            float dmg = std::max(1.f, 10.f - armorRed);
+            StatsManager::GetInstance().takeDamage(dmg * dt); // 10 damage per second while touching, reduced by armor
         }
 
         // Enemy-Player Physical Collision (Separation)
@@ -255,6 +275,13 @@ void PlayingState::update(float dt) {
         gem.update(dt, &m_player);
         if (gem.isActive() && gem.getBounds().intersects(m_player.getBounds())) {
             StatsManager::GetInstance().addExp(gem.getExpValue()); 
+            
+            // Greed Gold upgrade
+            int baseGold = 1;
+            int goldEarned = static_cast<int>(baseGold * ProfileManager::GetInstance().getGreedMultiplier());
+            m_runGold += goldEarned;
+            ProfileManager::GetInstance().addGold(goldEarned);
+            
             gem.deactivate();
         }
     }
@@ -267,11 +294,38 @@ void PlayingState::update(float dt) {
     m_activeProjectiles.erase(std::remove_if(m_activeProjectiles.begin(), m_activeProjectiles.end(),
         [](const Projectile& p) { return !p.isActive(); }), m_activeProjectiles.end());
 
+    // Update gold HUD text
+    m_goldText.setString("GOLD: " + std::to_string(m_runGold));
+
     // Detect player level-up and show the upgrade screen
     int currentLevel = StatsManager::GetInstance().getLevel();
     if (currentLevel > m_lastLevel) {
         m_lastLevel = currentLevel;
         m_manager->pushState(std::make_unique<LevelUpState>(m_manager, this));
+    }
+
+    // Check Player Death / Revival
+    if (StatsManager::GetInstance().getHealth() <= 0.f) {
+        if (m_revivalsLeft > 0) {
+            m_revivalsLeft--;
+            // Heal to 50% max health
+            StatsManager::GetInstance().heal(StatsManager::GetInstance().getMaxHealth() * 0.5f);
+            
+            // Revival blast: deactivate all active enemies in a 450px radius
+            for (auto* enemy : m_activeEnemies) {
+                sf::Vector2f diff = enemy->getPosition() - m_player.getPosition();
+                float distSq = diff.x * diff.x + diff.y * diff.y;
+                if (distSq < 450.f * 450.f) {
+                    enemy->setActive(false);
+                }
+            }
+            std::cout << "Resurrected! Revivals left: " << m_revivalsLeft << "\n";
+        } else {
+            // Game Over
+            ProfileManager::GetInstance().save("save.txt");
+            m_manager->changeState(std::make_unique<MainMenuState>(m_manager));
+            return;
+        }
     }
 }
 
@@ -328,6 +382,9 @@ void PlayingState::draw(sf::RenderWindow& window) {
     m_timerText.setOrigin(textBounds.left + textBounds.width / 2.0f, textBounds.top + textBounds.height / 2.0f);
     m_timerText.setPosition(windowSize.x / 2.0f, 40.f);
     window.draw(m_timerText);
+
+    // Gold Text (Top Right)
+    window.draw(m_goldText);
     
 
 

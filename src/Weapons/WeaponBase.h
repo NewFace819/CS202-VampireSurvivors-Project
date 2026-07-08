@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include "Projectile.h"
+#include "Engine/ProfileManager.h"
 
 class EnemyBase; // Forward declaration
 
@@ -18,12 +19,14 @@ public:
 
     virtual void update(float dt, const sf::Vector2f& playerPos, const sf::Vector2f& playerDir, const std::vector<EnemyBase*>& enemies, std::vector<Projectile>& activeProjectiles) {
         m_timer += dt;
-        if (m_timer >= m_cooldown) {
-            m_timer -= m_cooldown;
+        float actualCooldown = m_cooldown * ProfileManager::GetInstance().getCooldownMultiplier();
+        if (m_timer >= actualCooldown) {
+            m_timer = 0.f; // reset timer
             // Fire the first shot immediately
             fire(playerPos, playerDir, enemies, activeProjectiles, 0);
             // Queue remaining shots for sequential burst (0.1s interval)
-            m_pendingBurst    = m_amount - 1;
+            int actualAmount = m_amount + ProfileManager::GetInstance().getAmountBonus();
+            m_pendingBurst    = actualAmount - 1;
             m_burstShotsFired = 1;
             m_burstTimer      = 0.f;
             m_burstPlayerPos  = playerPos;

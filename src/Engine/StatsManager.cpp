@@ -5,18 +5,20 @@ StatsManager::StatsManager() {
     reset();
 }
 
+#include "ProfileManager.h"
+
 void StatsManager::reset() {
     m_level = 1;
     m_exp = 0.f;
-    m_health = 100.f;
-    m_maxHealth = 100.f;
+    m_maxHealth = 100.f * ProfileManager::GetInstance().getMaxHealthMultiplier();
+    m_health = m_maxHealth;
     calculateNextLevelExp();
 }
 
 void StatsManager::addExp(float amount) {
     if (amount <= 0) return;
     
-    m_exp += amount;
+    m_exp += amount * ProfileManager::GetInstance().getGrowthMultiplier();
     notify(GameEvent::PlayerGainedExp);
 
     while (m_exp >= m_expToNext) {
