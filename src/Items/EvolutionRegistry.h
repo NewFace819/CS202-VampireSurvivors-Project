@@ -24,13 +24,17 @@ inline const std::vector<EvolutionRecipe>& getEvolutionRecipes() {
     return recipes;
 }
 
+#include <cstdlib>
+
 // Check if any evolution is possible given the current weapons and passive items.
-// Returns the index of the recipe if found, or -1 if none.
+// Returns a random eligible evolution index, or -1 if none.
 inline int findAvailableEvolution(
     const std::vector<std::unique_ptr<WeaponBase>>& weapons,
     const std::vector<PassiveItem>& passives)
 {
     const auto& recipes = getEvolutionRecipes();
+    std::vector<int> eligible;
+
     for (int r = 0; r < static_cast<int>(recipes.size()); ++r) {
         const auto& recipe = recipes[r];
         // Check if the base weapon is at max level
@@ -53,7 +57,15 @@ inline int findAvailableEvolution(
         }
         if (!hasPassive) continue;
 
-        return r; // Found a valid evolution
+        eligible.push_back(r);
     }
-    return -1;
+
+    if (eligible.empty()) {
+        return -1;
+    }
+
+    // Pick one eligible index randomly
+    int randomIndex = std::rand() % eligible.size();
+    return eligible[randomIndex];
 }
+

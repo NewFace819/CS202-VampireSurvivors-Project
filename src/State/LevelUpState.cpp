@@ -3,6 +3,8 @@
 #include "Engine/GameManager.h"
 #include "Weapons/WeaponBase.h"
 #include "Items/PassiveItem.h"
+#include "Engine/StatsManager.h"
+
 #include <iostream>
 #include <algorithm>
 #include <random>
@@ -107,6 +109,27 @@ void LevelUpState::buildOptions() {
         }
     }
 
+    // If the pool is empty (all weapons/passives fully maxed), offer fallbacks
+    if (pool.empty()) {
+        LevelUpOption optGold;
+        optGold.existingWeapon = nullptr;
+        optGold.weaponName     = "Money Bag";
+        optGold.description    = "Grants 100 Gold coins immediately.";
+        optGold.isNew          = false;
+        optGold.isPassive      = false;
+        optGold.currentLevel   = 0;
+        pool.push_back(optGold);
+
+        LevelUpOption optChicken;
+        optChicken.existingWeapon = nullptr;
+        optChicken.weaponName     = "Floor Chicken";
+        optChicken.description    = "Heals 30 Health Points.";
+        optChicken.isNew          = false;
+        optChicken.isPassive      = false;
+        optChicken.currentLevel   = 0;
+        pool.push_back(optChicken);
+    }
+
     // Shuffle and take up to 3
     std::mt19937 rng(static_cast<unsigned>(std::time(nullptr)));
     std::shuffle(pool.begin(), pool.end(), rng);
@@ -144,7 +167,11 @@ void LevelUpState::buildOptions() {
         // Card background
         card.bg.setSize(sf::Vector2f(cardW, cardH));
         card.bg.setPosition(cardX, y);
-        if (m_options[i].isPassive) {
+        if (m_options[i].weaponName == "Money Bag") {
+            card.bg.setFillColor(sf::Color(180, 140, 40)); // Gold color
+        } else if (m_options[i].weaponName == "Floor Chicken") {
+            card.bg.setFillColor(sf::Color(150, 70, 70)); // Deep red/pink
+        } else if (m_options[i].isPassive) {
             card.bg.setFillColor(sf::Color(80, 120, 80)); // Green for passives
         } else {
             card.bg.setFillColor(sf::Color(136, 136, 136));
@@ -163,7 +190,13 @@ void LevelUpState::buildOptions() {
         // Weapon Icon Sprite
         card.iconSprite.setTexture(m_itemsTex);
         sf::IntRect texRect;
-        if (m_options[i].isPassive) {
+        if (m_options[i].weaponName == "Money Bag") {
+            texRect = sf::IntRect(378, 790, 16, 16); // Spinach icon
+            card.iconSprite.setColor(sf::Color(255, 230, 80)); // Tint yellow
+        } else if (m_options[i].weaponName == "Floor Chicken") {
+            texRect = sf::IntRect(360, 790, 16, 16); // Heart icon
+            card.iconSprite.setColor(sf::Color(255, 120, 120)); // Tint red
+        } else if (m_options[i].isPassive) {
             // Use passive item icon from the items list
             auto& passives = m_playing->getPassiveItems();
             for (const auto& p : passives) {
@@ -203,7 +236,12 @@ void LevelUpState::buildOptions() {
         card.titleText.setPosition(cardX + 110.f, y + 20.f);
 
         // Level indicator
-        std::string lvlStr = m_options[i].isNew ? "New!" : "Lv " + std::to_string(m_options[i].currentLevel + 1);
+        std::string lvlStr;
+        if (m_options[i].weaponName == "Money Bag" || m_options[i].weaponName == "Floor Chicken") {
+            lvlStr = "Bonus";
+        } else {
+            lvlStr = m_options[i].isNew ? "New!" : "Lv " + std::to_string(m_options[i].currentLevel + 1);
+        }
         card.levelText.setFont(m_font);
         card.levelText.setString(lvlStr);
         card.levelText.setCharacterSize(22);
@@ -242,7 +280,11 @@ void LevelUpState::update(float dt) {
 
         // Highlight on hover
         if (m_cards[i].hovered) {
-            if (m_options[i].isPassive) {
+            if (m_options[i].weaponName == "Money Bag") {
+                m_cards[i].bg.setFillColor(sf::Color(220, 170, 60));
+            } else if (m_options[i].weaponName == "Floor Chicken") {
+                m_cards[i].bg.setFillColor(sf::Color(190, 100, 100));
+            } else if (m_options[i].isPassive) {
                 m_cards[i].bg.setFillColor(sf::Color(110, 160, 110));
             } else {
                 m_cards[i].bg.setFillColor(sf::Color(170, 170, 170));
@@ -255,7 +297,11 @@ void LevelUpState::update(float dt) {
                 return;
             }
         } else {
-            if (m_options[i].isPassive) {
+            if (m_options[i].weaponName == "Money Bag") {
+                m_cards[i].bg.setFillColor(sf::Color(180, 140, 40));
+            } else if (m_options[i].weaponName == "Floor Chicken") {
+                m_cards[i].bg.setFillColor(sf::Color(150, 70, 70));
+            } else if (m_options[i].isPassive) {
                 m_cards[i].bg.setFillColor(sf::Color(80, 120, 80));
             } else {
                 m_cards[i].bg.setFillColor(sf::Color(136, 136, 136));
@@ -286,7 +332,11 @@ void LevelUpState::exit() {
 }
 
 void LevelUpState::applyOption(const LevelUpOption& opt) {
-    if (opt.isPassive) {
+    if (opt.weaponName == "Money Bag") {
+        m_playing->addGoldToRun(100);
+    } else if (opt.weaponName == "Floor Chicken") {
+        StatsManager::GetInstance().heal(30.f);
+    } else if (opt.isPassive) {
         m_playing->addOrUpgradePassive(opt.weaponName);
     } else if (opt.existingWeapon) {
         opt.existingWeapon->levelUp();
@@ -294,3 +344,4 @@ void LevelUpState::applyOption(const LevelUpOption& opt) {
         m_playing->addWeapon(opt.weaponName);
     }
 }
+

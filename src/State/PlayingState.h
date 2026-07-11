@@ -34,8 +34,15 @@ public:
     void draw(sf::RenderWindow& window) override;
     void exit() override;
 
+    // Add gold to current run and profile persistence
+    void addGoldToRun(int amount) {
+        m_runGold += amount;
+        ProfileManager::GetInstance().addGold(amount);
+    }
+
     // Called by LevelUpState to grant a new weapon by name
     void addWeapon(const std::string& weaponName);
+
 
     // Query which weapon type strings are currently owned
     std::set<std::string> getOwnedWeaponNames() const;

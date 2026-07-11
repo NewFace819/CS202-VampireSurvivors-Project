@@ -10,6 +10,11 @@
 #include "Weapons/FireWand.h"
 #include "Weapons/Axe.h"
 #include "Weapons/BloodyTear.h"
+#include "Weapons/HolyWand.h"
+#include "Weapons/ThousandEdge.h"
+#include "Weapons/Hellfire.h"
+#include "Weapons/DeathSpiral.h"
+
 #include "Physics/Physics.h"
 #include "Items/EvolutionRegistry.h"
 #include <cstdlib>
@@ -119,6 +124,51 @@ void PlayingState::update(float dt) {
         addOrUpgradePassive("Hollow Heart");
         std::cout << "CHEAT: Whip maxed + Hollow Heart added! Kill the boss for evolution.\n";
     }
+
+    // Cheat Code: Alt+C = max all weapons + all passives for testing
+    if (!m_cheatApplied && sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt) && sf::Keyboard::isKeyPressed(sf::Keyboard::C)) {
+        m_cheatApplied = true;
+        
+        // Add & Max all weapons
+        std::vector<std::string> baseWeapons = {"Whip", "Magic Wand", "Knife", "Fire Wand", "Axe"};
+        for (const auto& wName : baseWeapons) {
+            WeaponBase* found = nullptr;
+            for (auto& w : m_weapons) {
+                if (w->getName() == wName) {
+                    found = w.get();
+                    break;
+                }
+            }
+            if (!found) {
+                addWeapon(wName);
+                found = m_weapons.back().get();
+            }
+            while (!found->isMaxLevel()) {
+                found->levelUp();
+            }
+        }
+
+        // Max all passives
+        std::vector<std::string> passives = {"Hollow Heart", "Empty Tome", "Bracer", "Spinach", "Candelabrador"};
+        for (const auto& pName : passives) {
+            for (int level = 0; level < 5; ++level) {
+                addOrUpgradePassive(pName);
+            }
+        }
+        
+        std::cout << "CHEAT: All weapons and passives maxed!\n";
+    }
+
+    // Cheat Code: Alt+T = Spawn Treasure Chest at player's position for testing evolutions
+    static bool tPressedLastFrame = false;
+    bool tPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt) && sf::Keyboard::isKeyPressed(sf::Keyboard::T);
+    if (tPressed && !tPressedLastFrame) {
+        TreasureChest chest;
+        chest.init(m_player.getPosition());
+        m_chests.push_back(chest);
+        std::cout << "CHEAT: Spawned a treasure chest at player position!\n";
+    }
+    tPressedLastFrame = tPressed;
 
     m_player.update(dt);
 
@@ -482,8 +532,16 @@ void PlayingState::draw(sf::RenderWindow& window) {
         else if (name == "Knife")      texRect = sf::IntRect(116, 858, 16, 11);
         else if (name == "Fire Wand")  texRect = sf::IntRect(434, 788, 16, 16);
         else if (name == "Axe")        texRect = sf::IntRect(485, 660, 16, 16);
-        else if (name == "Bloody Tear") texRect = sf::IntRect(396, 790, 16, 16); // Same as Whip icon, red tinted
+        else if (name == "Bloody Tear") {
+            texRect = sf::IntRect(396, 790, 16, 16); // Whip icon
+            iconSprite.setColor(sf::Color(255, 100, 100)); // Red tinted
+        }
+        else if (name == "Holy Wand")    texRect = sf::IntRect(491, 793, 16, 16);
+        else if (name == "Thousand Edge") texRect = sf::IntRect(2, 801, 16, 16);
+        else if (name == "Hellfire")     texRect = sf::IntRect(99, 767, 16, 16);
+        else if (name == "Death Spiral")  texRect = sf::IntRect(396, 752, 16, 16);
         else texRect = sf::IntRect(0, 0, 16, 16);
+
         
         iconSprite.setTextureRect(texRect);
         
@@ -673,6 +731,14 @@ void PlayingState::tryEvolveWeapon() {
     // Add the evolved weapon
     if (recipe.evolvedWeapon == "Bloody Tear") {
         m_weapons.push_back(std::make_unique<BloodyTear>());
+    } else if (recipe.evolvedWeapon == "Holy Wand") {
+        m_weapons.push_back(std::make_unique<HolyWand>());
+    } else if (recipe.evolvedWeapon == "Thousand Edge") {
+        m_weapons.push_back(std::make_unique<ThousandEdge>());
+    } else if (recipe.evolvedWeapon == "Hellfire") {
+        m_weapons.push_back(std::make_unique<Hellfire>());
+    } else if (recipe.evolvedWeapon == "Death Spiral") {
+        m_weapons.push_back(std::make_unique<DeathSpiral>());
     }
-    // Future evolutions would go here
+
 }

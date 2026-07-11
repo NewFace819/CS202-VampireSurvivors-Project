@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Weekly Development Report - Week 5</title>
+<style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+        font-size: 16px;
+        line-height: 1.5;
+        word-wrap: break-word;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 45px;
+        background-color: #ffffff;
+        color: #24292e;
+    }
+    h1, h2, h3 {
+        margin-top: 24px;
+        margin-bottom: 16px;
+        font-weight: 600;
+        line-height: 1.25;
+        border-bottom: 1px solid #eaecef;
+        padding-bottom: 0.3em;
+    }
+    h1 { font-size: 2em; }
+    h2 { font-size: 1.5em; }
+    h3 { font-size: 1.25em; }
+    p, ul {
+        margin-top: 0;
+        margin-bottom: 16px;
+    }
+    li { margin: 0.25em 0; }
+    code {
+        padding: 0.2em 0.4em;
+        margin: 0;
+        font-size: 85%;
+        background-color: rgba(27,31,35,0.05);
+        border-radius: 3px;
+        font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+    }
+    a {
+        color: #0366d6;
+        text-decoration: none;
+    }
+    a:hover {
+        text-decoration: underline;
+    }
+    hr {
+        height: 0.25em;
+        padding: 0;
+        margin: 24px 0;
+        background-color: #e1e4e8;
+        border: 0;
+    }
+    @media print {
+        body {
+            padding: 20px;
+        }
+    }
+</style>
+</head>
+<body>
+<h1>Weekly Development Report</h1>
+<h2>1. General Information</h2>
+<ul>
+<li>Group ID: 54</li>
+<li>Project Name: Vampire Survivors Clone</li>
+<li>Date Range: 2026-07-06 – 2026-07-11 (Week 05)</li>
+</ul>
+<hr />
+<h2>2. Tasks Completed This Week</h2>
+<h3>25125011 – Vo Thanh Hai (Developer B - NewFace819)</h3>
+<ul>
+<li>Task A: Weapon Evolution &amp; Synergy Dictionary</li>
+<li>Designed the recipe registry in <code>src/Items/EvolutionRegistry.h</code> to check for max-level base weapons paired with required passive items.</li>
+<li>Coded the evolved weapon class <code>BloodyTear.h</code> which implements the Whip evolution, featuring a lifesteal logic (recovers +8 HP on hit).</li>
+<li>Developed the <code>TreasureChest</code> entity that drops upon defeating the boss (Purple bat spawned at 0:30), allowing the player to collect it to trigger weapon evolution or get a free level-up.</li>
+<li>Task B: Shop UI &amp; Account Saving</li>
+<li>Created the <code>ProfileManager</code> singleton class that manages cross-session progression. Implemented serialization/deserialization to <code>save.txt</code> using C++ file streams.</li>
+<li>Implemented the <code>ShopState</code> UI which renders a Shop menu. Players can spend gold earned from runs on permanent upgrades (Max Health, Armor, Recovery, Greed, and Revival) or refund their upgrades.</li>
+<li>Evidence</li>
+<li>Commits under username <code>NewFace819</code> (<code>vothanhhai2007@gmail.com</code>): <code>first draft of the shop (profile manager) and account saving</code>, <code>adding synergy mechanic</code>.</li>
+<li>Source files <a href="../src/Items/EvolutionRegistry.h">EvolutionRegistry.h</a>, <a href="../src/Weapons/BloodyTear.h">BloodyTear.h</a>, <a href="../src/Entities/TreasureChest.h">TreasureChest.h</a>, <a href="../src/Engine/ProfileManager.h">ProfileManager.h</a>, <a href="../src/Engine/ProfileManager.cpp">ProfileManager.cpp</a>, <a href="../src/State/ShopState.h">ShopState.h</a>, <a href="../src/State/ShopState.cpp">ShopState.cpp</a>.</li>
+</ul>
+<h3>25125013 – Do Gia Huy (Developer A - wii)</h3>
+<ul>
+<li>Task A: Swarm Physics &amp; Enemy Animations</li>
+<li>Integrated the timeline wave system in <code>PlayingState.cpp</code> to scale enemy spawning density and speed over time (Wave 1: brown bats, Wave 2: high density blue bats).</li>
+<li>Refactored <code>EnemyBase</code> to remove hardcoded collision radii, allowing sprites to use their actual texture bounding boxes.</li>
+<li>Fixed bat walking and death frame configurations to sync spritesheet coordinate transitions cleanly.</li>
+<li>Task B: Polished UI States &amp; Build Optimizations</li>
+<li>Redesigned <code>LevelUpState</code> using a transparent overlay that showcases 3 upgrade cards dynamically selected from available weapons and passives.</li>
+<li>Refactored <code>CharacterSelectState</code> to present a clean selection grid representing 6 playable characters (Antonio, Imelda, Gennaro, Arca, Lama, Queen Sigma) with their specific stats and starting items.</li>
+<li>Added interaction delays (<code>m_timeInState</code>) in state entries to prevent mouse clicks from accidentally double-triggering state changes.</li>
+<li>Optimized the CMake compilation step using local directory junctions for asset paths instead of copying folder contents, drastically reducing build times and saving ~1GB of disk usage.</li>
+<li>Evidence</li>
+<li>Commits under username <code>wii</code> (<code>wiih05217@gmail.com</code>): <code>Update character animation frames for Arca, Lama, and others</code>, <code>Restore teammate's wave mode and collisions logic lost during assets revert</code>, <code>UI: Update LevelUpState and CharacterSelectState design</code>, <code>Enemies: Fix bat animations, remove hardcoded collision radius, and enable swarming</code>, <code>CMake: Optimize asset directory copying by using a directory junction</code>.</li>
+<li>Source files <a href="../src/Entities/EnemyBase.cpp">EnemyBase.cpp</a>, <a href="../src/Entities/EnemyBase.h">EnemyBase.h</a>, <a href="../src/State/LevelUpState.cpp">LevelUpState.cpp</a>, <a href="../src/State/LevelUpState.h">LevelUpState.h</a>, <a href="../src/State/CharacterSelectState.cpp">CharacterSelectState.cpp</a>, <a href="../src/State/CharacterSelectState.h">CharacterSelectState.h</a>, <a href="../CMakeLists.txt">CMakeLists.txt</a>.</li>
+</ul>
+<hr />
+<h2>3. AI Usage Declaration</h2>
+<p>Our group utilized AI assistance (specifically Google DeepMind's Antigravity assistant) during this week to:
+1. Debug cross-platform directory junction generation commands in CMake.
+2. Review object lifetime policies when dynamically transitioning game states over transparent overlays.
+3. Structuring HTML layout design for documentation reports.</p>
+<hr />
+<h2>4. Tasks Planned for Next Week (Week 06)</h2>
+<h3>25125011 – Vo Thanh Hai</h3>
+<ul>
+<li>Task A: Weapon Evolution Expansion</li>
+<li>Implement the remaining evolved weapon classes (Holy Wand, Thousand Edge, Hellfire, Death Spiral) and hook them into the Evolution Registry.</li>
+<li>Task B: Boss AI &amp; Attack Strategy Patterns</li>
+<li>Code polymorphic boss behaviors using a state machine and implement telegraphed combat cues.</li>
+</ul>
+<h3>25125013 – Do Gia Huy</h3>
+<ul>
+<li>Task A: Local Co-Op Framework Setup</li>
+<li>Refactor player references to dynamic arrays (<code>std::vector&lt;std::unique_ptr&lt;PlayerBase&gt;&gt;</code>) to lay the groundwork for local cooperative play.</li>
+<li>Wire dual gamepad/keyboard input configurations.</li>
+<li>Task B: Map Boundaries &amp; Scrolling Tiled Backgrounds</li>
+<li>Implement scrolling tilemaps or background grid wrapping so player movement feels continuous over an infinite plane.</li>
+</ul>
+<hr />
+<h2>5. Issues</h2>
+<ol>
+<li><strong>Issue:</strong> SSL/TLS certificate verification failures occurred on CMake setup when attempting to download SFML packages over secure connections on restricted networks.</li>
+<li><strong>Resolution:</strong> Configured the CMake run parameters to skip TLS certificate verification (<code>CMAKE_TLS_VERIFY=OFF</code>) since the SFML archive is fetched from trusted sources.</li>
+<li><strong>Issue:</strong> Mouse click events from the main menu were leaking through and instantly selecting characters or state options on the succeeding screen.</li>
+<li><strong>Resolution:</strong> Added an input delay timer (<code>m_timeInState</code>) inside the update loop of transition states to ignore click registers during the first 200ms.</li>
+<li><strong>Issue:</strong> Axe, Magic Wand, Knife, and Whip projectile textures were drawing upside down or mapping to wrong sprite offsets due to differences in coordinate spaces.</li>
+<li><strong>Resolution:</strong> Re-mapped the source rectangle coordinates (<code>sf::IntRect</code>) based on top-left offsets matching the target spritesheets.</li>
+</ol>
+</body>
+</html>
