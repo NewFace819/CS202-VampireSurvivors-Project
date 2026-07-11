@@ -1,29 +1,16 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include <cmath>
-#include "Player.h"
-#include "Engine/ProfileManager.h"
+#include "Entities/Collectible.h"
+#include "Engine/StatsManager.h"
+#include "State/PlayingState.h"
 
-class ExpGem {
+class ExpGem : public Collectible {
 public:
-    ExpGem() : m_active(false), m_expValue(0.f) {}
-
-    void loadTexture() {
-        if (!m_hasTex) {
-            if (!m_tex) {
-                m_tex = new sf::Texture();
-            }
-            if (m_tex->loadFromFile("assets/ExportedProject/Assets/Resources/spritesheets/items.png")) {
-                m_hasTex = true;
-            }
-        }
-    }
-
+    ExpGem() : m_expValue(0.f) {}
 
     void init(const sf::Vector2f& pos, float expValue) {
         m_position = pos;
         m_expValue = expValue;
-        m_active = true;
+        m_isActive = true;
         m_isMagnetized = false;
         
         loadTexture();
@@ -45,71 +32,30 @@ public:
             m_sprite.setOrigin(5.5f, 7.f);
             m_sprite.setScale(1.5f, 1.5f);
             m_sprite.setPosition(m_position);
+            m_hasSprite = true;
         } else {
-            m_shape.setRadius(4.f);
-            m_shape.setFillColor(sf::Color::Blue);
-            m_shape.setOrigin(4.f, 4.f);
-            m_shape.setPosition(m_position);
+            m_fallbackShape.setRadius(4.f);
+            m_fallbackShape.setFillColor(sf::Color::Blue);
+            m_fallbackShape.setOrigin(4.f, 4.f);
+            m_fallbackShape.setPosition(m_position);
+            m_hasSprite = false;
         }
     }
 
+    void onPickup(PlayingState* playing) override {
+        // Grant EXP
+        StatsManager::GetInstance().addExp(m_expValue);
 
-    void update(float dt, Player* player) {
-        if (!m_active || !player) return;
-
-        // Collect radius check
-        sf::Vector2f delta = player->getPosition() - m_position;
-        float distSq = delta.x * delta.x + delta.y * delta.y;
+        // Greed Gold upgrade (gems yield gold on pick-up)
+        int baseGold = 1;
+        int goldEarned = static_cast<int>(baseGold * ProfileManager::GetInstance().getGreedMultiplier());
+        playing->addGoldToRun(goldEarned);
         
-        // Magnet radius (e.g. 100 pixels, boosted by Magnet powerup)
-        float magnetRadius = 100.0f * (1.f + ProfileManager::GetInstance().getMagnetBonus());
-        if (distSq < magnetRadius * magnetRadius) {
-            m_isMagnetized = true;
-        }
-
-        if (m_isMagnetized) {
-            // Move towards player quickly
-            float dist = std::sqrt(distSq);
-            if (dist > 0.0001f) {
-                sf::Vector2f dir = delta / dist;
-                m_position += dir * 400.0f * dt; // Magnetic pull speed
-                if (m_hasTex) {
-                    m_sprite.setPosition(m_position);
-                } else {
-                    m_shape.setPosition(m_position);
-                }
-            }
-        }
+        m_isActive = false; // deactivate
     }
 
-    void draw(sf::RenderWindow& window) {
-        if (m_active) {
-            if (m_hasTex) {
-                window.draw(m_sprite);
-            } else {
-                window.draw(m_shape);
-            }
-        }
-    }
-
-    bool isActive() const { return m_active; }
-    void deactivate() { m_active = false; }
-    
     float getExpValue() const { return m_expValue; }
-    sf::Vector2f getPosition() const { return m_position; }
-    sf::FloatRect getBounds() const { 
-        return m_hasTex ? m_sprite.getGlobalBounds() : m_shape.getGlobalBounds(); 
-    }
 
 private:
-    sf::Vector2f m_position;
     float m_expValue;
-    bool m_active;
-    bool m_isMagnetized;
-    
-    sf::CircleShape m_shape;
-    sf::Sprite m_sprite;
-    
-    inline static sf::Texture* m_tex = nullptr;
-    inline static bool m_hasTex = false;
 };

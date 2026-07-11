@@ -8,7 +8,8 @@
 #include "Engine/ObjectPool.h"
 #include "Weapons/WeaponBase.h"
 #include "Weapons/Projectile.h"
-#include "Entities/ExpGem.h"
+#include "Entities/Collectible.h"
+
 #include "Items/PassiveItem.h"
 #include <memory>
 #include <vector>
@@ -77,9 +78,10 @@ private:
     
     std::vector<std::unique_ptr<WeaponBase>> m_weapons;
     std::vector<Projectile> m_activeProjectiles;
-    std::vector<ExpGem> m_activeGems;
+    std::vector<std::unique_ptr<Collectible>> m_activeCollectibles;
     std::vector<PassiveItem> m_passiveItems;
     std::vector<TreasureChest> m_chests;
+
 
     float m_spawnTimer = 0.f;
     int   m_lastLevel  = 1; // Track StatsManager level to detect level-ups

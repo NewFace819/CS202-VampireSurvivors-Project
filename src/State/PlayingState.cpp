@@ -14,6 +14,10 @@
 #include "Weapons/ThousandEdge.h"
 #include "Weapons/Hellfire.h"
 #include "Weapons/DeathSpiral.h"
+#include "Entities/ExpGem.h"
+#include "Entities/Coin.h"
+#include "Entities/FloorChicken.h"
+
 
 #include "Physics/Physics.h"
 #include "Items/EvolutionRegistry.h"
@@ -298,12 +302,27 @@ void PlayingState::update(float dt) {
     for (auto it = m_activeEnemies.begin(); it != m_activeEnemies.end(); ) {
         EnemyBase* enemy = *it;
         if (!enemy->isActive()) {
-            // Spawn an ExpGem when an enemy dies (80% drop rate)
-            if (std::rand() % 100 < 80) {
-                ExpGem gem;
-                gem.init(enemy->getPosition(), 1.f); // 1 EXP per gem for early game
-                m_activeGems.push_back(gem);
+            // Spawn a random Collectible when an enemy dies
+            int roll = std::rand() % 100;
+            if (roll < 70) {
+                // 70% Gem
+                auto gem = std::make_unique<ExpGem>();
+                gem->init(enemy->getPosition(), 1.f);
+                m_activeCollectibles.push_back(std::move(gem));
+            } else if (roll < 80) {
+                // 10% Coin (value between 5 and 15)
+                auto coin = std::make_unique<Coin>();
+                int goldValue = 5 + (std::rand() % 11);
+                coin->init(enemy->getPosition(), goldValue);
+                m_activeCollectibles.push_back(std::move(coin));
+            } else if (roll < 85) {
+                // 5% Floor Chicken
+                auto chicken = std::make_unique<FloorChicken>();
+                chicken->init(enemy->getPosition(), 30.f); // Heals 30 HP
+                m_activeCollectibles.push_back(std::move(chicken));
             }
+            // 15% nothing
+
 
             m_enemyPool.release(enemy);
             it = m_activeEnemies.erase(it);
@@ -373,25 +392,18 @@ void PlayingState::update(float dt) {
         ++it;
     }
 
-    // Update gems and handle collection
-    for (auto& gem : m_activeGems) {
-        gem.update(dt, &m_player);
-        if (gem.isActive() && gem.getBounds().intersects(m_player.getBounds())) {
-            StatsManager::GetInstance().addExp(gem.getExpValue()); 
-            
-            // Greed Gold upgrade
-            int baseGold = 1;
-            int goldEarned = static_cast<int>(baseGold * ProfileManager::GetInstance().getGreedMultiplier());
-            m_runGold += goldEarned;
-            ProfileManager::GetInstance().addGold(goldEarned);
-            
-            gem.deactivate();
+    // Update collectibles and handle collection
+    for (auto& item : m_activeCollectibles) {
+        item->update(dt, &m_player);
+        if (item->isActive() && item->getBounds().intersects(m_player.getBounds())) {
+            item->onPickup(this);
         }
     }
 
-    // Clean up dead gems
-    m_activeGems.erase(std::remove_if(m_activeGems.begin(), m_activeGems.end(),
-        [](const ExpGem& g) { return !g.isActive(); }), m_activeGems.end());
+    // Clean up dead collectibles
+    m_activeCollectibles.erase(std::remove_if(m_activeCollectibles.begin(), m_activeCollectibles.end(),
+        [](const std::unique_ptr<Collectible>& c) { return !c->isActive(); }), m_activeCollectibles.end());
+
 
     // Clean up dead projectiles
     m_activeProjectiles.erase(std::remove_if(m_activeProjectiles.begin(), m_activeProjectiles.end(),
@@ -440,9 +452,10 @@ void PlayingState::draw(sf::RenderWindow& window) {
     worldView.setCenter(m_player.getPosition());
     window.setView(worldView);
     
-    for (auto& gem : m_activeGems) {
-        gem.draw(window);
+    for (auto& item : m_activeCollectibles) {
+        item->draw(window);
     }
+
     
     for (auto* enemy : m_activeEnemies) {
         enemy->draw(window);
