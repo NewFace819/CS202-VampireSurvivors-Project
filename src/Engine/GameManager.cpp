@@ -1,9 +1,14 @@
 #include "Engine/GameManager.h"
 #include "State/MainMenuState.h"
+#include "Entities/EnemyDatabase.h"
 
 GameManager::GameManager() 
     : m_window(sf::VideoMode::getDesktopMode(), "Vampire Survivors Clone", sf::Style::Fullscreen) {
     m_window.setFramerateLimit(60);
+    
+    // Load Enemy Database
+    EnemyDatabase::loadDatabase("assets/data/enemies.json", "assets/enemies_atlas.json");
+    
     // Initially push the main menu state
     pushState(std::make_unique<MainMenuState>(this));
 }

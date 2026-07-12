@@ -2,22 +2,20 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include "../Entities/Entity.h"
+#include "../Entities/EnemyBase.h"
 
 // Physics utilities for handling knockback and basic dynamics
 class Physics {
 public:
-    // Applies an instantaneous knockback force to an entity based on the impact direction and the entity's mass
+    // Simple knockback - applies an instantaneous velocity change in a given direction
     static void ApplyKnockback(Entity* entity, const sf::Vector2f& impactDirection, float force, float entityMass = 1.0f) {
-        if (!entity || entityMass <= 0.0f) return;
-
-        // F = m * a -> a = F / m
-        // Instantaneous acceleration added to velocity
-        float acceleration = force / entityMass;
+        if (!entity || entityMass <= 0.f) return;
         
-        sf::Vector2f currentVel = entity->getVelocity();
-        sf::Vector2f newVel = currentVel + (impactDirection * acceleration);
-        
-        entity->setVelocity(newVel);
+        // Cast to EnemyBase to apply knockback directly
+        EnemyBase* enemy = dynamic_cast<EnemyBase*>(entity);
+        if (enemy) {
+            enemy->applyKnockback(impactDirection, force);
+        }
     }
 
     // Resolves soft collisions between enemies to prevent them from stacking completely on top of each other

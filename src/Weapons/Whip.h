@@ -56,6 +56,7 @@ protected:
         Projectile p;
         float scaledRange = 80.0f * m_areaScale;
         p.init(startPos + offset, sf::Vector2f(directionX, 0.f), m_damage, 0.f, scaledRange, 0.3f, true);
+        p.setKnockback(1.0f);
         
         if (m_hasVfxTex) {
             p.setSprite(m_vfxTex, m_whipFrame, 1.f * m_areaScale); // 147x22px already wide enough

@@ -14,6 +14,13 @@ FetchContent_Declare(
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(SFML)
 
+# Fetch nlohmann/json
+FetchContent_Declare(json
+  URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz
+)
+FetchContent_MakeAvailable(json)
+
+
 # Define source files
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
@@ -29,12 +36,10 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     sfml-window
     sfml-system
     sfml-audio
+    nlohmann_json::nlohmann_json
 )
 
-# Create a directory junction (symlink) to assets instead of copying ~1GB every build.
-# This runs only if the junction does not already exist.
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
     COMMAND cmd /C "if not exist \"$<TARGET_FILE_DIR:${PROJECT_NAME}>/assets\" mklink /J \"$<TARGET_FILE_DIR:${PROJECT_NAME}>/assets\" \"${CMAKE_SOURCE_DIR}/assets\""
-    COMMENT "Linking assets directory (junction) if not already linked"
 )

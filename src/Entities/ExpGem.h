@@ -45,12 +45,6 @@ public:
     void onPickup(PlayingState* playing) override {
         // Grant EXP
         StatsManager::GetInstance().addExp(m_expValue);
-
-        // Greed Gold upgrade (gems yield gold on pick-up)
-        int baseGold = 1;
-        int goldEarned = static_cast<int>(baseGold * ProfileManager::GetInstance().getGreedMultiplier());
-        playing->addGoldToRun(goldEarned);
-        
         m_isActive = false; // deactivate
     }
 

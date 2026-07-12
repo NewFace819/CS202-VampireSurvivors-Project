@@ -16,11 +16,11 @@ public:
         loadTexture();
         if (m_hasTex) {
             m_sprite.setTexture(*m_tex);
-            // Uses a heart-shaped icon for chicken/food representation, tinted reddish/pink
-            m_sprite.setTextureRect(sf::IntRect(360, 790, 16, 16)); // Heart icon
-            m_sprite.setColor(sf::Color(255, 120, 120)); // Red-pink tint
+            // Roast.asset: Unity x=301, y=256, w=16, h=16 -> SFML y=752
+            m_sprite.setTextureRect(sf::IntRect(301, 752, 16, 16));
+            m_sprite.setColor(sf::Color::White); // No tint needed - sprite has its own color
             m_sprite.setOrigin(8.f, 8.f);
-            m_sprite.setScale(1.4f, 1.4f);
+            m_sprite.setScale(1.5f, 1.5f);
             m_sprite.setPosition(m_position);
             m_hasSprite = true;
         } else {

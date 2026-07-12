@@ -9,8 +9,8 @@
 #include "Weapons/WeaponBase.h"
 #include "Weapons/Projectile.h"
 #include "Entities/Collectible.h"
-
 #include "Items/PassiveItem.h"
+#include "Engine/WaveManager.h"
 #include <memory>
 #include <vector>
 #include <string>
@@ -83,7 +83,7 @@ private:
     std::vector<TreasureChest> m_chests;
 
 
-    float m_spawnTimer = 0.f;
+    float m_enemySpawnTimer = 0.f;
     int   m_lastLevel  = 1; // Track StatsManager level to detect level-ups
 
     float m_survivalTime = 0.f;
@@ -98,9 +98,13 @@ private:
     bool m_cheatApplied = false;
     std::set<std::string> m_bannedWeapons;
 
+    int m_currentWaveIndex = -1;
+    WaveManager m_waveManager;
+
     sf::Font m_font;
     sf::Text m_timerText;
     sf::Text m_goldText;
+    sf::Text m_levelText;
     sf::Texture m_itemsTex;
     sf::Texture m_enemiesTex; // enemies.png
 };

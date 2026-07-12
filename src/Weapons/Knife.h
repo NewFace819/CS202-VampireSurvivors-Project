@@ -59,6 +59,7 @@ protected:
 
         Projectile p;
         p.init(startPos, fireDir, m_damage, m_speed, 800.0f, 2.0f, false);
+        p.setKnockback(0.5f);
         
         if (m_hasItemsTex) {
             p.setSprite(m_itemsTex, m_knifeFrame, 2.f);

@@ -40,6 +40,10 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType)
     m_enemiesTex.loadFromFile("assets/ExportedProject/Assets/Resources/spritesheets/enemies.png");
     m_enemiesTex.setSmooth(false);
 
+    if (!m_waveManager.loadWavesFromJson("assets/data/mad_forest.json")) {
+        std::cerr << "PlayingState: Failed to load waves!\n";
+    }
+
     m_timerText.setFont(m_font);
     m_timerText.setCharacterSize(40);
     m_timerText.setFillColor(sf::Color::White);
@@ -57,6 +61,11 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType)
 
     // Initialize passive items pool
     m_passiveItems = createDefaultPassiveItems();
+    
+    m_levelText.setFont(m_font);
+    m_levelText.setCharacterSize(8);
+    m_levelText.setFillColor(sf::Color::White);
+    m_levelText.setStyle(sf::Text::Bold);
 
     switch (charType) {
         case CharacterType::Antonio:
@@ -202,24 +211,42 @@ void PlayingState::update(float dt) {
     std::snprintf(timeBuffer, sizeof(timeBuffer), "%02d:%02d", minutes, seconds);
     m_timerText.setString(timeBuffer);
 
-    // Spawn logic (Wave System)
-    m_spawnTimer += dt;
-    
-    // Boss Spawner (At 0:30)
-    if (m_survivalTime >= 30.f && !m_bossSpawned) {
-        m_bossSpawned = true;
-        EnemyBase* boss = m_enemyPool.acquire();
-        if (boss) {
-            float spawnX = m_player.getPosition().x;
-            float spawnY = m_player.getPosition().y - 600.f; // Spawn above
-            boss->init(sf::Vector2f(spawnX, spawnY), 500.f, 30.f, 60.f, sf::Color(128, 0, 128)); // Purple boss
-            boss->setTarget(&m_player);
-            m_activeEnemies.push_back(boss);
-            m_bossPtr = boss;
+
+    char levelBuffer[16];
+    std::snprintf(levelBuffer, sizeof(levelBuffer), "LV %d", StatsManager::GetInstance().getLevel());
+    m_levelText.setString(levelBuffer);
+
+    // Check for wave transition to spawn bosses
+    int newWaveIndex = m_waveManager.getCurrentWaveIndex(m_survivalTime);
+    if (newWaveIndex != m_currentWaveIndex) {
+        m_currentWaveIndex = newWaveIndex;
+        const WaveData* currentWave = m_waveManager.getWave(m_currentWaveIndex);
+        
+        if (currentWave && !currentWave->boss.empty()) {
+            EnemyBase* boss = m_enemyPool.acquire();
+            if (boss) {
+                float spawnX = m_player.getPosition().x;
+                float spawnY = m_player.getPosition().y - 1200.f; // Spawn above
+                
+                EnemyStats stats = EnemyDatabase::getStats(currentWave->boss);
+                int playerLevel = StatsManager::GetInstance().getLevel();
+                if (stats.hpPerLevel > 0.f) {
+                    stats.maxHp += stats.hpPerLevel * playerLevel;
+                    stats.hp = stats.maxHp;
+                }
+                
+                boss->init(sf::Vector2f(spawnX, spawnY), stats, &m_enemiesTex);
+                
+                boss->setTarget(&m_player);
+                m_activeEnemies.push_back(boss);
+                
+                m_bossPtr = boss;
+                m_bossIsDead = false;
+            }
         }
     }
 
-    // Detect boss death → spawn treasure chest
+    // Detect boss death -> spawn treasure chest
     if (m_bossPtr && !m_bossPtr->isActive() && !m_bossIsDead) {
         m_bossIsDead = true;
         TreasureChest chest;
@@ -239,50 +266,45 @@ void PlayingState::update(float dt) {
     m_chests.erase(std::remove_if(m_chests.begin(), m_chests.end(),
         [](const TreasureChest& c) { return !c.isActive(); }), m_chests.end());
 
-    // Normal Waves
-    if (m_survivalTime < 60.f) {
-        // Wave 1: 0:00 - 1:00 (Pipestrello 2 - brown bat)
-        if (m_spawnTimer >= 0.2f) {
-            m_spawnTimer = 0.f;
-            for (int i = 0; i < 2; ++i) {
-                EnemyBase* enemy = m_enemyPool.acquire();
-                if (enemy) {
-                    float angle = static_cast<float>(rand() % 360) * 3.14159f / 180.f;
-                    float spawnX = m_player.getPosition().x + std::cos(angle) * 800.f;
-                    float spawnY = m_player.getPosition().y + std::sin(angle) * 800.f;
-                    std::vector<sf::IntRect> moving = {
-                        {805, 1030, 25, 24}, {1336, 1052, 21, 24}, 
-                        {1011, 917, 19, 24}, {1336, 1052, 21, 24}
-                    };
-                    std::vector<sf::IntRect> death = {
-                        {247, 1169, 27, 26}, {189, 1120, 27, 29}, {477, 904, 31, 33},
-                        {1697, 1224, 34, 37}, {1269, 1047, 31, 40}, {496, 738, 33, 41}
-                    };
-                    enemy->init(sf::Vector2f(spawnX, spawnY), 10.f, 40.f, 8.f, sf::Color::White, &m_enemiesTex, moving, death); 
-                    enemy->setTarget(&m_player);
-                    m_activeEnemies.push_back(enemy);
-                }
-            }
+    // Wave-based Enemy Spawning Logic
+    const WaveData* currentWave = m_waveManager.getCurrentWave(m_survivalTime);
+    if (currentWave && !currentWave->enemies.empty()) {
+        m_enemySpawnTimer += dt;
+        
+        int currentCount = m_activeEnemies.size();
+        bool shouldSpawn = false;
+        int toSpawn = 0;
+        
+        // Spawn immediately to meet minimum, or spawn periodically
+        if (currentCount < currentWave->minEnemies) {
+            shouldSpawn = true;
+            toSpawn = currentWave->minEnemies - currentCount;
+            // Cap at 20 per frame to avoid lag spikes
+            if (toSpawn > 20) toSpawn = 20; 
+        } else if (m_enemySpawnTimer >= currentWave->spawnInterval) {
+            shouldSpawn = true;
+            toSpawn = 1; // Or spawn a batch
+            m_enemySpawnTimer = 0.f;
         }
-    } else {
-        // Wave 2: 1:00+ (Pipestrello 4 - blue bat)
-        if (m_spawnTimer >= 0.1f) {
-            m_spawnTimer = 0.f;
-            for (int i = 0; i < 5; ++i) {
+
+        if (shouldSpawn) {
+            for (int i = 0; i < toSpawn; ++i) {
                 EnemyBase* enemy = m_enemyPool.acquire();
                 if (enemy) {
                     float angle = static_cast<float>(rand() % 360) * 3.14159f / 180.f;
                     float spawnX = m_player.getPosition().x + std::cos(angle) * 800.f;
                     float spawnY = m_player.getPosition().y + std::sin(angle) * 800.f;
-                    std::vector<sf::IntRect> moving = {
-                        {805, 1030, 25, 24}, {1336, 1052, 21, 24}, 
-                        {1011, 917, 19, 24}, {1336, 1052, 21, 24}
-                    };
-                    std::vector<sf::IntRect> death = {
-                        {247, 1169, 27, 26}, {189, 1120, 27, 29}, {477, 904, 31, 33},
-                        {1697, 1224, 34, 37}, {1269, 1047, 31, 40}, {496, 738, 33, 41}
-                    };
-                    enemy->init(sf::Vector2f(spawnX, spawnY), 20.f, 70.f, 6.f, sf::Color(100, 100, 255), &m_enemiesTex, moving, death); 
+
+                    // Randomly select an enemy type from the wave's possible enemies
+                    std::string type = currentWave->enemies[rand() % currentWave->enemies.size()];
+                    EnemyStats stats = EnemyDatabase::getStats(type);
+                    int playerLevel = StatsManager::GetInstance().getLevel();
+                    if (stats.hpPerLevel > 0.f) {
+                        stats.maxHp += stats.hpPerLevel * playerLevel;
+                        stats.hp = stats.maxHp;
+                    }
+
+                    enemy->init(sf::Vector2f(spawnX, spawnY), stats, &m_enemiesTex);
                     enemy->setTarget(&m_player);
                     m_activeEnemies.push_back(enemy);
                 }
@@ -306,9 +328,11 @@ void PlayingState::update(float dt) {
             int roll = std::rand() % 100;
             if (roll < 70) {
                 // 70% Gem
-                auto gem = std::make_unique<ExpGem>();
-                gem->init(enemy->getPosition(), 1.f);
-                m_activeCollectibles.push_back(std::move(gem));
+                if (enemy->getStats().expDrop > 0.0f) {
+                    auto gem = std::make_unique<ExpGem>();
+                    gem->init(enemy->getPosition(), enemy->getStats().expDrop);
+                    m_activeCollectibles.push_back(std::move(gem));
+                }
             } else if (roll < 80) {
                 // 10% Coin (value between 5 and 15)
                 auto coin = std::make_unique<Coin>();
@@ -322,7 +346,6 @@ void PlayingState::update(float dt) {
                 m_activeCollectibles.push_back(std::move(chicken));
             }
             // 15% nothing
-
 
             m_enemyPool.release(enemy);
             it = m_activeEnemies.erase(it);
@@ -376,7 +399,7 @@ void PlayingState::update(float dt) {
         for (auto& proj : m_activeProjectiles) {
             if (proj.isActive() && proj.getBounds().intersects(enemyBounds)) {
                 // Apply Damage & Knockback
-                enemy->takeDamage(proj.getDamage());
+                bool killed = enemy->takeDamage(proj.getDamage());
                 Physics::ApplyKnockback(enemy, proj.getDirection(), proj.getKnockback(), 1.0f);
                 
                 // Bloody Tear lifesteal
@@ -592,24 +615,54 @@ void PlayingState::draw(sf::RenderWindow& window) {
 
     // Draw HUD - Passive Items (below weapons)
     float passiveStartY = startY + boxHeight + 10.f;
+    size_t ownedIdx = 0;
     for (size_t i = 0; i < m_passiveItems.size(); ++i) {
         if (!m_passiveItems[i].isOwned()) continue;
-        float x = startX + i * (boxWidth + padding);
+        float x = startX + ownedIdx * (boxWidth + padding);
         float y = passiveStartY;
+        ++ownedIdx;
 
-        sf::RectangleShape bg(sf::Vector2f(boxWidth, 40.f));
+        // Draw box (greenish bg, green border) — same size as weapon boxes
+        sf::RectangleShape bg(sf::Vector2f(boxWidth, boxHeight));
         bg.setPosition(x, y);
-        bg.setFillColor(sf::Color(50, 100, 50, 220)); // Greenish
+        bg.setFillColor(sf::Color(50, 100, 50, 220));
         bg.setOutlineThickness(2.f);
         bg.setOutlineColor(sf::Color(100, 200, 100));
         window.draw(bg);
 
+        // Draw icon (at top of box)
         sf::Sprite iconSprite;
         iconSprite.setTexture(m_itemsTex);
         iconSprite.setTextureRect(m_passiveItems[i].iconRect);
-        iconSprite.setScale(2.f, 2.f);
-        iconSprite.setPosition(x + 3.f, y + 4.f);
+        float iconScale = 2.f;
+        iconSprite.setScale(iconScale, iconScale);
+        float iconW = m_passiveItems[i].iconRect.width * iconScale;
+        iconSprite.setPosition(x + (boxWidth - iconW) / 2.f, y + 2.f);
         window.draw(iconSprite);
+
+        // Draw level grid (same as weapons)
+        int level   = m_passiveItems[i].level;
+        int maxLevel = m_passiveItems[i].maxLevel;
+        float gridStartX = x + 5.f;
+        float gridStartY = y + 36.f;
+        float cellSize = 8.f;
+        float spacing  = 2.f;
+
+        for (int j = 0; j < maxLevel; ++j) {
+            int row = j / 3;
+            int col = j % 3;
+            sf::RectangleShape cell(sf::Vector2f(cellSize, cellSize));
+            cell.setPosition(gridStartX + col * (cellSize + spacing), gridStartY + row * (cellSize + spacing));
+
+            if (j < level) {
+                cell.setFillColor(sf::Color(100, 230, 100)); // Green for passive
+            } else {
+                cell.setFillColor(sf::Color::Black);
+            }
+            cell.setOutlineThickness(1.f);
+            cell.setOutlineColor(sf::Color(100, 200, 100));
+            window.draw(cell);
+        }
     }
 
     // EXP Bar Fill
@@ -618,6 +671,11 @@ void PlayingState::draw(sf::RenderWindow& window) {
     expFill.setPosition(20.f, windowSize.y - 20.f);
     expFill.setFillColor(sf::Color::Blue);
     window.draw(expFill);
+
+    sf::FloatRect levelBounds = m_levelText.getLocalBounds();
+    m_levelText.setOrigin(levelBounds.left + levelBounds.width / 2.0f, levelBounds.top + levelBounds.height / 2.0f);
+    m_levelText.setPosition(windowSize.x / 2.0f, windowSize.y - 15.f);
+    window.draw(m_levelText);
 }
 
 void PlayingState::exit() {

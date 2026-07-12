@@ -57,6 +57,7 @@ protected:
 
         Projectile p;
         p.init(spawnPos, fireDir, m_damage, m_speed, 800.0f, 3.0f, true);
+        p.setKnockback(1.0f);
         p.setGravity(600.f); 
         p.setSpinSpeed(720.f);
         

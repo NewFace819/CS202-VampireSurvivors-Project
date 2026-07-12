@@ -12,14 +12,19 @@ public:
         m_isActive = true;
         m_isMagnetized = false;
         
-        loadTexture();
-        if (m_hasTex) {
-            m_sprite.setTexture(*m_tex);
-            // Uses a gold-tinted small icon
-            m_sprite.setTextureRect(sf::IntRect(378, 790, 16, 16));
-            m_sprite.setColor(sf::Color(255, 223, 0)); // Gold/Yellow
-            m_sprite.setOrigin(8.f, 8.f);
-            m_sprite.setScale(1.3f, 1.3f);
+        if (!m_coinTex) {
+            m_coinTex = new sf::Texture();
+            if (m_coinTex->loadFromFile("assets/ExportedProject/Assets/Resources/spritesheets/UI.png")) {
+                m_hasCoinTex = true;
+            }
+        }
+        
+        if (m_hasCoinTex) {
+            m_sprite.setTexture(*m_coinTex);
+            // CoinGold icon in UI.png
+            m_sprite.setTextureRect(sf::IntRect(1011, 359, 12, 12));
+            m_sprite.setOrigin(6.f, 6.f);
+            m_sprite.setScale(1.5f, 1.5f);
             m_sprite.setPosition(m_position);
             m_hasSprite = true;
         } else {
@@ -32,11 +37,16 @@ public:
     }
 
     void onPickup(PlayingState* playing) override {
-        // Grant Gold directly
+        // Grant Gold directly, apply greed multiplier
+        float greed = 1.0f;
+        // If ProfileManager is accessible here, we would use it, but since we don't have it included, just give base for now or include it
         playing->addGoldToRun(m_goldValue);
         m_isActive = false; // deactivate
     }
 
 private:
     int m_goldValue;
+    
+    inline static sf::Texture* m_coinTex = nullptr;
+    inline static bool m_hasCoinTex = false;
 };

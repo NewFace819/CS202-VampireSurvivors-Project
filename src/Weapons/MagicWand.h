@@ -69,6 +69,7 @@ protected:
         Projectile p;
         // Use pierce count; default non-piercing but m_pierce extra hits allowed
         p.init(startPos, fireDir, m_damage, m_speed, 50.0f, 5.0f, m_pierce > 0);
+        p.setKnockback(1.0f);
         if (m_hasVfxTex) {
             // Soft glowing sparkle, small scale so it looks like a sparkling orb
             p.setSprite(m_vfxTex, m_wandFrame, 0.4f, true, sf::Color(100, 200, 255));

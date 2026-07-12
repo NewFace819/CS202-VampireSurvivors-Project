@@ -34,35 +34,35 @@ inline std::vector<PassiveItem> createDefaultPassiveItems() {
             "Hollow Heart",
             "Augments max health by 20%.",
             0, 5,
-            sf::IntRect(360, 790, 16, 16), // Hollow Heart icon in items.png
+            sf::IntRect(434, 807, 16, 15), // HeartBlack
             "maxHealth", 0.20f
         },
         {
             "Empty Tome",
             "Reduces weapons cooldown by 8%.",
             0, 5,
-            sf::IntRect(454, 793, 16, 16),
+            sf::IntRect(206, 686, 16, 16), // Book2
             "cooldown", 0.08f
         },
         {
             "Bracer",
             "Increases projectiles speed by 10%.",
             0, 5,
-            sf::IntRect(509, 793, 16, 16),
+            sf::IntRect(418, 693, 16, 16), // Gauntlet
             "projSpeed", 0.10f
         },
         {
             "Spinach",
             "Raises inflicted damage by 10%.",
             0, 5,
-            sf::IntRect(378, 790, 16, 16),
+            sf::IntRect(136, 672, 12, 16), // Leaf
             "damage", 0.10f
         },
         {
             "Candelabrador",
             "Augments the Area of attacks by 10%.",
             0, 5,
-            sf::IntRect(490, 793, 16, 16),
+            sf::IntRect(467, 598, 15, 16), // Candelabra
             "area", 0.10f
         }
     };

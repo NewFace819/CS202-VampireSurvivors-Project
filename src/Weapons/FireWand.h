@@ -78,6 +78,7 @@ protected:
 
         Projectile p;
         p.init(startPos, fireDir, m_damage, m_speed, 800.0f, 5.0f, false);
+        p.setKnockback(1.0f);
         
         if (m_hasVfxTex) {
             p.setSprite(m_vfxTex, m_fireballFrame, 1.0f);
