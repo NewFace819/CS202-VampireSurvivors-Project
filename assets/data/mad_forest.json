@@ -1,0 +1,63 @@
+{
+  "name": "Mad Forest",
+  "waves": [
+    {
+      "startTime": 0.0,
+      "spawnInterval": 1.0,
+      "enemies": [
+        "Pipestrello 3"
+      ],
+      "enemyMinimum": 15
+    },
+    {
+      "startTime": 60.0,
+      "spawnInterval": 1.0,
+      "enemies": [
+        "ZOMBIE",
+        "Pipestrello 2"
+      ],
+      "boss": "Pipestrello 4 (glowing bat)",
+      "enemyMinimum": 30
+    },
+    {
+      "startTime": 120.0,
+      "spawnInterval": 0.5,
+      "enemies": [
+        "Pipestrello 2",
+        "Pipestrello 1",
+        "Pipestrello 3"
+      ],
+      "enemyMinimum": 50
+    },
+    {
+      "startTime": 180.0,
+      "spawnInterval": 0.25,
+      "enemies": [
+        "SKELETON"
+      ],
+      "boss": "Pipestrello 4 (glowing bat)",
+      "enemyMinimum": 40
+    },
+    {
+      "startTime": 240.0,
+      "spawnInterval": 0.4,
+      "enemies": [
+        "Pipestrello 4 (glowing bat)",
+        "SKELETON_4",
+        "SKELETON_5"
+      ],
+      "enemyMinimum": 70
+    },
+    {
+      "startTime": 300.0,
+      "spawnInterval": 0.3,
+      "enemies": [
+        "ZOMBIE",
+        "Pipestrello 4 (glowing bat)",
+        "SKELETON_5",
+        "SKELETON_6"
+      ],
+      "enemyMinimum": 80
+    }
+  ]
+}

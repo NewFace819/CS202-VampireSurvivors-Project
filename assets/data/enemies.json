@@ -1,0 +1,342 @@
+{
+  "enemies": {
+    "Pipestrello 1": {
+      "class": "NORMAL",
+      "hp": 1.0,
+      "speed": 63.0,
+      "damage": 5.0,
+      "collisionRadius": 7.0,
+      "expDrop": 1.0,
+      "spriteWalkPrefix": "Bat1_i0",
+      "spriteDeathPrefix": "Bat1_",
+      "walkFrames": 4,
+      "deathFrames": 10,
+      "facesLeftByDefault": false,
+      "color": [
+        255,
+        255,
+        255,
+        255
+      ]
+    },
+    "Pipestrello 2": {
+      "class": "NORMAL",
+      "hp": 5.0,
+      "speed": 63.0,
+      "damage": 5.0,
+      "collisionRadius": 8.0,
+      "expDrop": 1.0,
+      "spriteWalkPrefix": "Bat2_i0",
+      "spriteDeathPrefix": "Bat2_",
+      "walkFrames": 4,
+      "deathFrames": 10,
+      "facesLeftByDefault": false,
+      "color": [
+        255,
+        255,
+        255,
+        255
+      ]
+    },
+    "Pipestrello 3": {
+      "class": "NORMAL",
+      "hp": 5.0,
+      "speed": 63.0,
+      "damage": 5.0,
+      "collisionRadius": 8.0,
+      "expDrop": 1.0,
+      "spriteWalkPrefix": "Bat3_i0",
+      "spriteDeathPrefix": "Bat3_",
+      "walkFrames": 4,
+      "deathFrames": 10,
+      "facesLeftByDefault": false,
+      "color": [
+        255,
+        255,
+        255,
+        255
+      ]
+    },
+    "Pipestrello 4 (glowing bat)": {
+      "class": "BOSS",
+      "hp": 0.0,
+      "hpPerLevel": 50.0,
+      "speed": 63.0,
+      "damage": 10.0,
+      "collisionRadius": 16.0,
+      "expDrop": 30.0,
+      "spriteWalkPrefix": "Bat4_i0",
+      "spriteDeathPrefix": "Bat4_",
+      "walkFrames": 4,
+      "deathFrames": 10,
+      "facesLeftByDefault": false,
+      "color": [
+        255,
+        255,
+        255,
+        255
+      ]
+    },
+    "SKELETON": {
+      "class": "NORMAL",
+      "hp": 15.0,
+      "speed": 45.0,
+      "damage": 10.0,
+      "collisionRadius": 12.0,
+      "expDrop": 2.0,
+      "spriteWalkPrefix": "SkeletonN1_i0",
+      "spriteDeathPrefix": "SkeletonN1_",
+      "walkFrames": 4,
+      "deathFrames": 8,
+      "facesLeftByDefault": false,
+      "color": [
+        255,
+        255,
+        255,
+        255
+      ]
+    },
+    "SKELETON_1": {
+      "class": "NORMAL",
+      "hp": 15.0,
+      "speed": 45.0,
+      "damage": 10.0,
+      "collisionRadius": 12.0,
+      "expDrop": 2.0,
+      "spriteWalkPrefix": "Skeleton1_i0",
+      "spriteDeathPrefix": "Skeleton1_",
+      "walkFrames": 4,
+      "deathFrames": 10,
+      "facesLeftByDefault": false,
+      "color": [
+        255,
+        255,
+        255,
+        255
+      ]
+    },
+    "SKELETON_2": {
+      "class": "NORMAL",
+      "hp": 15.0,
+      "speed": 45.0,
+      "damage": 10.0,
+      "collisionRadius": 12.0,
+      "expDrop": 2.0,
+      "spriteWalkPrefix": "Skeleton2_i0",
+      "spriteDeathPrefix": "Skeleton2_",
+      "walkFrames": 4,
+      "deathFrames": 10,
+      "facesLeftByDefault": false,
+      "color": [
+        255,
+        255,
+        255,
+        255
+      ]
+    },
+    "SKELETON_3": {
+      "class": "NORMAL",
+      "hp": 15.0,
+      "speed": 45.0,
+      "damage": 10.0,
+      "collisionRadius": 12.0,
+      "expDrop": 2.0,
+      "spriteWalkPrefix": "Skeleton3_i0",
+      "spriteDeathPrefix": "Skeleton3_",
+      "walkFrames": 4,
+      "deathFrames": 10,
+      "facesLeftByDefault": false,
+      "color": [
+        255,
+        255,
+        255,
+        255
+      ]
+    },
+    "SKELETON_4": {
+      "class": "NORMAL",
+      "hp": 15.0,
+      "speed": 45.0,
+      "damage": 10.0,
+      "collisionRadius": 12.0,
+      "expDrop": 2.0,
+      "spriteWalkPrefix": "Skeleton4_i0",
+      "spriteDeathPrefix": "Skeleton4_",
+      "walkFrames": 4,
+      "deathFrames": 10,
+      "facesLeftByDefault": false,
+      "color": [
+        255,
+        255,
+        255,
+        255
+      ]
+    },
+    "SKELETON_5": {
+      "class": "NORMAL",
+      "hp": 15.0,
+      "speed": 45.0,
+      "damage": 10.0,
+      "collisionRadius": 12.0,
+      "expDrop": 2.0,
+      "spriteWalkPrefix": "Skeleton5_i0",
+      "spriteDeathPrefix": "Skeleton5_",
+      "walkFrames": 4,
+      "deathFrames": 10,
+      "facesLeftByDefault": false,
+      "color": [
+        255,
+        255,
+        255,
+        255
+      ]
+    },
+    "SKELETON_6": {
+      "class": "NORMAL",
+      "hp": 15.0,
+      "speed": 45.0,
+      "damage": 10.0,
+      "collisionRadius": 12.0,
+      "expDrop": 2.0,
+      "spriteWalkPrefix": "Skeleton6_i0",
+      "spriteDeathPrefix": "Skeleton6_",
+      "walkFrames": 4,
+      "deathFrames": 10,
+      "facesLeftByDefault": false,
+      "color": [
+        255,
+        255,
+        255,
+        255
+      ]
+    },
+    "ZOMBIE": {
+      "class": "NORMAL",
+      "hp": 10.0,
+      "speed": 45.0,
+      "damage": 10.0,
+      "collisionRadius": 12.0,
+      "expDrop": 1.0,
+      "spriteWalkPrefix": "Ghoul1_i0",
+      "spriteDeathPrefix": "Ghoul1_",
+      "walkFrames": 4,
+      "deathFrames": 10,
+      "facesLeftByDefault": true,
+      "color": [
+        255,
+        255,
+        255,
+        255
+      ]
+    },
+    "MUDMAN": {
+      "class": "NORMAL",
+      "hp": 80.0,
+      "speed": 30.0,
+      "damage": 20.0,
+      "collisionRadius": 12.0,
+      "expDrop": 5.0,
+      "spriteWalkPrefix": "Mudman1_i0",
+      "spriteDeathPrefix": "Mudman1_",
+      "walkFrames": 4,
+      "deathFrames": 10,
+      "facesLeftByDefault": true,
+      "color": [
+        255,
+        255,
+        255,
+        255
+      ]
+    },
+    "GHOST": {
+      "class": "NORMAL",
+      "hp": 25.0,
+      "speed": 45.0,
+      "damage": 8.0,
+      "collisionRadius": 8.0,
+      "expDrop": 3.0,
+      "spriteWalkPrefix": "",
+      "spriteDeathPrefix": "",
+      "walkRects": [
+        [
+          389,
+          714,
+          25,
+          29
+        ],
+        [
+          418,
+          715,
+          23,
+          28
+        ],
+        [
+          445,
+          714,
+          25,
+          29
+        ],
+        [
+          474,
+          713,
+          26,
+          30
+        ]
+      ],
+      "deathRects": [
+        [
+          389,
+          714,
+          25,
+          29
+        ],
+        [
+          418,
+          715,
+          23,
+          28
+        ],
+        [
+          445,
+          714,
+          25,
+          29
+        ],
+        [
+          474,
+          713,
+          26,
+          30
+        ]
+      ],
+      "walkFrames": 4,
+      "deathFrames": 4,
+      "facesLeftByDefault": true,
+      "color": [
+        200,
+        200,
+        255,
+        180
+      ]
+    },
+    "GIANT_BOSS": {
+      "class": "BOSS",
+      "hp": 10000.0,
+      "speed": 20.0,
+      "damage": 100.0,
+      "collisionRadius": 50.0,
+      "expDrop": 100.0,
+      "spriteWalkPrefix": "XLBat_i0",
+      "spriteDeathPrefix": "XLBat_",
+      "walkFrames": 4,
+      "deathFrames": 18,
+      "facesLeftByDefault": false,
+      "color": [
+        128,
+        0,
+        128,
+        255
+      ]
+    }
+  }
+}
