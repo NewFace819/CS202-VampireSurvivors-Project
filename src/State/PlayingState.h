@@ -107,5 +107,10 @@ private:
     sf::Text m_levelText;
     sf::Texture m_itemsTex;
     sf::Texture m_enemiesTex; // enemies.png
+
+    // Infinite-tiling background (3x3 grid)
+    sf::Texture m_bgTex;
+    sf::Sprite  m_bgTiles[3][3];  // [row][col]
+    float       m_tileSize = 1024.f; // size of one tile in world units
 };
 

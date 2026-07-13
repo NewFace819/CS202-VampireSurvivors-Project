@@ -40,6 +40,24 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType)
     m_enemiesTex.loadFromFile("assets/ExportedProject/Assets/Resources/spritesheets/enemies.png");
     m_enemiesTex.setSmooth(false);
 
+    // Load background tile
+    if (!m_bgTex.loadFromFile("assets/ExportedProject/Assets/App/Art/Sprites/Addressable/backgrounds/bg_forest.png")) {
+        std::cerr << "PlayingState: Could not load bg_forest.png!\n";
+    }
+    m_bgTex.setRepeated(false);
+    m_tileSize = 2048.f; // 1024 texture * 2x scale
+    // Initialize 3x3 grid of tiles: center tile (1,1) sits at world origin
+    for (int row = 0; row < 3; ++row) {
+        for (int col = 0; col < 3; ++col) {
+            m_bgTiles[row][col].setTexture(m_bgTex);
+            m_bgTiles[row][col].setScale(2.f, 2.f);
+            m_bgTiles[row][col].setPosition(
+                (col - 1) * m_tileSize,
+                (row - 1) * m_tileSize
+            );
+        }
+    }
+
     if (!m_waveManager.loadWavesFromJson("assets/data/mad_forest.json")) {
         std::cerr << "PlayingState: Failed to load waves!\n";
     }
@@ -115,8 +133,24 @@ void PlayingState::update(float dt) {
         m_manager->changeState(std::make_unique<MainMenuState>(m_manager));
         return; 
     }
+    // Update infinite background tiles: snap any tile that drifts too far from camera
+    {
+        sf::Vector2f cam = m_player.getPosition();
+        // For each tile, if it's more than 1.5 tile-widths away in any axis, wrap it
+        for (int row = 0; row < 3; ++row) {
+            for (int col = 0; col < 3; ++col) {
+                sf::Vector2f tpos = m_bgTiles[row][col].getPosition();
+                float dx = cam.x - (tpos.x + m_tileSize * 0.5f);
+                float dy = cam.y - (tpos.y + m_tileSize * 0.5f);
+                if (dx >  m_tileSize * 1.5f) m_bgTiles[row][col].move( m_tileSize * 3.f, 0.f);
+                if (dx < -m_tileSize * 1.5f) m_bgTiles[row][col].move(-m_tileSize * 3.f, 0.f);
+                if (dy >  m_tileSize * 1.5f) m_bgTiles[row][col].move(0.f,  m_tileSize * 3.f);
+                if (dy < -m_tileSize * 1.5f) m_bgTiles[row][col].move(0.f, -m_tileSize * 3.f);
+            }
+        }
+    }
 
-    // Cheat Code: Alt+E = max Whip + add Hollow Heart for evolution testing
+
     if (!m_cheatApplied && sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt) && sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
         m_cheatApplied = true;
         // Max out Whip if owned, or add it
@@ -468,12 +502,17 @@ void PlayingState::update(float dt) {
 }
 
 void PlayingState::draw(sf::RenderWindow& window) {
-    window.clear(sf::Color(20, 50, 20)); 
+    window.clear(sf::Color(20, 50, 20));
 
     // Create and apply World View centered on player
     sf::View worldView = window.getDefaultView();
     worldView.setCenter(m_player.getPosition());
     window.setView(worldView);
+
+    // Draw infinite-tiling background before everything else
+    for (int row = 0; row < 3; ++row)
+        for (int col = 0; col < 3; ++col)
+            window.draw(m_bgTiles[row][col]);
     
     for (auto& item : m_activeCollectibles) {
         item->draw(window);
