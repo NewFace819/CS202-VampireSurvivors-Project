@@ -191,11 +191,11 @@ void LevelUpState::buildOptions() {
         card.iconSprite.setTexture(m_itemsTex);
         sf::IntRect texRect;
         if (m_options[i].weaponName == "Money Bag") {
-            texRect = sf::IntRect(378, 790, 16, 16); // Spinach icon
-            card.iconSprite.setColor(sf::Color(255, 230, 80)); // Tint yellow
+            texRect = sf::IntRect(97, 786, 16, 16); // MoneyBagColor icon
+            card.iconSprite.setColor(sf::Color::White);
         } else if (m_options[i].weaponName == "Floor Chicken") {
-            texRect = sf::IntRect(360, 790, 16, 16); // Heart icon
-            card.iconSprite.setColor(sf::Color(255, 120, 120)); // Tint red
+            texRect = sf::IntRect(301, 752, 16, 16); // Roast icon
+            card.iconSprite.setColor(sf::Color::White);
         } else if (m_options[i].isPassive) {
             // Use passive item icon from the items list
             auto& passives = m_playing->getPassiveItems();

@@ -31,6 +31,8 @@ public:
         m_trailEnabled = false;
         m_trailTimer = 0.f;
         m_trailParticles.clear();
+        m_gravity = 0.f;
+        m_spinSpeed = 0.f;
         
         float areaMult = ProfileManager::GetInstance().getAreaMultiplier();
         m_shape.setRadius(5.f * areaMult);

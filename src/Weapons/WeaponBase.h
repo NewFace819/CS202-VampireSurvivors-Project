@@ -38,7 +38,7 @@ public:
             m_burstTimer += dt;
             while (m_burstTimer >= m_burstInterval && m_pendingBurst > 0) {
                 m_burstTimer -= m_burstInterval;
-                fire(m_burstPlayerPos, m_burstPlayerDir, enemies, activeProjectiles, m_burstShotsFired);
+                fire(playerPos, playerDir, enemies, activeProjectiles, m_burstShotsFired);
                 m_burstShotsFired++;
                 m_pendingBurst--;
             }

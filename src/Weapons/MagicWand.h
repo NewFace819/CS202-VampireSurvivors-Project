@@ -45,25 +45,32 @@ public:
 
 protected:
     void fire(const sf::Vector2f& startPos, const sf::Vector2f& playerDir, const std::vector<EnemyBase*>& enemies, std::vector<Projectile>& activeProjectiles, int shotIndex = 0) override {
-        // Find nearest active enemy
-        float minDistSq = std::numeric_limits<float>::max();
-        EnemyBase* target = nullptr;
+        sf::Vector2f fireDir;
         
-        for (auto* enemy : enemies) {
-            if (!enemy->isActive()) continue;
-            sf::Vector2f diff = enemy->getPosition() - startPos;
-            float distSq = diff.x * diff.x + diff.y * diff.y;
-            if (distSq < minDistSq) {
-                minDistSq = distSq;
-                target = enemy;
+        if (shotIndex == 0) {
+            // Find nearest active enemy
+            float minDistSq = std::numeric_limits<float>::max();
+            EnemyBase* target = nullptr;
+            
+            for (auto* enemy : enemies) {
+                if (!enemy->isActive()) continue;
+                sf::Vector2f diff = enemy->getPosition() - startPos;
+                float distSq = diff.x * diff.x + diff.y * diff.y;
+                if (distSq < minDistSq) {
+                    minDistSq = distSq;
+                    target = enemy;
+                }
             }
-        }
-        
-        sf::Vector2f fireDir = playerDir; // Default to facing dir if no enemies
-        if (target) {
-            sf::Vector2f diff = target->getPosition() - startPos;
-            float length = std::sqrt(diff.x * diff.x + diff.y * diff.y);
-            if (length > 0) fireDir = diff / length;
+            
+            fireDir = playerDir; // Default to facing dir if no enemies
+            if (target) {
+                sf::Vector2f diff = target->getPosition() - startPos;
+                float length = std::sqrt(diff.x * diff.x + diff.y * diff.y);
+                if (length > 0) fireDir = diff / length;
+            }
+            m_currentTargetDir = fireDir;
+        } else {
+            fireDir = m_currentTargetDir;
         }
 
         Projectile p;
@@ -80,4 +87,5 @@ protected:
 private:
     sf::IntRect m_wandFrame;
     int m_pierce = 0; // extra pierce levels
+    sf::Vector2f m_currentTargetDir;
 };
