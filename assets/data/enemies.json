@@ -255,62 +255,10 @@
       "damage": 8.0,
       "collisionRadius": 8.0,
       "expDrop": 3.0,
-      "spriteWalkPrefix": "",
-      "spriteDeathPrefix": "",
-      "walkRects": [
-        [
-          389,
-          714,
-          25,
-          29
-        ],
-        [
-          418,
-          715,
-          23,
-          28
-        ],
-        [
-          445,
-          714,
-          25,
-          29
-        ],
-        [
-          474,
-          713,
-          26,
-          30
-        ]
-      ],
-      "deathRects": [
-        [
-          389,
-          714,
-          25,
-          29
-        ],
-        [
-          418,
-          715,
-          23,
-          28
-        ],
-        [
-          445,
-          714,
-          25,
-          29
-        ],
-        [
-          474,
-          713,
-          26,
-          30
-        ]
-      ],
+      "spriteWalkPrefix": "Skeleton1_i0",
+      "spriteDeathPrefix": "Skeleton1_",
       "walkFrames": 4,
-      "deathFrames": 4,
+      "deathFrames": 10,
       "facesLeftByDefault": true,
       "color": [
         200,
@@ -337,6 +285,28 @@
         128,
         255
       ]
+    },
+    "Undead Witch": {
+      "class": "NORMAL",
+      "hp": 25.0,
+      "speed": 45.0,
+      "damage": 8.0,
+      "collisionRadius": 10.0,
+      "expDrop": 3.0,
+      "spriteWalkPrefix": "Witch2_i0",
+      "spriteDeathPrefix": "Witch2_",
+      "walkFrames": 4,
+      "deathFrames": 10,
+      "facesLeftByDefault": true,
+      "color": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "shootCooldown": 2.0,
+      "projectileDamage": 10.0,
+      "projectileSpeed": 200.0
     }
   }
 }

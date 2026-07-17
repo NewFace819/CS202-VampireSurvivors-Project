@@ -47,6 +47,9 @@ void EnemyDatabase::loadDatabase(const std::string& enemiesJsonPath, const std::
         stats.collisionRadius = data.value("collisionRadius", 10.f);
         stats.expDrop = data.value("expDrop", 1.f);
         stats.facesLeftByDefault = data.value("facesLeftByDefault", false);
+        stats.shootCooldown = data.value("shootCooldown", 0.f);
+        stats.projectileDamage = data.value("projectileDamage", 0.f);
+        stats.projectileSpeed = data.value("projectileSpeed", 0.f);
 
         if (data.contains("color")) {
             auto c = data["color"];

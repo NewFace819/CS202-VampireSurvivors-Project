@@ -25,6 +25,10 @@ struct EnemyStats {
     std::vector<sf::IntRect> movingRects;
     std::vector<sf::IntRect> deathRects;
     bool facesLeftByDefault;
+    
+    float shootCooldown = 0.f;
+    float projectileDamage = 0.f;
+    float projectileSpeed = 0.f;
 };
 
 class EnemyDatabase {

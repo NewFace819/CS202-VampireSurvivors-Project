@@ -1,0 +1,53 @@
+{
+  "name": "Inlaid Library",
+  "waves": [
+    {
+      "startTime": 0.0,
+      "spawnInterval": 1.0,
+      "enemies": [
+        "GHOST",
+        "ZOMBIE"
+      ],
+      "enemyMinimum": 15
+    },
+    {
+      "startTime": 60.0,
+      "spawnInterval": 1.0,
+      "enemies": [
+        "ZOMBIE",
+        "Undead Witch"
+      ],
+      "boss": "GIANT_BOSS",
+      "enemyMinimum": 30
+    },
+    {
+      "startTime": 120.0,
+      "spawnInterval": 0.8,
+      "enemies": [
+        "Undead Witch",
+        "SKELETON"
+      ],
+      "enemyMinimum": 45
+    },
+    {
+      "startTime": 180.0,
+      "spawnInterval": 0.6,
+      "enemies": [
+        "MUDMAN",
+        "Undead Witch"
+      ],
+      "boss": "Pipestrello 4 (glowing bat)",
+      "enemyMinimum": 60
+    },
+    {
+      "startTime": 240.0,
+      "spawnInterval": 0.4,
+      "enemies": [
+        "SKELETON",
+        "GHOST",
+        "Undead Witch"
+      ],
+      "enemyMinimum": 80
+    }
+  ]
+}

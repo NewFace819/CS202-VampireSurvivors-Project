@@ -4,6 +4,7 @@
 #include "Physics/SpatialHashGrid.h"
 #include "Entities/Player.h"
 #include "Entities/EnemyBase.h"
+#include "Entities/ShooterEnemy.h"
 #include "Entities/TreasureChest.h"
 #include "Engine/ObjectPool.h"
 #include "Weapons/WeaponBase.h"
@@ -27,9 +28,14 @@ enum class CharacterType {
     Sigma
 };
 
+enum class StageType {
+    MadForest,
+    InlaidLibrary
+};
+
 class PlayingState : public GameState {
 public:
-    PlayingState(GameManager* manager, CharacterType charType);
+    PlayingState(GameManager* manager, CharacterType charType, StageType stageType);
     void enter() override;
     void update(float dt) override;
     void draw(sf::RenderWindow& window) override;
@@ -74,6 +80,7 @@ private:
     
     Player m_player;
     ObjectPool<EnemyBase> m_enemyPool;
+    ObjectPool<ShooterEnemy> m_shooterPool;
     std::vector<EnemyBase*> m_activeEnemies;
     
     std::vector<std::unique_ptr<WeaponBase>> m_weapons;
@@ -112,5 +119,6 @@ private:
     sf::Texture m_bgTex;
     sf::Sprite  m_bgTiles[3][3];  // [row][col]
     float       m_tileSize = 1024.f; // size of one tile in world units
+    StageType   m_stageType;
 };
 

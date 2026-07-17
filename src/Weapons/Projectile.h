@@ -27,6 +27,7 @@ public:
         m_lifeTimer = 0.f;
         m_piercing = piercing;
         m_active = true;
+        m_isEnemyProj = false;
         m_hasSprite = false;
         m_trailEnabled = false;
         m_trailTimer = 0.f;
@@ -200,6 +201,10 @@ public:
     void setGravity(float g) { m_gravity = g; }
     void setSpinSpeed(float s) { m_spinSpeed = s; }
 
+    bool isEnemyProj() const { return m_isEnemyProj; }
+    void setEnemyProj(bool isEnemy) { m_isEnemyProj = isEnemy; }
+    void setFillColor(const sf::Color& color) { m_shape.setFillColor(color); }
+
 private:
     struct TrailParticle {
         sf::Vector2f pos;
@@ -220,6 +225,7 @@ private:
     float m_lifetime;
     bool m_piercing;
     bool m_active;
+    bool m_isEnemyProj = false;
 
     sf::CircleShape m_shape;
     sf::RectangleShape m_rectShape;

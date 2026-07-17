@@ -27,8 +27,8 @@
 
 #include "Engine/ProfileManager.h"
 
-PlayingState::PlayingState(GameManager* manager, CharacterType charType) 
-    : m_manager(manager), m_grid(100.0f), m_enemyPool(500) { 
+PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageType stageType) 
+    : m_manager(manager), m_grid(100.0f), m_enemyPool(500), m_shooterPool(150), m_stageType(stageType) { 
 
     if (!m_font.loadFromFile("assets/ExportedProject/Assets/Font/Courier_HintedSmooth.ttf")) {
         std::cerr << "PlayingState: Could not load font!\n";
@@ -40,9 +40,17 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType)
     m_enemiesTex.loadFromFile("assets/ExportedProject/Assets/Resources/spritesheets/enemies.png");
     m_enemiesTex.setSmooth(false);
 
+    std::string waveJsonPath = "assets/data/mad_forest.json";
+    std::string bgPath = "assets/ExportedProject/Assets/App/Art/Sprites/Addressable/backgrounds/bg_forest.png";
+
+    if (m_stageType == StageType::InlaidLibrary) {
+        waveJsonPath = "assets/data/inlaid_library.json";
+        bgPath = "assets/ExportedProject/Assets/App/Art/Sprites/Addressable/backgrounds/bg_green.png";
+    }
+
     // Load background tile
-    if (!m_bgTex.loadFromFile("assets/ExportedProject/Assets/App/Art/Sprites/Addressable/backgrounds/bg_forest.png")) {
-        std::cerr << "PlayingState: Could not load bg_forest.png!\n";
+    if (!m_bgTex.loadFromFile(bgPath)) {
+        std::cerr << "PlayingState: Could not load background texture: " << bgPath << "\n";
     }
     m_bgTex.setRepeated(false);
     m_tileSize = 2048.f; // 1024 texture * 2x scale
@@ -58,8 +66,8 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType)
         }
     }
 
-    if (!m_waveManager.loadWavesFromJson("assets/data/mad_forest.json")) {
-        std::cerr << "PlayingState: Failed to load waves!\n";
+    if (!m_waveManager.loadWavesFromJson(waveJsonPath)) {
+        std::cerr << "PlayingState: Failed to load waves: " << waveJsonPath << "\n";
     }
 
     m_timerText.setFont(m_font);
@@ -257,12 +265,17 @@ void PlayingState::update(float dt) {
         const WaveData* currentWave = m_waveManager.getWave(m_currentWaveIndex);
         
         if (currentWave && !currentWave->boss.empty()) {
-            EnemyBase* boss = m_enemyPool.acquire();
+            EnemyStats stats = EnemyDatabase::getStats(currentWave->boss);
+            EnemyBase* boss = nullptr;
+            if (stats.shootCooldown > 0.f) {
+                boss = m_shooterPool.acquire();
+            } else {
+                boss = m_enemyPool.acquire();
+            }
             if (boss) {
                 float spawnX = m_player.getPosition().x;
                 float spawnY = m_player.getPosition().y - 1200.f; // Spawn above
                 
-                EnemyStats stats = EnemyDatabase::getStats(currentWave->boss);
                 int playerLevel = StatsManager::GetInstance().getLevel();
                 if (stats.hpPerLevel > 0.f) {
                     stats.maxHp += stats.hpPerLevel * playerLevel;
@@ -270,10 +283,8 @@ void PlayingState::update(float dt) {
                 }
                 
                 boss->init(sf::Vector2f(spawnX, spawnY), stats, &m_enemiesTex);
-                
                 boss->setTarget(&m_player);
                 m_activeEnemies.push_back(boss);
-                
                 m_bossPtr = boss;
                 m_bossIsDead = false;
             }
@@ -323,15 +334,22 @@ void PlayingState::update(float dt) {
 
         if (shouldSpawn) {
             for (int i = 0; i < toSpawn; ++i) {
-                EnemyBase* enemy = m_enemyPool.acquire();
+                // Randomly select an enemy type from the wave's possible enemies
+                std::string type = currentWave->enemies[rand() % currentWave->enemies.size()];
+                EnemyStats stats = EnemyDatabase::getStats(type);
+
+                EnemyBase* enemy = nullptr;
+                if (stats.shootCooldown > 0.f) {
+                    enemy = m_shooterPool.acquire();
+                } else {
+                    enemy = m_enemyPool.acquire();
+                }
+
                 if (enemy) {
                     float angle = static_cast<float>(rand() % 360) * 3.14159f / 180.f;
                     float spawnX = m_player.getPosition().x + std::cos(angle) * 800.f;
                     float spawnY = m_player.getPosition().y + std::sin(angle) * 800.f;
 
-                    // Randomly select an enemy type from the wave's possible enemies
-                    std::string type = currentWave->enemies[rand() % currentWave->enemies.size()];
-                    EnemyStats stats = EnemyDatabase::getStats(type);
                     int playerLevel = StatsManager::GetInstance().getLevel();
                     if (stats.hpPerLevel > 0.f) {
                         stats.maxHp += stats.hpPerLevel * playerLevel;
@@ -381,7 +399,11 @@ void PlayingState::update(float dt) {
             }
             // 15% nothing
 
-            m_enemyPool.release(enemy);
+            if (auto* shooter = dynamic_cast<ShooterEnemy*>(enemy)) {
+                m_shooterPool.release(shooter);
+            } else {
+                m_enemyPool.release(enemy);
+            }
             it = m_activeEnemies.erase(it);
             continue;
         } 
@@ -391,6 +413,24 @@ void PlayingState::update(float dt) {
         // Check distance to player. If very close, ignore enemy-enemy collision so they can swarm the player tightly.
         sf::Vector2f toPlayer = enemy->getPosition() - m_player.getPosition();
         float distToPlayerSq = toPlayer.x * toPlayer.x + toPlayer.y * toPlayer.y;
+
+        if (auto* shooter = dynamic_cast<ShooterEnemy*>(enemy)) {
+            if (shooter->wantsToShoot()) {
+                shooter->resetShootFlag();
+                if (distToPlayerSq < 1000.f * 1000.f) {
+                    sf::Vector2f dir = -toPlayer;
+                    float len = std::sqrt(dir.x * dir.x + dir.y * dir.y);
+                    if (len > 0.f) {
+                        dir /= len;
+                        Projectile proj;
+                        proj.init(enemy->getPosition(), dir, enemy->getStats().projectileDamage, enemy->getStats().projectileSpeed, 1200.f, 5.f, false);
+                        proj.setEnemyProj(true);
+                        proj.setFillColor(sf::Color(220, 80, 220)); // Purple magic bullet
+                        m_activeProjectiles.push_back(proj);
+                    }
+                }
+            }
+        }
         
         // --- Enemy-Enemy Soft Collision (Separation) ---
         auto neighbors = m_grid.getNeighbors(enemy->getPosition());
@@ -431,7 +471,7 @@ void PlayingState::update(float dt) {
         }
 
         for (auto& proj : m_activeProjectiles) {
-            if (proj.isActive() && proj.getBounds().intersects(enemyBounds)) {
+            if (proj.isActive() && !proj.isEnemyProj() && proj.getBounds().intersects(enemyBounds)) {
                 // Apply Damage & Knockback
                 bool killed = enemy->takeDamage(proj.getDamage());
                 Physics::ApplyKnockback(enemy, proj.getDirection(), proj.getKnockback(), 1.0f);
@@ -447,6 +487,18 @@ void PlayingState::update(float dt) {
             }
         }
         ++it;
+    }
+
+    // Check enemy projectile collisions with player
+    for (auto& proj : m_activeProjectiles) {
+        if (proj.isActive() && proj.isEnemyProj()) {
+            if (proj.getBounds().intersects(m_player.getBounds())) {
+                float armorRed = ProfileManager::GetInstance().getArmorReduction();
+                float dmg = std::max(1.f, proj.getDamage() - armorRed);
+                StatsManager::GetInstance().takeDamage(dmg);
+                proj.deactivate();
+            }
+        }
     }
 
     // Update collectibles and handle collection

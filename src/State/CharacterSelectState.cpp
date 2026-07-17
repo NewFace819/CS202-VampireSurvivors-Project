@@ -1,5 +1,5 @@
 #include "State/CharacterSelectState.h"
-#include "State/PlayingState.h"
+#include "State/StageSelectState.h"
 #include "Engine/GameManager.h"
 #include <iostream>
 
@@ -89,7 +89,7 @@ void CharacterSelectState::update(float dt) {
         if (panel.panel.getGlobalBounds().contains(mousePosF)) {
             panel.panel.setFillColor(sf::Color(80, 80, 80));
             if (m_timeInState > 0.2f && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-                m_manager->changeState(std::make_unique<PlayingState>(m_manager, panel.type));
+                m_manager->changeState(std::make_unique<StageSelectState>(m_manager, panel.type));
             }
         } else {
             panel.panel.setFillColor(sf::Color(50, 50, 50));
