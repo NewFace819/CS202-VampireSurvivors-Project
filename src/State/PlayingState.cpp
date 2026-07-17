@@ -214,14 +214,14 @@ void PlayingState::update(float dt) {
         std::cout << "CHEAT: All weapons and passives maxed!\n";
     }
 
-    // Cheat Code: Alt+T = Spawn Treasure Chest at player's position for testing evolutions
+    // Cheat Code: Alt+T = Spawn Treasure Chest 150px to the right of player for testing evolutions
     static bool tPressedLastFrame = false;
     bool tPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt) && sf::Keyboard::isKeyPressed(sf::Keyboard::T);
     if (tPressed && !tPressedLastFrame) {
         TreasureChest chest;
-        chest.init(m_player.getPosition());
+        chest.init(m_player.getPosition() + sf::Vector2f(150.f, 0.f));
         m_chests.push_back(chest);
-        std::cout << "CHEAT: Spawned a treasure chest at player position!\n";
+        std::cout << "CHEAT: Spawned a treasure chest 150px to the right of player!\n";
     }
     tPressedLastFrame = tPressed;
 
