@@ -19,11 +19,11 @@ private:
     
     sf::Font m_font;
     sf::Text m_titleText;
+    sf::Texture m_charactersTex;
 
     struct CharacterPanel {
         CharacterType type;
         sf::RectangleShape panel;
-        sf::Texture tex;
         sf::Sprite sprite;
         sf::Text name;
         sf::Text weapon;

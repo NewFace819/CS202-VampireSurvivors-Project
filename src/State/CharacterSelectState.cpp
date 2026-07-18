@@ -7,7 +7,7 @@ struct CharConfig {
     CharacterType type;
     std::string name;
     std::string weapon;
-    std::string texturePath;
+    sf::IntRect iconRect;
 };
 
 CharacterSelectState::CharacterSelectState(GameManager* manager) : m_manager(manager) {
@@ -24,13 +24,17 @@ CharacterSelectState::CharacterSelectState(GameManager* manager) : m_manager(man
     m_titleText.setStyle(sf::Text::Bold);
     m_titleText.setPosition(windowSize.x / 2.f - m_titleText.getGlobalBounds().width / 2.f, 50.f);
 
+    if (!m_charactersTex.loadFromFile("assets/ExportedProject/Assets/Resources/spritesheets/characters.png")) {
+        std::cerr << "CharacterSelectState: Could not load characters.png!\n";
+    }
+
     std::vector<CharConfig> configs = {
-        { CharacterType::Antonio, "Antonio", "Whip", "character_antonio.png" },
-        { CharacterType::Imelda, "Imelda", "Magic Wand", "character_imelda.png" },
-        { CharacterType::Gennaro, "Gennaro", "Knife", "character_gennaro.png" },
-        { CharacterType::Arca, "Arca", "Fire Wand", "character_arca.png" },
-        { CharacterType::Lama, "Lama", "Axe", "character_lama.png" },
-        { CharacterType::Sigma, "Queen Sigma", "ALL", "character_sigma.png" }
+        { CharacterType::Antonio, "Antonio", "Whip", sf::IntRect(38, 38, 32, 34) },
+        { CharacterType::Imelda, "Imelda", "Magic Wand", sf::IntRect(164, 36, 36, 36) },
+        { CharacterType::Gennaro, "Gennaro", "Knife", sf::IntRect(256, 0, 34, 34) },
+        { CharacterType::Arca, "Arca", "Fire Wand", sf::IntRect(418, 1, 34, 34) },
+        { CharacterType::Lama, "Lama", "Axe", sf::IntRect(0, 256, 34, 34) },
+        { CharacterType::Sigma, "Queen Sigma", "ALL", sf::IntRect(128, 256, 34, 34) }
     };
 
     float spacingX = 350.f;
@@ -41,11 +45,13 @@ CharacterSelectState::CharacterSelectState(GameManager* manager) : m_manager(man
     float startX = (windowSize.x - totalW) / 2.f;
     float startY = (windowSize.y - totalH) / 2.f + 40.f; // Slightly offset downwards
 
+    m_panels.resize(configs.size());
+
     for (size_t i = 0; i < configs.size(); ++i) {
         float x = startX + (i % 3) * spacingX;
         float y = startY + (i / 3) * spacingY;
 
-        CharacterPanel panel;
+        CharacterPanel& panel = m_panels[i];
         panel.type = configs[i].type;
         
         panel.panel.setSize(sf::Vector2f(300.f, 250.f));
@@ -54,12 +60,10 @@ CharacterSelectState::CharacterSelectState(GameManager* manager) : m_manager(man
         panel.panel.setOutlineThickness(5.f);
         panel.panel.setOutlineColor(sf::Color::White);
 
-        if (panel.tex.loadFromFile("assets/ExportedProject/Assets/App/Art/Sprites/Addressable/characters/" + configs[i].texturePath)) {
-            panel.sprite.setTexture(panel.tex);
-            panel.sprite.setTextureRect(sf::IntRect(0, 0, 32, 32));
-            panel.sprite.setScale(3.f, 3.f);
-            panel.sprite.setPosition(x + 150.f - panel.sprite.getGlobalBounds().width / 2.f, y + 20.f);
-        }
+        panel.sprite.setTexture(m_charactersTex);
+        panel.sprite.setTextureRect(configs[i].iconRect);
+        panel.sprite.setScale(3.f, 3.f);
+        panel.sprite.setPosition(x + 150.f - panel.sprite.getGlobalBounds().width / 2.f, y + 20.f);
 
         panel.name.setFont(m_font);
         panel.name.setString(configs[i].name);
@@ -72,8 +76,6 @@ CharacterSelectState::CharacterSelectState(GameManager* manager) : m_manager(man
         panel.weapon.setCharacterSize(16);
         panel.weapon.setStyle(sf::Text::Bold);
         panel.weapon.setPosition(x + 150.f - panel.weapon.getGlobalBounds().width / 2.f, y + 190.f);
-
-        m_panels.push_back(std::move(panel));
     }
 }
 
