@@ -2,6 +2,8 @@
 #include "State/StageSelectState.h"
 #include "Engine/GameManager.h"
 #include <iostream>
+#include <fstream>
+#include <nlohmann/json.hpp>
 
 struct CharConfig {
     CharacterType type;
@@ -28,13 +30,30 @@ CharacterSelectState::CharacterSelectState(GameManager* manager) : m_manager(man
         std::cerr << "CharacterSelectState: Could not load characters.png!\n";
     }
 
+    nlohmann::json charAtlas;
+    std::ifstream atlasFile("assets/characters_atlas.json");
+    if (atlasFile.is_open()) {
+        atlasFile >> charAtlas;
+        atlasFile.close();
+    } else {
+        std::cerr << "CharacterSelectState: Could not open assets/characters_atlas.json\n";
+    }
+
+    auto getIconRect = [&](const std::string& name) -> sf::IntRect {
+        if (charAtlas.contains(name) && charAtlas[name].contains("frames") && !charAtlas[name]["frames"].empty()) {
+            const auto& f = charAtlas[name]["frames"][0];
+            return sf::IntRect(f["x"], f["y"], f["width"], f["height"]);
+        }
+        return sf::IntRect(0, 0, 32, 32); // Fallback
+    };
+
     std::vector<CharConfig> configs = {
-        { CharacterType::Antonio, "Antonio", "Whip", sf::IntRect(38, 38, 32, 34) },
-        { CharacterType::Imelda, "Imelda", "Magic Wand", sf::IntRect(164, 36, 36, 36) },
-        { CharacterType::Gennaro, "Gennaro", "Knife", sf::IntRect(256, 0, 34, 34) },
-        { CharacterType::Arca, "Arca", "Fire Wand", sf::IntRect(418, 1, 34, 34) },
-        { CharacterType::Lama, "Lama", "Axe", sf::IntRect(0, 256, 34, 34) },
-        { CharacterType::Sigma, "Queen Sigma", "ALL", sf::IntRect(128, 256, 34, 34) }
+        { CharacterType::Antonio, "Antonio", "Whip", getIconRect("Antonio") },
+        { CharacterType::Imelda, "Imelda", "Magic Wand", getIconRect("Imelda") },
+        { CharacterType::Gennaro, "Gennaro", "Knife", getIconRect("Gennaro") },
+        { CharacterType::Arca, "Arca", "Fire Wand", getIconRect("Arca") },
+        { CharacterType::Lama, "Lama", "Axe", getIconRect("Lama") },
+        { CharacterType::Sigma, "Queen Sigma", "ALL", getIconRect("Sigma") }
     };
 
     float spacingX = 350.f;

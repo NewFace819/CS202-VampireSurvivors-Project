@@ -17,7 +17,8 @@
 #include "Entities/ExpGem.h"
 #include "Entities/Coin.h"
 #include "Entities/FloorChicken.h"
-
+#include <nlohmann/json.hpp>
+#include <fstream>
 
 #include "Physics/Physics.h"
 #include "Items/EvolutionRegistry.h"
@@ -93,36 +94,56 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
     m_levelText.setFillColor(sf::Color::White);
     m_levelText.setStyle(sf::Text::Bold);
 
+    // Load characters_atlas.json
+    nlohmann::json charAtlas;
+    std::ifstream atlasFile("assets/characters_atlas.json");
+    if (atlasFile.is_open()) {
+        atlasFile >> charAtlas;
+        atlasFile.close();
+    } else {
+        std::cerr << "PlayingState: Could not open assets/characters_atlas.json\n";
+    }
+
+    auto getFrames = [&](const std::string& name) -> std::vector<sf::IntRect> {
+        std::vector<sf::IntRect> frames;
+        if (charAtlas.contains(name) && charAtlas[name].contains("frames")) {
+            for (const auto& f : charAtlas[name]["frames"]) {
+                frames.push_back(sf::IntRect(f["x"], f["y"], f["width"], f["height"]));
+            }
+        }
+        return frames;
+    };
+
     switch (charType) {
         case CharacterType::Antonio:
             m_player.setSprite("assets/ExportedProject/Assets/Resources/spritesheets/characters.png", 
-                               {{38,38,32,34}, {74,38,32,34}, {2,74,32,34}});
+                               getFrames("Antonio"));
             m_weapons.push_back(std::make_unique<Whip>());
             break;
         case CharacterType::Imelda:
             m_player.setSprite("assets/ExportedProject/Assets/Resources/spritesheets/characters.png", 
-                               {{164,36,36,36}, {200,36,36,36}, {164,108,36,36}, {200,108,36,36}});
+                               getFrames("Imelda"));
             m_weapons.push_back(std::make_unique<MagicWand>());
             break;
         case CharacterType::Gennaro:
             m_player.setSprite("assets/ExportedProject/Assets/Resources/spritesheets/characters.png", 
-                               {{256,0,34,34}, {290,0,34,34}, {326,0,34,34}, {256,34,34,34}});
+                               getFrames("Gennaro"));
             m_weapons.push_back(std::make_unique<Knife>());
             break;
         case CharacterType::Arca:
             m_player.setSprite("assets/ExportedProject/Assets/Resources/spritesheets/characters.png", 
-                               {{418,1,34,34}, {385,38,34,34}, {450,38,34,34}, {384,108,34,34}});
+                               getFrames("Arca"));
             m_weapons.push_back(std::make_unique<FireWand>());
             break;
         case CharacterType::Lama:
             m_player.setSprite("assets/ExportedProject/Assets/Resources/spritesheets/characters.png", 
-                               {{0,256,34,34}, {36,256,34,34}, {70,290,34,34}, {68,324,34,34}});
+                               getFrames("Lama"));
                                //{{0, 0, 32, 32}, {32, 0, 32, 32}, {64, 32, 32, 32}, {64, 64, 32, 32}});
             m_weapons.push_back(std::make_unique<Axe>());
             break;
         case CharacterType::Sigma:
             m_player.setSprite("assets/ExportedProject/Assets/Resources/spritesheets/characters.png", 
-                               {{128,256,34,34}, {160,256,34,34}});
+                               getFrames("Sigma"));
             m_weapons.push_back(std::make_unique<Whip>());
             m_weapons.push_back(std::make_unique<MagicWand>());
             m_weapons.push_back(std::make_unique<Knife>());
