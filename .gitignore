@@ -367,6 +367,9 @@ build/
 build2/
 build_mingw/
 build_vs/
+build_ninja/
+build_msvc/
+out/
 Group54_04.html
 Group54_04.md
 Group54_04.pdf

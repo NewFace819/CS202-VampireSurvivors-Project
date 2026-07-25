@@ -6,6 +6,7 @@
 #include "Entities/EnemyBase.h"
 #include "Entities/ShooterEnemy.h"
 #include "Entities/TreasureChest.h"
+#include "Entities/Obstacle.h"
 #include "Engine/ObjectPool.h"
 #include "Weapons/WeaponBase.h"
 #include "Weapons/Projectile.h"
@@ -88,6 +89,9 @@ private:
     std::vector<std::unique_ptr<Collectible>> m_activeCollectibles;
     std::vector<PassiveItem> m_passiveItems;
     std::vector<TreasureChest> m_chests;
+    std::vector<std::unique_ptr<Obstacle>> m_obstacles;
+    sf::Texture m_libraryPropsTex;
+    void generateLibraryObstacles();
 
 
     float m_enemySpawnTimer = 0.f;

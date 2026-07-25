@@ -19,7 +19,7 @@
 #include "Entities/FloorChicken.h"
 #include <nlohmann/json.hpp>
 #include <fstream>
-
+#include "Physics/Collision.h"
 #include "Physics/Physics.h"
 #include "Items/EvolutionRegistry.h"
 #include <cstdlib>
@@ -46,7 +46,11 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
 
     if (m_stageType == StageType::InlaidLibrary) {
         waveJsonPath = "assets/data/inlaid_library.json";
-        bgPath = "assets/ExportedProject/Assets/App/Art/Sprites/Addressable/backgrounds/bg_green.png";
+        bgPath = "assets/ExportedProject/Assets/App/Art/Sprites/Addressable/backgrounds/bg_library.png";
+        if (!m_libraryPropsTex.loadFromFile("assets/ExportedProject/Assets/Texture2D/LibraryTexturePacked.png")) {
+            std::cerr << "PlayingState: Could not load LibraryTexturePacked.png!\n";
+        }
+        generateLibraryObstacles();
     }
 
     // Load background tile
@@ -151,6 +155,10 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
             m_weapons.push_back(std::make_unique<Axe>());
             break;
     }
+
+    if (m_stageType == StageType::InlaidLibrary) {
+        m_player.setPosition(640.f, 1024.f);
+    }
 }
 
 void PlayingState::enter() {
@@ -247,6 +255,29 @@ void PlayingState::update(float dt) {
     tPressedLastFrame = tPressed;
 
     m_player.update(dt);
+
+    if (m_stageType == StageType::InlaidLibrary) {
+        sf::Vector2f pos = m_player.getPosition();
+        // The library floor is in y range [576, 1472] in world space.
+        // We clamp the player to stay within the floor with a 64px margin: [640.f, 1408.f]
+        float minY = 640.f;
+        float maxY = 1408.f;
+        if (pos.y < minY) {
+            m_player.setPosition(pos.x, minY);
+        } else if (pos.y > maxY) {
+            m_player.setPosition(pos.x, maxY);
+        }
+
+        // Resolve Circle-AABB sliding collisions with furniture obstacles
+        sf::Vector2f playerPos = m_player.getPosition();
+        float playerRadius = 16.f; // Player physical collision circle
+        for (const auto& obs : m_obstacles) {
+            if (obs->isActive() && Collision::checkCircleAABB(playerPos, playerRadius, obs->getBounds())) {
+                Collision::resolveCircleAABB(playerPos, playerRadius, m_player.getVelocity(), obs->getBounds());
+            }
+        }
+        m_player.setPosition(playerPos);
+    }
 
     // Apply Recovery Upgrade (HP regen)
     float recovery = ProfileManager::GetInstance().getRecoveryRate();
@@ -430,6 +461,18 @@ void PlayingState::update(float dt) {
         } 
         
         enemy->update(dt);
+
+        if (m_stageType == StageType::InlaidLibrary) {
+            sf::Vector2f epos = enemy->getPosition();
+            // Clamp enemy Y to floor corridor [576, 1472] with a 24px margin: [600.f, 1448.f]
+            float minEY = 600.f;
+            float maxEY = 1448.f;
+            if (epos.y < minEY) {
+                enemy->setPosition(epos.x, minEY);
+            } else if (epos.y > maxEY) {
+                enemy->setPosition(epos.x, maxEY);
+            }
+        }
         
         // Check distance to player. If very close, ignore enemy-enemy collision so they can swarm the player tightly.
         sf::Vector2f toPlayer = enemy->getPosition() - m_player.getPosition();
@@ -586,6 +629,13 @@ void PlayingState::draw(sf::RenderWindow& window) {
     for (int row = 0; row < 3; ++row)
         for (int col = 0; col < 3; ++col)
             window.draw(m_bgTiles[row][col]);
+
+    // Draw obstacles behind player (above in Y world coordinates) for 2.5D depth
+    for (const auto& obs : m_obstacles) {
+        if (obs->isActive() && obs->getPosition().y <= m_player.getPosition().y + 10.f) {
+            obs->draw(window);
+        }
+    }
     
     for (auto& item : m_activeCollectibles) {
         item->draw(window);
@@ -606,6 +656,13 @@ void PlayingState::draw(sf::RenderWindow& window) {
     }
 
     m_player.draw(window);
+
+    // Draw obstacles in front of player (below in Y world coordinates) for 2.5D occlusion
+    for (const auto& obs : m_obstacles) {
+        if (obs->isActive() && obs->getPosition().y > m_player.getPosition().y + 10.f) {
+            obs->draw(window);
+        }
+    }
 
     // Health Bar Background (under character)
     StatsManager& stats = StatsManager::GetInstance();
@@ -924,4 +981,32 @@ void PlayingState::tryEvolveWeapon() {
         m_weapons.push_back(std::make_unique<DeathSpiral>());
     }
 
+}
+
+void PlayingState::generateLibraryObstacles() {
+    m_obstacles.clear();
+    
+    // Customize your furniture texture rectangle coordinates from LibraryTexturePacked.png (512x512) here!
+    sf::IntRect pianoRect(384, 128, 48, 48);
+    sf::IntRect tableRect(320, 128, 32, 32);
+    
+    // Place furniture regularly along the horizontal library corridor
+    for (float x = -3000.f; x <= 3000.f; x += 500.f) {
+        if (std::abs(x) < 250.f) continue; // Keep player spawning center area clear of obstacles!
+        
+        // Upper corridor lane (Y = 780) - Alternating Table and Piano
+        if (static_cast<int>(std::abs(x) / 500.f) % 2 == 0) {
+            m_obstacles.push_back(std::make_unique<Obstacle>(sf::Vector2f(x, 780.f), m_libraryPropsTex, tableRect, 2.5f, 0.35f));
+        } else {
+            m_obstacles.push_back(std::make_unique<Obstacle>(sf::Vector2f(x, 780.f), m_libraryPropsTex, pianoRect, 2.5f, 0.4f));
+        }
+        
+        // Lower corridor lane (Y = 1260) - Alternating Piano and Table
+        if (static_cast<int>(std::abs(x) / 500.f) % 2 != 0) {
+            m_obstacles.push_back(std::make_unique<Obstacle>(sf::Vector2f(x + 250.f, 1260.f), m_libraryPropsTex, tableRect, 2.5f, 0.35f));
+        } else {
+            m_obstacles.push_back(std::make_unique<Obstacle>(sf::Vector2f(x + 250.f, 1260.f), m_libraryPropsTex, pianoRect, 2.5f, 0.4f));
+        }
+    }
+    std::cout << "Generated " << m_obstacles.size() << " interactive physical furniture obstacle props along Inlaid Library corridor!\n";
 }

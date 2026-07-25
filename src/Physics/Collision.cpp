@@ -29,8 +29,29 @@ namespace Collision {
 
     void resolveCircleAABB(sf::Vector2f& circlePos, float circleRadius,
                            const sf::Vector2f& velocity, const sf::FloatRect& aabb) {
-        // Implement Axis-Separated resolution to allow sliding along walls
-        // (Implementation details left for Phase 2)
+        float closestX = std::max(aabb.left, std::min(circlePos.x, aabb.left + aabb.width));
+        float closestY = std::max(aabb.top, std::min(circlePos.y, aabb.top + aabb.height));
+
+        float dx = circlePos.x - closestX;
+        float dy = circlePos.y - closestY;
+        float distSquared = dx * dx + dy * dy;
+
+        if (distSquared < circleRadius * circleRadius && distSquared > 0.00001f) {
+            float dist = std::sqrt(distSquared);
+            float penetration = circleRadius - dist;
+            circlePos.x += (dx / dist) * penetration;
+            circlePos.y += (dy / dist) * penetration;
+        } else if (distSquared <= 0.00001f) {
+            float distLeft = circlePos.x - aabb.left;
+            float distRight = (aabb.left + aabb.width) - circlePos.x;
+            float distTop = circlePos.y - aabb.top;
+            float distBottom = (aabb.top + aabb.height) - circlePos.y;
+            float minDist = std::min({distLeft, distRight, distTop, distBottom});
+            if (minDist == distLeft) circlePos.x = aabb.left - circleRadius;
+            else if (minDist == distRight) circlePos.x = aabb.left + aabb.width + circleRadius;
+            else if (minDist == distTop) circlePos.y = aabb.top - circleRadius;
+            else circlePos.y = aabb.top + aabb.height + circleRadius;
+        }
     }
 
 }
