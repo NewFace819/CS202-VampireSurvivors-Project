@@ -22,6 +22,8 @@ void EnemyBase::init(const sf::Vector2f& startPos, const EnemyStats& stats, sf::
     m_knockbackTimer = 0.f;
     m_knockbackDir = sf::Vector2f(0.f, 0.f);
     m_knockbackSpeed = 0.f;
+    m_shootCooldown = 2.0f;
+    m_shootTimer = 1.0f + static_cast<float>(std::rand() % 100) / 100.f;
 
     m_texture = texture;
     m_movingRects = m_stats.movingRects;
@@ -206,4 +208,32 @@ sf::Shader* EnemyBase::getDamageShader() {
         loaded = true;
     }
     return &shader;
+}
+
+void EnemyBase::updateShooting(float dt, const sf::Vector2f& playerPos, std::vector<Projectile>& bossProjectiles, sf::Texture* vfxTexture) {
+    if (!m_isActive || m_isDying || m_stats.enemyClass != EnemyClass::BOSS) return;
+
+    m_shootTimer -= dt;
+    if (m_shootTimer <= 0.f) {
+        m_shootTimer = m_shootCooldown;
+
+        // Calculate direction towards player
+        sf::Vector2f diff = playerPos - m_position;
+        float length = std::sqrt(diff.x * diff.x + diff.y * diff.y);
+        if (length > 0) {
+            sf::Vector2f dir = diff / length;
+
+            Projectile p;
+            // Fired directly at player, doing boss contact damage as projectile damage
+            p.init(m_position, dir, m_stats.damage, 150.f, 800.f, 5.0f, false);
+            
+            if (vfxTexture) {
+                // Use Magic Wand glowing orb frame but tinted red
+                sf::IntRect orbFrame(256, 798, 64, 64);
+                p.setSprite(*vfxTexture, orbFrame, 0.4f, true, sf::Color(255, 60, 60));
+                p.enableTrail(0.04f, 0.2f, sf::Color(255, 100, 100));
+            }
+            bossProjectiles.push_back(p);
+        }
+    }
 }

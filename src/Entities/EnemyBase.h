@@ -1,6 +1,7 @@
 #pragma once
 #include "Entity.h"
 #include "EnemyDatabase.h"
+#include "Weapons/Projectile.h"
 #include <cmath>
 
 class EnemyBase : public Entity {
@@ -27,6 +28,9 @@ public:
     float getDamage() const { return m_stats.damage; }
     const EnemyStats& getStats() const { return m_stats; }
 
+    // Boss shooting mechanics
+    void updateShooting(float dt, const sf::Vector2f& playerPos, std::vector<Projectile>& bossProjectiles, sf::Texture* vfxTexture);
+
 protected:
     sf::Shader* getDamageShader();
 
@@ -52,4 +56,8 @@ protected:
     float m_animTimer;
     int m_currentFrame;
     bool m_isDying;
+
+    // Boss shooting variables
+    float m_shootCooldown = 2.0f;
+    float m_shootTimer = 0.f;
 };

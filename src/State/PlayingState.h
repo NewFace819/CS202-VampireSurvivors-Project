@@ -55,9 +55,19 @@ public:
     // Query which weapon type strings are currently owned
     std::set<std::string> getOwnedWeaponNames() const;
     const std::set<std::string>& getBannedWeapons() const { return m_bannedWeapons; }
+    void banishItem(const std::string& name) { m_bannedWeapons.insert(name); }
+
+    // Tactical Level-Up charges
+    int getRerollCharges() const { return m_rerollCharges; }
+    void useRerollCharge() { if (m_rerollCharges > 0) m_rerollCharges--; }
+    int getSkipCharges() const { return m_skipCharges; }
+    void useSkipCharge() { if (m_skipCharges > 0) m_skipCharges--; }
+    int getBanishCharges() const { return m_banishCharges; }
+    void useBanishCharge() { if (m_banishCharges > 0) m_banishCharges--; }
 
     // Raw pointers into m_weapons for LevelUpState to call levelUp() on
     std::vector<WeaponBase*> getUpgradeableWeapons();
+    const std::vector<std::unique_ptr<WeaponBase>>& getWeapons() const { return m_weapons; }
 
     // --- Passive Item Interface (for LevelUpState) ---
     std::vector<PassiveItem>& getPassiveItems() { return m_passiveItems; }
@@ -86,6 +96,7 @@ private:
     
     std::vector<std::unique_ptr<WeaponBase>> m_weapons;
     std::vector<Projectile> m_activeProjectiles;
+    std::vector<Projectile> m_bossProjectiles;
     std::vector<std::unique_ptr<Collectible>> m_activeCollectibles;
     std::vector<PassiveItem> m_passiveItems;
     std::vector<TreasureChest> m_chests;
@@ -104,6 +115,9 @@ private:
 
     int m_revivalsLeft = 0;
     int m_runGold = 0;
+    int m_rerollCharges = 10;
+    int m_skipCharges = 10;
+    int m_banishCharges = 10;
 
     // Cheat code state
     bool m_cheatApplied = false;
@@ -118,6 +132,7 @@ private:
     sf::Text m_levelText;
     sf::Texture m_itemsTex;
     sf::Texture m_enemiesTex; // enemies.png
+    sf::Texture m_vfxTex; // vfx.png
 
     // Infinite-tiling background (3x3 grid)
     sf::Texture m_bgTex;

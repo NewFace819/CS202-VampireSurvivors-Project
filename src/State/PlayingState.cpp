@@ -1,6 +1,7 @@
 #include "State/PlayingState.h"
 #include "State/PauseState.h"
 #include "State/LevelUpState.h"
+#include "State/TreasureChestState.h"
 #include "State/MainMenuState.h"
 #include "Engine/GameManager.h"
 #include "Engine/StatsManager.h"
@@ -40,6 +41,7 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
     }
     m_enemiesTex.loadFromFile("assets/ExportedProject/Assets/Resources/spritesheets/enemies.png");
     m_enemiesTex.setSmooth(false);
+    m_vfxTex.loadFromFile("assets/ExportedProject/Assets/Resources/spritesheets/vfx.png");
 
     std::string waveJsonPath = "assets/data/mad_forest.json";
     std::string bgPath = "assets/ExportedProject/Assets/App/Art/Sprites/Addressable/backgrounds/bg_forest.png";
@@ -295,6 +297,10 @@ void PlayingState::update(float dt) {
         proj.update(dt);
     }
 
+    for (auto& proj : m_bossProjectiles) {
+        proj.update(dt);
+    }
+
     // Update survival timer
     m_survivalTime += dt;
     
@@ -357,7 +363,7 @@ void PlayingState::update(float dt) {
         chest.update(dt);
         if (chest.isActive() && chest.getBounds().intersects(m_player.getBounds())) {
             chest.deactivate();
-            tryEvolveWeapon();
+            m_manager->pushState(std::make_unique<TreasureChestState>(m_manager, this));
         }
     }
     m_chests.erase(std::remove_if(m_chests.begin(), m_chests.end(),
@@ -474,6 +480,10 @@ void PlayingState::update(float dt) {
             }
         }
         
+        if (enemy->getStats().enemyClass == EnemyClass::BOSS) {
+            enemy->updateShooting(dt, m_player.getPosition(), m_bossProjectiles, &m_vfxTex);
+        }
+        
         // Check distance to player. If very close, ignore enemy-enemy collision so they can swarm the player tightly.
         sf::Vector2f toPlayer = enemy->getPosition() - m_player.getPosition();
         float distToPlayerSq = toPlayer.x * toPlayer.x + toPlayer.y * toPlayer.y;
@@ -578,9 +588,22 @@ void PlayingState::update(float dt) {
         [](const std::unique_ptr<Collectible>& c) { return !c->isActive(); }), m_activeCollectibles.end());
 
 
+    // Collision check: Boss Projectiles vs Player
+    for (auto& proj : m_bossProjectiles) {
+        if (proj.isActive() && proj.getBounds().intersects(m_player.getBounds())) {
+            float armorRed = ProfileManager::GetInstance().getArmorReduction();
+            float dmg = std::max(1.f, proj.getDamage() - armorRed);
+            StatsManager::GetInstance().takeDamage(dmg);
+            proj.deactivate();
+        }
+    }
+
     // Clean up dead projectiles
     m_activeProjectiles.erase(std::remove_if(m_activeProjectiles.begin(), m_activeProjectiles.end(),
         [](const Projectile& p) { return !p.isActive(); }), m_activeProjectiles.end());
+
+    m_bossProjectiles.erase(std::remove_if(m_bossProjectiles.begin(), m_bossProjectiles.end(),
+        [](const Projectile& p) { return !p.isActive(); }), m_bossProjectiles.end());
 
     // Update gold HUD text
     m_goldText.setString("GOLD: " + std::to_string(m_runGold));
@@ -647,6 +670,10 @@ void PlayingState::draw(sf::RenderWindow& window) {
     }
     
     for (auto& proj : m_activeProjectiles) {
+        proj.draw(window);
+    }
+    
+    for (auto& proj : m_bossProjectiles) {
         proj.draw(window);
     }
 
