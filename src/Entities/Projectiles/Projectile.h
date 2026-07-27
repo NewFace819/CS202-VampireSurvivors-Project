@@ -39,6 +39,7 @@ public:
         m_trailParticles.clear();
         m_gravity = 0.f;
         m_spinSpeed = 0.f;
+        m_isGarlicAura = false;
         
         float areaMult = ProfileManager::GetInstance().getAreaMultiplier();
         m_shape.setRadius(5.f * areaMult);
@@ -199,7 +200,33 @@ public:
         } else if (m_useRect) {
             window.draw(m_rectShape);
         } else {
-            window.draw(m_shape);
+            if (m_isGarlicAura) {
+                // Faint yellow background
+                m_shape.setFillColor(sf::Color(255, 255, 200, 40));
+                m_shape.setOutlineThickness(0.f);
+                window.draw(m_shape);
+
+                // Pulsating concentric rings
+                float maxRadius = m_shape.getRadius();
+                float timer = m_lifeTimer * 1.5f;
+                for (int i = 0; i < 4; ++i) {
+                    float phase = std::fmod(timer + i * 0.25f, 1.0f);
+                    float r = maxRadius * phase;
+                    if (r <= 0.1f) continue;
+                    
+                    sf::CircleShape ring(r);
+                    ring.setOrigin(r, r);
+                    ring.setPosition(m_shape.getPosition());
+                    ring.setFillColor(sf::Color::Transparent);
+                    ring.setOutlineThickness(2.f);
+                    
+                    float alpha = 150.f * (1.0f - phase);
+                    ring.setOutlineColor(sf::Color(255, 255, 255, static_cast<sf::Uint8>(alpha)));
+                    window.draw(ring);
+                }
+            } else {
+                window.draw(m_shape);
+            }
         }
     }
 
@@ -228,6 +255,15 @@ public:
         m_useRect = true;
     }
 
+    void setCircleShape(float radius, sf::Color color) {
+        float areaMult = ProfileManager::GetInstance().getAreaMultiplier();
+        float scaledRadius = radius * areaMult;
+        m_shape.setRadius(scaledRadius);
+        m_shape.setFillColor(color);
+        m_shape.setOrigin(scaledRadius, scaledRadius);
+        m_useRect = false;
+    }
+
     void setGravity(float g) { m_gravity = g; }
     void setSpinSpeed(float s) { m_spinSpeed = s; }
     void setAcceleration(const sf::Vector2f& acc) { m_acceleration = acc; }
@@ -248,6 +284,7 @@ public:
     }
 
     void setIsAura(bool isAura) { m_isAura = isAura; }
+    void setGarlicAura(bool garlic) { m_isGarlicAura = garlic; }
 
     void setSourceWeapon(WeaponBase* weapon) { m_sourceWeapon = weapon; }
     WeaponBase* getSourceWeapon() const { return m_sourceWeapon; }
@@ -307,6 +344,7 @@ private:
     std::unordered_set<EnemyBase*> m_hitEnemies;
 
     bool m_isAura = false;
+    bool m_isGarlicAura = false;
 
     sf::CircleShape m_shape;
     sf::RectangleShape m_rectShape;

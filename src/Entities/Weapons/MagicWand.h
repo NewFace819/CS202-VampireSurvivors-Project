@@ -10,9 +10,9 @@ public:
     MagicWand(float cooldown = 1.2f, float damage = 10.0f, float speed = 180.0f)
         : WeaponBase(cooldown, damage, speed) {
         loadVfxTexture();
-        // blurredSharpStar.asset - soft glowing star sparkle (vfx.png, 2048 height)
-        // Unity: x=256, y=1186, w=64, h=64 -> SFML y = 2048 - 1186 - 64 = 798
-        m_wandFrame = sf::IntRect(256, 798, 64, 64);
+        // ProjectileHoly1 from vfx.png (2048 height)
+        // Unity: x=1098, y=618, w=27, h=14 -> SFML y = 2048 - 618 - 14 = 1416
+        m_wandFrame = sf::IntRect(1098, 1416, 27, 14);
     }
 
     std::string getName() const override { return "Magic Wand"; }
@@ -78,8 +78,8 @@ protected:
         p.init(startPos, fireDir, m_damage, m_speed, 50.0f, 5.0f, m_pierce > 0);
         p.setKnockback(1.0f);
         if (m_hasVfxTex) {
-            // Soft glowing sparkle, small scale so it looks like a sparkling orb
-            p.setSprite(m_vfxTex, m_wandFrame, 0.4f, true, sf::Color(100, 200, 255));
+            // Blue/White glowing missile
+            p.setSprite(m_vfxTex, m_wandFrame, 1.0f, true, sf::Color(100, 200, 255));
         }
         activeProjectiles.push_back(p);
     }

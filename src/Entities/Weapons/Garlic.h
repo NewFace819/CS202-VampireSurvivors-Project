@@ -7,7 +7,7 @@ public:
     // Base stats from wiki: Damage = 5, Area = 100%, Cooldown = 1.3s
     Garlic(float cooldown = 1.3f, float damage = 5.0f, float speed = 0.0f)
         : WeaponBase(cooldown, damage, speed) {
-        
+        m_timer = cooldown; // Fire immediately upon acquiring
     }
 
     std::string getName() const override { return "Garlic"; }
@@ -48,10 +48,11 @@ protected:
         
         // Aura tracking the player
         p.setIsAura(true);
+        p.setGarlicAura(true);
 
         // Make it a transparent yellow circle with an outline
         float radius = 50.f; // Base radius
-        p.setCustomShape(sf::Vector2f(radius * 2.f, radius * 2.f), sf::Color(255, 255, 200, 100)); // Will internally multiply by areaScale
+        p.setCircleShape(radius, sf::Color(255, 255, 200, 100)); // Will internally multiply by areaScale
         
         // Custom visual: add outline
         p.setOutline(2.f, sf::Color(255, 255, 200, 200));

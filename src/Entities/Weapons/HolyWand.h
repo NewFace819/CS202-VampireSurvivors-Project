@@ -14,9 +14,9 @@ public:
         m_amount = 1;
         m_isEvolved = true;
         loadVfxTexture();
-        // blurredSharpStar.asset frame in vfx.png (2048 height)
-        // Unity: x=256, y=1186, w=64, h=64 -> SFML y = 2048 - 1186 - 64 = 798
-        m_wandFrame = sf::IntRect(256, 798, 64, 64);
+        // ProjectileHoly1 frame in vfx.png (2048 height)
+        // Unity: x=1098, y=618, w=27, h=14 -> SFML y = 2048 - 618 - 14 = 1416
+        m_wandFrame = sf::IntRect(1098, 1416, 27, 14);
     }
 
     std::string getName() const override { return "Holy Wand"; }
@@ -58,8 +58,8 @@ protected:
         p.init(startPos, fireDir, m_damage, m_speed, 800.0f, 5.0f, true);
         
         if (m_hasVfxTex) {
-            // Bright white/cyan glowing star, larger scale (0.6f)
-            p.setSprite(m_vfxTex, m_wandFrame, 0.6f, true, sf::Color(180, 240, 255));
+            // Blue/White glowing missile (evolved might be tinted differently, but let's keep it similar for now)
+            p.setSprite(m_vfxTex, m_wandFrame, 1.2f, true, sf::Color(150, 200, 255));
         } else {
             p.setCustomShape(sf::Vector2f(12.f, 12.f), sf::Color::Cyan);
         }
