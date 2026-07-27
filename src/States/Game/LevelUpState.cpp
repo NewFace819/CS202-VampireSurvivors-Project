@@ -18,7 +18,13 @@
 
 // All weapon names in the game
 static const std::vector<std::string> ALL_WEAPON_NAMES = {
-    "Whip", "Magic Wand", "Knife", "Fire Wand", "Axe"
+    "Whip",
+    "Magic Wand",
+    "Knife",
+    "Fire Wand",
+    "Axe",
+    "Cross",
+    "Garlic"
 };
 
 // Helper function to get icon texture coordinates for any item
@@ -30,6 +36,8 @@ static sf::IntRect getItemIconRect(const std::string& name, PlayingState* playin
     if (name == "Knife")         return sf::IntRect(116, 858, 16, 11);
     if (name == "Fire Wand")     return sf::IntRect(434, 788, 16, 16);
     if (name == "Axe")           return sf::IntRect(485, 660, 16, 16);
+    if (name == "Cross")         return sf::IntRect(149, 263, 16, 16);
+    if (name == "Garlic")        return sf::IntRect(256, 408, 13, 13);
 
     if (playing) {
         for (const auto& p : playing->getPassiveItems()) {
@@ -172,6 +180,8 @@ void LevelUpState::buildOptions() {
             else if (name == "Knife")      opt.description = "Throws a fast knife in your facing direction.";
             else if (name == "Fire Wand")  opt.description = "Hurls a slow fireball at a random enemy.";
             else if (name == "Axe")        opt.description = "Throws an axe in an arc, pierces through enemies.";
+            else if (name == "Cross")      opt.description = "Aims at nearest enemy, has boomerang effect.";
+            else if (name == "Garlic")     opt.description = "Damages nearby enemies. Reduces resistance to knockback and freeze.";
             pool.push_back(opt);
         }
     }

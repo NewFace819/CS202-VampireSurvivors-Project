@@ -6,16 +6,7 @@
 #include "States/Menu/MainMenuState.h"
 #include "Core/GameManager.h"
 #include "Core/Data/StatsManager.h"
-#include "Entities/Weapons/MagicWand.h"
-#include "Entities/Weapons/Whip.h"
-#include "Entities/Weapons/Knife.h"
-#include "Entities/Weapons/FireWand.h"
-#include "Entities/Weapons/Axe.h"
-#include "Entities/Weapons/BloodyTear.h"
-#include "Entities/Weapons/HolyWand.h"
-#include "Entities/Weapons/ThousandEdge.h"
-#include "Entities/Weapons/Hellfire.h"
-#include "Entities/Weapons/DeathSpiral.h"
+#include "Entities/Weapons/WeaponFactory.h"
 #include "Entities/Pickups/ExpGem.h"
 #include "Entities/Pickups/Coin.h"
 #include "Entities/Pickups/FloorChicken.h"
@@ -147,37 +138,39 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
         case CharacterType::Antonio:
             m_player.setSprite("assets/Graphics/Characters/characters.png", 
                                getFrames("Antonio"));
-            m_weapons.push_back(std::make_unique<Whip>());
+            addWeapon("Whip");
             break;
         case CharacterType::Imelda:
             m_player.setSprite("assets/Graphics/Characters/characters.png", 
                                getFrames("Imelda"));
-            m_weapons.push_back(std::make_unique<MagicWand>());
+            addWeapon("Magic Wand");
             break;
         case CharacterType::Gennaro:
             m_player.setSprite("assets/Graphics/Characters/characters.png", 
                                getFrames("Gennaro"));
-            m_weapons.push_back(std::make_unique<Knife>());
+            addWeapon("Knife");
             break;
         case CharacterType::Arca:
             m_player.setSprite("assets/Graphics/Characters/characters.png", 
                                getFrames("Arca"));
-            m_weapons.push_back(std::make_unique<FireWand>());
+            addWeapon("Fire Wand");
             break;
         case CharacterType::Lama:
             m_player.setSprite("assets/Graphics/Characters/characters.png", 
                                getFrames("Lama"));
                                //{{0, 0, 32, 32}, {32, 0, 32, 32}, {64, 32, 32, 32}, {64, 64, 32, 32}});
-            m_weapons.push_back(std::make_unique<Axe>());
+            addWeapon("Axe");
             break;
         case CharacterType::Sigma:
             m_player.setSprite("assets/Graphics/Characters/characters.png", 
                                getFrames("Sigma"));
-            m_weapons.push_back(std::make_unique<Whip>());
-            m_weapons.push_back(std::make_unique<MagicWand>());
-            m_weapons.push_back(std::make_unique<Knife>());
-            m_weapons.push_back(std::make_unique<FireWand>());
-            m_weapons.push_back(std::make_unique<Axe>());
+            addWeapon("Whip");
+            addWeapon("Magic Wand");
+            addWeapon("Knife");
+            addWeapon("Fire Wand");
+            addWeapon("Axe");
+            addWeapon("Cross");
+            addWeapon("Garlic");
             break;
     }
 
@@ -258,7 +251,7 @@ void PlayingState::update(float dt) {
             }
         }
         if (!hasWhip) {
-            m_weapons.push_back(std::make_unique<Whip>());
+            addWeapon("Whip");
             auto& w = m_weapons.back();
             while (!w->isMaxLevel()) w->levelUp();
         }
@@ -607,6 +600,9 @@ void PlayingState::update(float dt) {
 
         for (auto& proj : m_activeProjectiles) {
             if (proj.isActive() && !proj.isEnemyProj() && proj.getBounds().intersects(enemyBounds)) {
+                if (proj.hasHitEnemy(enemy)) continue; // Already hit this enemy
+                proj.addHitEnemy(enemy);
+
                 bool killed = enemy->takeDamage(proj.getDamage());
                 
                 if (proj.getSourceWeapon()) {
@@ -971,11 +967,10 @@ void PlayingState::exit() {
 }
 
 void PlayingState::addWeapon(const std::string& weaponName) {
-    if (weaponName == "Whip")      m_weapons.push_back(std::make_unique<Whip>());
-    else if (weaponName == "Magic Wand")  m_weapons.push_back(std::make_unique<MagicWand>());
-    else if (weaponName == "Knife")     m_weapons.push_back(std::make_unique<Knife>());
-    else if (weaponName == "Fire Wand")  m_weapons.push_back(std::make_unique<FireWand>());
-    else if (weaponName == "Axe")       m_weapons.push_back(std::make_unique<Axe>());
+    auto newWeapon = WeaponFactory::createWeapon(weaponName);
+    if (newWeapon) {
+        m_weapons.push_back(std::move(newWeapon));
+    }
 }
 
 std::set<std::string> PlayingState::getOwnedWeaponNames() const {
@@ -1089,16 +1084,9 @@ void PlayingState::tryEvolveWeapon() {
     m_bannedWeapons.insert(recipe.baseWeapon);
 
     // Add the evolved weapon
-    if (recipe.evolvedWeapon == "Bloody Tear") {
-        m_weapons.push_back(std::make_unique<BloodyTear>());
-    } else if (recipe.evolvedWeapon == "Holy Wand") {
-        m_weapons.push_back(std::make_unique<HolyWand>());
-    } else if (recipe.evolvedWeapon == "Thousand Edge") {
-        m_weapons.push_back(std::make_unique<ThousandEdge>());
-    } else if (recipe.evolvedWeapon == "Hellfire") {
-        m_weapons.push_back(std::make_unique<Hellfire>());
-    } else if (recipe.evolvedWeapon == "Death Spiral") {
-        m_weapons.push_back(std::make_unique<DeathSpiral>());
+    auto newWeapon = WeaponFactory::createWeapon(recipe.evolvedWeapon);
+    if (newWeapon) {
+        m_weapons.push_back(std::move(newWeapon));
     }
 
 }
