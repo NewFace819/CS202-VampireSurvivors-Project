@@ -12,6 +12,7 @@ public:
     void pushState(std::unique_ptr<GameState> state);
     void popState();
     void changeState(std::unique_ptr<GameState> state);
+    void clearAndChangeState(std::unique_ptr<GameState> state);
 
     sf::RenderWindow& getWindow() { return m_window; }
 
@@ -24,6 +25,7 @@ private:
     bool m_shouldPop = false;
     bool m_shouldChange = false;
     bool m_shouldPush = false;
+    bool m_shouldClearAndChange = false;
 
     void processStateChanges();
 };

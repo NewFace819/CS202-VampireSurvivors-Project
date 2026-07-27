@@ -78,7 +78,25 @@ void GameManager::changeState(std::unique_ptr<GameState> state) {
     m_pendingState = std::move(state);
 }
 
+void GameManager::clearAndChangeState(std::unique_ptr<GameState> state) {
+    m_shouldClearAndChange = true;
+    m_pendingState = std::move(state);
+}
+
 void GameManager::processStateChanges() {
+    if (m_shouldClearAndChange) {
+        while (!m_states.empty()) {
+            m_states.top()->exit();
+            m_states.pop();
+        }
+        m_states.push(std::move(m_pendingState));
+        m_states.top()->enter();
+        m_shouldClearAndChange = false;
+        m_shouldPop = false;
+        m_shouldChange = false;
+        m_shouldPush = false;
+        return; // done processing
+    }
     if (m_shouldPop && !m_states.empty()) {
         m_states.top()->exit();
         m_states.pop();

@@ -77,10 +77,20 @@ void Player::update(float dt) {
 }
 
 void Player::draw(sf::RenderWindow& window) {
-    if (m_hasSprite)
+    if (!m_isActive) return;
+    
+    if (m_hasSprite) {
         m_animSprite.draw(window);
-    else
+    } else {
         window.draw(m_fallbackShape);
+    }
+    
+    // Debug draw collision circle
+    sf::CircleShape debugCircle(16.f);
+    debugCircle.setOrigin(16.f, 16.f);
+    debugCircle.setPosition(m_position);
+    debugCircle.setFillColor(sf::Color(0, 0, 255, 100)); // semi-transparent blue
+    window.draw(debugCircle);
 }
 
 sf::FloatRect Player::getBounds() const {

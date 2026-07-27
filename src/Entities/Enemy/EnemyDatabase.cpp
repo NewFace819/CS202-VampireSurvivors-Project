@@ -42,7 +42,7 @@ void EnemyDatabase::loadDatabase(const std::string& enemiesJsonPath, const std::
         stats.hp = data.value("hp", 10.f);
         stats.maxHp = stats.hp;
         stats.hpPerLevel = data.value("hpPerLevel", 0.0f);
-        stats.speed = data.value("speed", 50.f) * 0.5f; // Scale down speed
+        stats.speed = data.value("speed", 50.f); 
         stats.damage = data.value("damage", 5.f);
         stats.collisionRadius = data.value("collisionRadius", 10.f);
         stats.expDrop = data.value("expDrop", 1.f);

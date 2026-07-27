@@ -99,6 +99,12 @@ private:
     std::vector<PassiveItem> m_passiveItems;
     std::vector<TreasureChest> m_chests;
     std::vector<std::unique_ptr<Obstacle>> m_obstacles;
+    std::vector<std::unique_ptr<Obstacle>> m_baseObstacles; // Base template for repeating maps
+    int m_lastGridX = -999;
+    int m_lastGridY = -999;
+
+    // View & Level
+    sf::View worldView; 
     sf::Texture m_libraryPropsTex;
     void generateLibraryObstacles();
 
@@ -113,6 +119,7 @@ private:
 
     int m_revivalsLeft = 0;
     int m_runGold = 0;
+    int m_kills = 0;
     int m_rerollCharges = 10;
     int m_skipCharges = 10;
     int m_banishCharges = 10;

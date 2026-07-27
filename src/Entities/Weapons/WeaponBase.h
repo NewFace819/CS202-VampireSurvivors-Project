@@ -23,7 +23,11 @@ public:
         if (m_timer >= actualCooldown) {
             m_timer = 0.f; // reset timer
             // Fire the first shot immediately
+            size_t prevSize = activeProjectiles.size();
             fire(playerPos, playerDir, enemies, activeProjectiles, 0);
+            for (size_t i = prevSize; i < activeProjectiles.size(); ++i) {
+                activeProjectiles[i].setSourceWeapon(this);
+            }
             // Queue remaining shots for sequential burst (0.1s interval)
             int actualAmount = m_amount + ProfileManager::GetInstance().getAmountBonus();
             m_pendingBurst    = actualAmount - 1;
@@ -38,7 +42,11 @@ public:
             m_burstTimer += dt;
             while (m_burstTimer >= m_burstInterval && m_pendingBurst > 0) {
                 m_burstTimer -= m_burstInterval;
+                size_t prevSize = activeProjectiles.size();
                 fire(playerPos, playerDir, enemies, activeProjectiles, m_burstShotsFired);
+                for (size_t i = prevSize; i < activeProjectiles.size(); ++i) {
+                    activeProjectiles[i].setSourceWeapon(this);
+                }
                 m_burstShotsFired++;
                 m_pendingBurst--;
             }
@@ -57,6 +65,9 @@ public:
     virtual int getMaxLevel() const { return 8; }
     bool isMaxLevel() const { return m_level >= getMaxLevel(); }
     virtual bool isEvolved() const { return m_isEvolved; }
+
+    void addDamageDealt(float damage) { m_totalDamageDealt += damage; }
+    float getTotalDamageDealt() const { return m_totalDamageDealt; }
 
 protected:
     // `shotIndex` = which shot in the burst (0..m_amount-1), used for spreading or alternating
@@ -108,6 +119,7 @@ protected:
     float         m_burstInterval   = 0.1f; // seconds between burst shots (wiki-accurate)
     sf::Vector2f  m_burstPlayerPos;
     sf::Vector2f  m_burstPlayerDir;
+    float         m_totalDamageDealt = 0.f;
 
     sf::Texture m_itemsTex;
     bool m_hasItemsTex = false;

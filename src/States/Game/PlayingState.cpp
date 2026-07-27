@@ -2,6 +2,7 @@
 #include "States/Game/PauseState.h"
 #include "States/Game/LevelUpState.h"
 #include "States/Game/TreasureChestState.h"
+#include "States/Game/GameOverState.h"
 #include "States/Menu/MainMenuState.h"
 #include "Core/GameManager.h"
 #include "Core/Data/StatsManager.h"
@@ -23,6 +24,7 @@
 #include "Core/Physics/Collision.h"
 #include "Core/Physics/Physics.h"
 #include "Entities/Weapons/EvolutionRegistry.h"
+#include "Core/Data/MapLoader.h"
 #include <cstdlib>
 #include <algorithm>
 #include <iostream>
@@ -46,26 +48,47 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
     std::string waveJsonPath = "assets/data/mad_forest.json";
     std::string bgPath = "assets/images/maps/forest_tiles.png";
 
-    if (m_stageType == StageType::InlaidLibrary) {
+    if (m_stageType == StageType::MadForest) {
+        MapData mapData = MapLoader::LoadMap("assets/data/maps/forest_map.json", m_libraryPropsTex);
+        if (mapData.success) {
+            // Extract the rendered tilemap to our background texture
+            m_bgTex.loadFromImage(mapData.backgroundTexture->getTexture().copyToImage());
+            m_bgTex.setSmooth(false);
+            
+            // Steal the obstacles into the base template list
+            for (auto& obs : mapData.obstacles) {
+                m_baseObstacles.push_back(std::move(obs));
+            }
+        } else {
+            // Fallback
+            if (!m_bgTex.loadFromFile(bgPath)) {
+                std::cerr << "PlayingState: Could not load background texture: " << bgPath << "\n";
+            }
+        }
+    } else if (m_stageType == StageType::InlaidLibrary) {
         waveJsonPath = "assets/data/inlaid_library.json";
         bgPath = "assets/images/maps/LibraryTexturePacked.png";
         if (!m_libraryPropsTex.loadFromFile("assets/images/maps/LibraryTexturePacked.png")) {
             std::cerr << "PlayingState: Could not load LibraryTexturePacked.png!\n";
         }
         generateLibraryObstacles();
+        
+        if (!m_bgTex.loadFromFile(bgPath)) {
+            std::cerr << "PlayingState: Could not load background texture: " << bgPath << "\n";
+        }
     }
 
-    // Load background tile
-    if (!m_bgTex.loadFromFile(bgPath)) {
-        std::cerr << "PlayingState: Could not load background texture: " << bgPath << "\n";
-    }
     m_bgTex.setRepeated(false);
-    m_tileSize = 2048.f; // 1024 texture * 2x scale
+    m_tileSize = 2048.f;
+    
+    float scaleX = m_tileSize / static_cast<float>(m_bgTex.getSize().x);
+    float scaleY = m_tileSize / static_cast<float>(m_bgTex.getSize().y);
+
     // Initialize 3x3 grid of tiles: center tile (1,1) sits at world origin
     for (int row = 0; row < 3; ++row) {
         for (int col = 0; col < 3; ++col) {
             m_bgTiles[row][col].setTexture(m_bgTex);
-            m_bgTiles[row][col].setScale(2.f, 2.f);
+            m_bgTiles[row][col].setScale(scaleX, scaleY);
             m_bgTiles[row][col].setPosition(
                 (col - 1) * m_tileSize,
                 (row - 1) * m_tileSize
@@ -189,6 +212,39 @@ void PlayingState::update(float dt) {
         }
     }
 
+    if (m_stageType == StageType::MadForest) {
+        sf::Vector2f cam = m_player.getPosition();
+        int centerGridX = std::floor(cam.x / m_tileSize);
+        int centerGridY = std::floor(cam.y / m_tileSize);
+
+        if (centerGridX != m_lastGridX || centerGridY != m_lastGridY) {
+            m_lastGridX = centerGridX;
+            m_lastGridY = centerGridY;
+            
+            m_obstacles.clear();
+            for (int x = -1; x <= 1; ++x) {
+                for (int y = -1; y <= 1; ++y) {
+                    float offsetX = (centerGridX + x) * m_tileSize;
+                    float offsetY = (centerGridY + y) * m_tileSize;
+                    
+                    for (const auto& baseObs : m_baseObstacles) {
+                        sf::Vector2f basePos = baseObs->getPosition();
+                        auto obs = std::make_unique<Obstacle>(
+                            basePos + sf::Vector2f(offsetX, offsetY), 
+                            *baseObs->getSprite().getTexture(), 
+                            baseObs->getSprite().getTextureRect(), 
+                            baseObs->getSprite().getScale().x,
+                            baseObs->getFootprintRatio(), 
+                            baseObs->getWidthRatio()
+                        );
+                        obs->setVisible(baseObs->isVisible());
+                        m_obstacles.push_back(std::move(obs));
+                    }
+                }
+            }
+        }
+    }
+
 
     if (!m_cheatApplied && sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt) && sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
         m_cheatApplied = true;
@@ -269,17 +325,17 @@ void PlayingState::update(float dt) {
         } else if (pos.y > maxY) {
             m_player.setPosition(pos.x, maxY);
         }
-
-        // Resolve Circle-AABB sliding collisions with furniture obstacles
-        sf::Vector2f playerPos = m_player.getPosition();
-        float playerRadius = 16.f; // Player physical collision circle
-        for (const auto& obs : m_obstacles) {
-            if (obs->isActive() && Collision::checkCircleAABB(playerPos, playerRadius, obs->getBounds())) {
-                Collision::resolveCircleAABB(playerPos, playerRadius, m_player.getVelocity(), obs->getBounds());
-            }
-        }
-        m_player.setPosition(playerPos);
     }
+
+    // Resolve Circle-AABB sliding collisions with furniture and map obstacles
+    sf::Vector2f playerPos = m_player.getPosition();
+    float playerRadius = 16.f; // Player physical collision circle
+    for (const auto& obs : m_obstacles) {
+        if (obs->isActive() && obs->hasCollision() && Collision::checkCircleAABB(playerPos, playerRadius, obs->getBounds())) {
+            Collision::resolveCircleAABB(playerPos, playerRadius, m_player.getVelocity(), obs->getBounds());
+        }
+    }
+    m_player.setPosition(playerPos);
 
     // Apply Recovery Upgrade (HP regen)
     float recovery = ProfileManager::GetInstance().getRecoveryRate();
@@ -332,7 +388,8 @@ void PlayingState::update(float dt) {
             }
             if (boss) {
                 float spawnX = m_player.getPosition().x;
-                float spawnY = m_player.getPosition().y - 1200.f; // Spawn above
+                sf::Vector2u winSize = m_manager->getWindow().getSize();
+                float spawnY = m_player.getPosition().y - (winSize.y / 2.0f + 200.f); // Spawn safely above screen
                 
                 int playerLevel = StatsManager::GetInstance().getLevel();
                 if (stats.hpPerLevel > 0.f) {
@@ -404,9 +461,13 @@ void PlayingState::update(float dt) {
                 }
 
                 if (enemy) {
-                    float angle = static_cast<float>(rand() % 360) * 3.14159f / 180.f;
-                    float spawnX = m_player.getPosition().x + std::cos(angle) * 800.f;
-                    float spawnY = m_player.getPosition().y + std::sin(angle) * 800.f;
+                    float angle = (std::rand() % 360) * 3.14159f / 180.f;
+                    sf::Vector2u winSize = m_manager->getWindow().getSize();
+                    float halfW = winSize.x / 2.0f;
+                    float halfH = winSize.y / 2.0f;
+                    float spawnRadius = std::sqrt(halfW * halfW + halfH * halfH) + 100.f;
+                    float spawnX = m_player.getPosition().x + std::cos(angle) * spawnRadius;
+                    float spawnY = m_player.getPosition().y + std::sin(angle) * spawnRadius;
 
                     int playerLevel = StatsManager::GetInstance().getLevel();
                     if (stats.hpPerLevel > 0.f) {
@@ -444,9 +505,9 @@ void PlayingState::update(float dt) {
                     m_activeCollectibles.push_back(std::move(gem));
                 }
             } else if (roll < 80) {
-                // 10% Coin (value between 5 and 15)
+                // 1 Coin
                 auto coin = std::make_unique<Coin>();
-                int goldValue = 5 + (std::rand() % 11);
+                int goldValue = 1;
                 coin->init(enemy->getPosition(), goldValue);
                 m_activeCollectibles.push_back(std::move(coin));
             } else if (roll < 85) {
@@ -546,8 +607,12 @@ void PlayingState::update(float dt) {
 
         for (auto& proj : m_activeProjectiles) {
             if (proj.isActive() && !proj.isEnemyProj() && proj.getBounds().intersects(enemyBounds)) {
-                // Apply Damage & Knockback
                 bool killed = enemy->takeDamage(proj.getDamage());
+                
+                if (proj.getSourceWeapon()) {
+                    proj.getSourceWeapon()->addDamageDealt(proj.getDamage());
+                }
+
                 Physics::ApplyKnockback(enemy, proj.getDirection(), proj.getKnockback(), 1.0f);
                 
                 // Bloody Tear lifesteal
@@ -557,6 +622,10 @@ void PlayingState::update(float dt) {
                 
                 if (!proj.isPiercing()) {
                     proj.deactivate();
+                }
+                
+                if (killed) {
+                    m_kills++;
                 }
             }
         }
@@ -634,7 +703,31 @@ void PlayingState::update(float dt) {
         } else {
             // Game Over
             ProfileManager::GetInstance().save("save.txt");
-            m_manager->changeState(std::make_unique<MainMenuState>(m_manager));
+
+            RunSummaryData summary;
+            summary.mapName = "Mad Forest"; // hardcoded for now, or use m_stageType
+            summary.characterName = "Survivor"; // hardcoded for now
+            summary.survivalTime = m_survivalTime;
+            summary.goldEarned = m_runGold;
+            summary.levelReached = StatsManager::GetInstance().getLevel();
+            summary.enemiesDefeated = m_kills;
+            summary.charIconRect = sf::IntRect(0, 0, 16, 16); // placeholder
+
+            // Populate weapons
+            for (const auto& weapon : m_weapons) {
+                WeaponSummary ws;
+                ws.name = weapon->getName();
+                ws.level = weapon->getLevel();
+                ws.damage = weapon->getTotalDamageDealt();
+                ws.timeActive = summary.survivalTime;
+                ws.dps = (summary.survivalTime > 0) ? (ws.damage / summary.survivalTime) : 0;
+                ws.frameName = weapon->getName();
+                summary.weapons.push_back(ws);
+            }
+
+            // In the future, populate passives here
+
+            m_manager->pushState(std::make_unique<GameOverState>(m_manager, summary));
             return;
         }
     }
