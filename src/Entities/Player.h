@@ -1,6 +1,6 @@
 #pragma once
 #include "Entity.h"
-#include "Engine/AnimatedSprite.h"
+#include "Core/Animation/AnimatedSprite.h"
 #include <string>
 #include <vector>
 #include <SFML/Graphics.hpp>
