@@ -13,7 +13,7 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
-CharacterSelectionView::CharacterSelectionView(TextureAtlas& atlas, const sf::Font& font, const sf::Font* boldFont, const CharacterDataManager& characterData, const PlayerProgressionManager* progressionManager, const WeaponDataManager* weaponManager, const PowerUpDataManager* powerUpManager, TextureAtlas* itemsAtlas)
+CharacterSelectionView::CharacterSelectionView(TextureAtlas& atlas, const sf::Font& font, const sf::Font* boldFont, const CharacterDataManager& characterData, PlayerProgressionManager* progressionManager, const WeaponDataManager* weaponManager, const PowerUpDataManager* powerUpManager, TextureAtlas* itemsAtlas)
     : m_mainBoard(std::make_unique<MainBoardPanel>(atlas, font, boldFont, itemsAtlas))
     , m_statsPanel(std::make_unique<StatsPanel>(atlas, font, itemsAtlas))
     , m_goldDisplay(std::make_unique<GoldDisplayWidget>(atlas, progressionManager, font))
@@ -68,10 +68,11 @@ CharacterSelectionView::CharacterSelectionView(TextureAtlas& atlas, const sf::Fo
 
             m_hoveredCharacterId = characterId;
             const CharacterProfile& profile = characterData.GetCharacterById(characterId);
+            bool isUnlocked = (progressionManager && progressionManager->IsCharacterUnlocked(characterId));
             
             if(m_mainBoard->GetDetailPanel())
             {
-                m_mainBoard->GetDetailPanel()->SetCharacterProfile(profile, weaponManager);
+                m_mainBoard->GetDetailPanel()->SetCharacterProfile(profile, weaponManager, isUnlocked);
             }
 
             if(m_statsPanel)
@@ -79,10 +80,11 @@ CharacterSelectionView::CharacterSelectionView(TextureAtlas& atlas, const sf::Fo
                 m_statsPanel->SetCharacterProfile(profile, progressionManager, powerUpManager);
             }
 
-            if(progressionManager && progressionManager->IsCharacterUnlocked(characterId))
+            if(isUnlocked)
             {
                 if (m_selectionState == SelectionState::SelectingP1 || m_selectionState == SelectionState::SelectingP2)
                 {
+                    m_confirmButton->SetText("CONFIRM", m_font, 24);
                     m_confirmButton->SetState(ButtonState::Normal);
                 }
                 
@@ -95,7 +97,13 @@ CharacterSelectionView::CharacterSelectionView(TextureAtlas& atlas, const sf::Fo
             }
             else
             {
-                m_confirmButton->SetState(ButtonState::Disabled);
+                m_confirmButton->SetText("BUY", m_font, 24);
+                int gold = progressionManager ? progressionManager->GetGold() : 0;
+                if (gold >= 500 && (m_selectionState == SelectionState::SelectingP1 || m_selectionState == SelectionState::SelectingP2)) {
+                    m_confirmButton->SetState(ButtonState::Normal);
+                } else {
+                    m_confirmButton->SetState(ButtonState::Disabled);
+                }
                 
                 // Clear the co-op cards if hovering a locked character
                 if (m_isCoopMode)
@@ -107,33 +115,62 @@ CharacterSelectionView::CharacterSelectionView(TextureAtlas& atlas, const sf::Fo
         });
     }
 
-    m_confirmButton->SetOnClickCallback([this]()
+    m_confirmButton->SetOnClickCallback([this, progressionManager, &characterData, weaponManager, powerUpManager, &atlas]()
     {
-        if (m_selectionState == SelectionState::SelectingP1)
+        if (m_selectionState == SelectionState::SelectingP1 || m_selectionState == SelectionState::SelectingP2)
         {
-            m_p1CharacterId = m_hoveredCharacterId;
-            m_p1Card->SetSelected(true);
-            
-            if (m_isCoopMode)
+            if (progressionManager && !progressionManager->IsCharacterUnlocked(m_hoveredCharacterId))
             {
-                SetState(SelectionState::SelectingP2);
-                if(m_mainBoard && m_mainBoard->GetRosterGrid())
+                if (progressionManager->GetGold() >= 500)
                 {
-                    m_mainBoard->GetRosterGrid()->ClearSelection();
+                    progressionManager->SpendGold(500);
+                    progressionManager->UnlockCharacter(m_hoveredCharacterId);
+                    progressionManager->Save();
+
+                    if (m_mainBoard && m_mainBoard->GetRosterGrid()) {
+                        m_mainBoard->GetRosterGrid()->UnlockCard(m_hoveredCharacterId);
+                    }
+
+                    m_confirmButton->SetText("CONFIRM", m_font, 24);
+                    
+                    const CharacterProfile& profile = characterData.GetCharacterById(m_hoveredCharacterId);
+                    if (m_mainBoard->GetDetailPanel()) {
+                        m_mainBoard->GetDetailPanel()->SetCharacterProfile(profile, weaponManager, true);
+                    }
+                    if (m_isCoopMode) {
+                        if (m_selectionState == SelectionState::SelectingP1) m_p1Card->SetCharacterProfile(&profile, weaponManager, atlas);
+                        else if (m_selectionState == SelectionState::SelectingP2) m_p2Card->SetCharacterProfile(&profile, weaponManager, atlas);
+                    }
                 }
-                m_hoveredCharacterId = "";
-                m_confirmButton->SetState(ButtonState::Disabled);
+                return;
             }
-            else
+
+            if (m_selectionState == SelectionState::SelectingP1)
             {
+                m_p1CharacterId = m_hoveredCharacterId;
+                m_p1Card->SetSelected(true);
+                
+                if (m_isCoopMode)
+                {
+                    SetState(SelectionState::SelectingP2);
+                    if(m_mainBoard && m_mainBoard->GetRosterGrid())
+                    {
+                        m_mainBoard->GetRosterGrid()->ClearSelection();
+                    }
+                    m_hoveredCharacterId = "";
+                    m_confirmButton->SetState(ButtonState::Disabled);
+                }
+                else
+                {
+                    SetState(SelectionState::ReadyToStart);
+                }
+            }
+            else if (m_selectionState == SelectionState::SelectingP2)
+            {
+                m_p2CharacterId = m_hoveredCharacterId;
+                m_p2Card->SetSelected(true);
                 SetState(SelectionState::ReadyToStart);
             }
-        }
-        else if (m_selectionState == SelectionState::SelectingP2)
-        {
-            m_p2CharacterId = m_hoveredCharacterId;
-            m_p2Card->SetSelected(true);
-            SetState(SelectionState::ReadyToStart);
         }
         else if (m_selectionState == SelectionState::ReadyToStart)
         {

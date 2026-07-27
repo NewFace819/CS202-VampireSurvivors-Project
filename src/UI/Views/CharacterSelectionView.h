@@ -73,7 +73,7 @@ private:
     static constexpr float BUTTON_MARGIN_RIGHT = 20.0f;
 
 public:
-    CharacterSelectionView(TextureAtlas& atlas, const sf::Font& font, const sf::Font* boldFont, const CharacterDataManager& characterData, const PlayerProgressionManager* progressionManager = nullptr, const WeaponDataManager* weaponManager = nullptr, const PowerUpDataManager* powerUpManager = nullptr, TextureAtlas* itemsAtlas = nullptr);
+    CharacterSelectionView(TextureAtlas& atlas, const sf::Font& font, const sf::Font* boldFont, const CharacterDataManager& characterData, PlayerProgressionManager* progressionManager = nullptr, const WeaponDataManager* weaponManager = nullptr, const PowerUpDataManager* powerUpManager = nullptr, TextureAtlas* itemsAtlas = nullptr);
     ~CharacterSelectionView() override;
 
     void InitializeLayout(const sf::Vector2f& viewportSize);
