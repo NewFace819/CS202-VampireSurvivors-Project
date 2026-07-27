@@ -65,7 +65,9 @@ void RosterGridPanel::OnCardClicked(const std::string& characterId)
     {
         if(card->GetCharacterId() == characterId)
         {
-            card->SetState(CardState::Selected);
+            if (card->GetState() != CardState::Locked) {
+                card->SetState(CardState::Selected);
+            }
         }
     }
 
@@ -98,7 +100,22 @@ void RosterGridPanel::ClearSelection()
     m_selectedCharacterId = "";
     for(auto& card : m_cards)
     {
-        card->SetState(CardState::Normal);
+        if(card->GetState() != CardState::Locked)
+        {
+            card->SetState(CardState::Normal);
+        }
+    }
+}
+
+void RosterGridPanel::UnlockCard(const std::string& characterId)
+{
+    for(auto& card : m_cards)
+    {
+        if(card->GetCharacterId() == characterId)
+        {
+            card->Unlock();
+            break;
+        }
     }
 }
 
