@@ -21,9 +21,11 @@
 #include <iostream>
 
 #include "Core/Data/ProfileManager.h"
+#include "Core/Data/IconManager.h"
 
 PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageType stageType) 
     : m_manager(manager), m_grid(100.0f), m_enemyPool(500), m_shooterPool(150), m_stageType(stageType) { 
+    IconManager::GetInstance().init();
 
     if (!m_font.loadFromFile("assets/fonts/Courier_HintedSmooth.ttf")) {
         std::cerr << "PlayingState: Could not load font!\n";
@@ -343,7 +345,7 @@ void PlayingState::update(float dt) {
 
     // Update projectiles
     for (auto& proj : m_activeProjectiles) {
-        proj.update(dt);
+        proj.update(dt, m_player.getPosition());
     }
 
     for (auto& proj : m_bossProjectiles) {
@@ -847,23 +849,12 @@ void PlayingState::draw(sf::RenderWindow& window) {
         sf::Sprite iconSprite;
         iconSprite.setTexture(m_itemsTex);
         std::string name = m_weapons[i]->getName();
-        sf::IntRect texRect;
-        if (name == "Whip")            texRect = sf::IntRect(396, 790, 16, 16);
-        else if (name == "Magic Wand") texRect = sf::IntRect(472, 793, 16, 16);
-        else if (name == "Knife")      texRect = sf::IntRect(116, 858, 16, 11);
-        else if (name == "Fire Wand")  texRect = sf::IntRect(434, 788, 16, 16);
-        else if (name == "Axe")        texRect = sf::IntRect(485, 660, 16, 16);
-        else if (name == "Bloody Tear") {
-            texRect = sf::IntRect(396, 790, 16, 16); // Whip icon
+        sf::IntRect texRect = IconManager::GetInstance().getIconRect(name);
+        
+        if (name == "Bloody Tear") {
             iconSprite.setColor(sf::Color(255, 100, 100)); // Red tinted
         }
-        else if (name == "Holy Wand")    texRect = sf::IntRect(491, 793, 16, 16);
-        else if (name == "Thousand Edge") texRect = sf::IntRect(2, 801, 16, 16);
-        else if (name == "Hellfire")     texRect = sf::IntRect(99, 767, 16, 16);
-        else if (name == "Death Spiral")  texRect = sf::IntRect(396, 752, 16, 16);
-        else texRect = sf::IntRect(0, 0, 16, 16);
 
-        
         iconSprite.setTextureRect(texRect);
         
         float iconScale = 2.f; 

@@ -5,6 +5,7 @@
 #include "Entities/Weapons/PassiveItem.h"
 #include "Core/Data/StatsManager.h"
 #include "Core/Data/ProfileManager.h"
+#include "Core/Data/IconManager.h"
 #include "Entities/Weapons/EvolutionRegistry.h"
 
 #include <iostream>
@@ -29,16 +30,17 @@ static const std::vector<std::string> ALL_WEAPON_NAMES = {
 
 // Helper function to get icon texture coordinates for any item
 static sf::IntRect getItemIconRect(const std::string& name, PlayingState* playing) {
-    if (name == "Money Bag")     return sf::IntRect(97, 786, 16, 16);
-    if (name == "Floor Chicken") return sf::IntRect(301, 752, 16, 16);
-    if (name == "Whip")          return sf::IntRect(396, 790, 16, 16);
-    if (name == "Magic Wand")    return sf::IntRect(472, 793, 16, 16);
-    if (name == "Knife")         return sf::IntRect(116, 858, 16, 11);
-    if (name == "Fire Wand")     return sf::IntRect(434, 788, 16, 16);
-    if (name == "Axe")           return sf::IntRect(485, 660, 16, 16);
-    if (name == "Cross")         return sf::IntRect(149, 263, 16, 16);
-    if (name == "Garlic")        return sf::IntRect(256, 408, 13, 13);
+    // 1. Check IconManager first
+    sf::IntRect rect = IconManager::GetInstance().getIconRect(name);
+    if (rect.width != 16 || rect.height != 16) { 
+        // Note: Some icons might naturally not be 16x16 (e.g. Garlic is 13x13)
+        // IconManager handles fetching properly.
+    }
+    if (rect.width != 0) { // Assuming 0 width means it wasn't found properly, though IconManager falls back to 16x16.
+        return rect;
+    }
 
+    // 2. Fallback to playing state passives if needed (though IconManager should handle this now)
     if (playing) {
         for (const auto& p : playing->getPassiveItems()) {
             if (p.name == name) {
@@ -51,6 +53,8 @@ static sf::IntRect getItemIconRect(const std::string& name, PlayingState* playin
 
 LevelUpState::LevelUpState(GameManager* manager, PlayingState* playing)
     : m_manager(manager), m_playing(playing) {
+    
+    IconManager::GetInstance().init();
 
     if (!m_font.loadFromFile("assets/fonts/Courier_HintedSmooth.ttf")) {
         std::cerr << "LevelUpState: Could not load font!\n";
