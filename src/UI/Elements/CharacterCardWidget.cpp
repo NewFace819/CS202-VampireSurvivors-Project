@@ -195,6 +195,13 @@ CardState CharacterCardWidget::GetState() const
     return m_state;
 }
 
+void CharacterCardWidget::Unlock()
+{
+    m_isUnlocked = true;
+    m_state = CardState::Normal;
+    UpdateVisuals();
+}
+
 const std::string& CharacterCardWidget::GetCharacterId() const
 {
     return m_characterId;
@@ -222,7 +229,7 @@ void CharacterCardWidget::UpdateVisuals()
 
     if (m_state == CardState::Locked) {
         m_characterSprite.setColor(sf::Color(0, 0, 0, 255)); // Pure black silhouette
-        m_weaponSprite.setColor(sf::Color(255, 255, 255, 100)); // Slightly faded weapon or transparent
+        // m_weaponSprite.setColor(sf::Color(0, 0, 0, 255));    // Pure black silhouette
         m_nameText.setFillColor(sf::Color(100, 100, 100)); // Darker name
     } else {
         m_characterSprite.setColor(tint);

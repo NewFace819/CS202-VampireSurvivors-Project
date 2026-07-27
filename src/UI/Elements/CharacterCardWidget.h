@@ -50,6 +50,7 @@ public:
     void SetState(CardState state);
     CardState GetState() const;
     void SetTint(sf::Color color);
+    void Unlock();
     const std::string& GetCharacterId() const;
 
     void SetOnClickCallback(std::function<void(const std::string&)> callback);

@@ -37,12 +37,12 @@ DetailPanel::DetailPanel(TextureAtlas& atlas, const sf::Font& font, const sf::Fo
     m_weaponBgSprite.SetSize(sf::Vector2f(80.0f, 80.0f));
 }
 
-void DetailPanel::SetCharacterProfile(const CharacterProfile& profile, const WeaponDataManager* weaponManager)
+void DetailPanel::SetCharacterProfile(const CharacterProfile& profile, const WeaponDataManager* weaponManager, bool isUnlocked)
 {
     m_hasProfile = true;
 
     m_nameText.setString(profile.GetName());
-    m_rawDescription = profile.GetDescription();
+    m_rawDescription = isUnlocked ? profile.GetDescription() : "";
     m_descriptionText.setString(m_rawDescription);
 
     // ── Rebuild character sprite using the exact same logic as CharacterCardWidget ──
@@ -158,6 +158,16 @@ void DetailPanel::SetCharacterProfile(const CharacterProfile& profile, const Wea
     {
         float scale = std::min(56.0f / weaponBounds.width, 56.0f / weaponBounds.height);
         m_weaponSprite.setScale(scale, scale);
+    }
+
+    if (!isUnlocked) {
+        m_characterSprite.setColor(sf::Color(0, 0, 0, 255));
+        // m_weaponSprite.setColor(sf::Color(0, 0, 0, 255));
+        m_nameText.setFillColor(sf::Color(100, 100, 100));
+    } else {
+        m_characterSprite.setColor(sf::Color::White);
+        m_weaponSprite.setColor(sf::Color::White);
+        m_nameText.setFillColor(sf::Color::White);
     }
 
     // Re-layout immediately in case lengths changed

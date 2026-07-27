@@ -38,7 +38,7 @@ public:
     DetailPanel(TextureAtlas& atlas, const sf::Font& font, const sf::Font* boldFont = nullptr, TextureAtlas* itemsAtlas = nullptr);
     ~DetailPanel() override = default;
 
-    void SetCharacterProfile(const CharacterProfile& profile, const WeaponDataManager* weaponManager = nullptr);
+    void SetCharacterProfile(const CharacterProfile& profile, const WeaponDataManager* weaponManager = nullptr, bool isUnlocked = true);
 
     void Update(float deltaTime) override;
     void HandleEvent(const sf::Event& event, const sf::RenderWindow& window) override;
