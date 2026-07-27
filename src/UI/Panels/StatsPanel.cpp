@@ -131,6 +131,11 @@ std::string StatsPanel::FormatLabelName(const std::string& key) const
 
 void StatsPanel::SetCharacterProfile(const CharacterProfile& profile, const PlayerProgressionManager* progressionManager, const PowerUpDataManager* powerUpManager)
 {
+    bool isUnlocked = true;
+    if (progressionManager) {
+        isUnlocked = progressionManager->IsCharacterUnlocked(profile.GetId());
+    }
+
     for(StatRow& row : m_rows)
     {
         float value = profile.GetStat(row.key);
@@ -141,7 +146,7 @@ void StatsPanel::SetCharacterProfile(const CharacterProfile& profile, const Play
             buff = progressionManager->GetGlobalStatBuff(row.key, *powerUpManager);
         }
         
-        FormatStatText(row, value, buff);
+        FormatStatText(row, value, buff, isUnlocked);
 
         // Set icon sprite
         if (m_itemsAtlas) {
@@ -161,12 +166,21 @@ void StatsPanel::SetCharacterProfile(const CharacterProfile& profile, const Play
     SetPosition(m_position);
 }
 
-void StatsPanel::FormatStatText(StatRow& row, float value, float buff) const
+void StatsPanel::FormatStatText(StatRow& row, float value, float buff, bool isUnlocked) const
 {
+    if (!isUnlocked)
+    {
+        row.valueText.setString("-");
+        row.valueText.setFillColor(sf::Color(160, 160, 160));
+        row.buffText.setString("");
+        return;
+    }
+
     if(value == 0.0f)
     {
         row.valueText.setString("-");
         row.valueText.setFillColor(sf::Color(160, 160, 160));
+        row.buffText.setString("");
         return;
     }
 

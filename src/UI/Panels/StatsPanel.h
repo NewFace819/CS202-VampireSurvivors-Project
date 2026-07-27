@@ -36,7 +36,7 @@ private:
     static constexpr float START_Y_OFFSET = 20.0f;
     static constexpr float PADDING_X = 20.0f;
 
-    void FormatStatText(StatRow& row, float value, float buff) const;
+    void FormatStatText(StatRow& row, float value, float buff, bool isUnlocked) const;
     std::string FormatLabelName(const std::string& key) const;
     static std::string GetStatIconFrame(const std::string& statKey);
 
