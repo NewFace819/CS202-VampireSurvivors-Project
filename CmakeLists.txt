@@ -22,7 +22,7 @@ FetchContent_MakeAvailable(json)
 
 
 # Define source files
-file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp")
+file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 # Define executable
 add_executable(${PROJECT_NAME} ${SOURCES})
