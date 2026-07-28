@@ -181,33 +181,15 @@ public:
                     } else {
                         setSprite(*m_landedSpriteTex, m_landedSpriteFrame, m_landedSpriteScale, false, m_spriteColor);
                     }
-                } else {
-                    m_hasSprite = false;
-                    // Fallback visual
-                    float areaMult = ProfileManager::GetInstance().getAreaMultiplier();
-                    m_shape.setRadius(50.f * areaMult); // Puddle size
-                    m_shape.setOrigin(50.f * areaMult, 50.f * areaMult);
-                    m_shape.setScale(1.f, 0.5f); // Flatten circle to look like an isometric puddle
-                    m_shape.setFillColor(sf::Color(100, 150, 255, 150));
-                    m_shape.setOutlineThickness(2.f);
-                    m_shape.setOutlineColor(sf::Color(150, 200, 255, 200));
-                    m_shape.setPosition(m_position);
                 }
             }
         }
         
         // Hit interval for continuous damage
-        if (m_hitInterval > 0.f && m_hasLanded) {
+        if (m_hitInterval > 0.f && !m_isLanding) {
             m_hitIntervalTimer += dt;
             if (m_hitIntervalTimer >= m_hitInterval) {
                 m_hitIntervalTimer = 0.f; // The wiki says they reset simultaneously
-                m_hitEnemies.clear();
-            }
-        } else if (m_hitInterval > 0.f && !m_isLanding) {
-            // Continuous damage for non-landing projectiles (e.g. Aura)
-            m_hitIntervalTimer += dt;
-            if (m_hitIntervalTimer >= m_hitInterval) {
-                m_hitIntervalTimer = 0.f;
                 m_hitEnemies.clear();
             }
         }

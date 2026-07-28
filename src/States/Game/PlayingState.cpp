@@ -611,9 +611,7 @@ void PlayingState::update(float dt) {
                 sf::Vector2f pushDir = toPlayer / dist; // From player to enemy
                 enemy->setPosition(enemy->getPosition() + pushDir * overlap);
             }
-        }
 
-        if (!enemy->isDying()) {
             for (auto& proj : m_activeProjectiles) {
                 if (proj.canHit() && !proj.isEnemyProj() && proj.getBounds().intersects(enemyBounds)) {
                     if (proj.hasHitEnemy(enemy)) continue; // Already hit this enemy
