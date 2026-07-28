@@ -10,6 +10,7 @@
 #include "Hellfire.h"
 #include "SantaWater.h"
 #include "Runetracer.h"
+#include "LightningRing.h"
 #include "Entities/Weapons/Axe.h"
 #include "Entities/Weapons/DeathSpiral.h"
 #include "Entities/Weapons/Cross.h"

@@ -1,4 +1,5 @@
 #include "Core/GameManager.h"
+#include "States/Game/PlayingState.h"
 #include "States/Menu/MainMenuState.h"
 #include "Entities/Enemy/EnemyDatabase.h"
 
@@ -9,7 +10,7 @@ GameManager::GameManager()
     // Load Enemy Database
     EnemyDatabase::loadDatabase("assets/data/enemies.json", "assets/enemies_atlas.json");
     
-    // Initially push the main menu state
+    // Initially push the Main Menu state
     pushState(std::make_unique<MainMenuState>(this));
 }
 

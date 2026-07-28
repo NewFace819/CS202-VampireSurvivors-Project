@@ -17,6 +17,7 @@ std::unique_ptr<WeaponBase> WeaponFactory::createWeapon(const std::string& weapo
     if (weaponName == "King Bible") return std::make_unique<KingBible>();
     if (weaponName == "Santa Water") return std::make_unique<SantaWater>();
     if (weaponName == "Runetracer") return std::make_unique<Runetracer>();
+    if (weaponName == "Lightning Ring" || weaponName == "LIGHTNING") return std::make_unique<LightningRing>();
     
     return nullptr;
 }

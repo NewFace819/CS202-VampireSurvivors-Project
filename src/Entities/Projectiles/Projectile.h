@@ -90,6 +90,8 @@ public:
         m_hasSprite = true;
     }
 
+    AnimatedSprite& getAnimatedSprite() { return m_animSprite; }
+
     // Enable a sparkle trail. `spawnInterval` = seconds between trail particles (e.g. 0.03)
     // `particleLifetime` = how long each particle lives (e.g. 0.25)
     // `color` = trail particle tint
@@ -166,8 +168,11 @@ public:
     float getDamage() const { return m_damage; }
     float getKnockback() const { return m_knockbackForce; }
     void setKnockback(float force) { m_knockbackForce = force; }
+    bool m_useShapeForBounds = false;
+    void setUseShapeForBounds(bool useShape) { m_useShapeForBounds = useShape; }
+
     sf::FloatRect getBounds() const { 
-        if (m_hasSprite) return m_animSprite.getGlobalBounds();
+        if (m_hasSprite && !m_useShapeForBounds) return m_animSprite.getGlobalBounds();
         if (m_useRect) return m_rectShape.getGlobalBounds();
         return m_shape.getGlobalBounds(); 
     }

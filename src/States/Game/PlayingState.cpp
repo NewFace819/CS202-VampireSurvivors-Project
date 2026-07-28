@@ -167,16 +167,17 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
         case CharacterType::Sigma:
             m_player.setSprite("assets/Graphics/Characters/characters.png", 
                                getFrames("Sigma"));
-            addWeapon("Whip");
-            addWeapon("Magic Wand");
-            addWeapon("Knife");
-            addWeapon("Fire Wand");
-            addWeapon("Axe");
-            addWeapon("Cross");
-            addWeapon("Garlic");
-            addWeapon("King Bible");
-            addWeapon("Santa Water");
-            addWeapon("Runetracer");
+            //addWeapon("Whip");
+            //addWeapon("Magic Wand");
+            //addWeapon("Knife");
+            //addWeapon("Fire Wand");
+            //addWeapon("Axe");
+            //addWeapon("Cross");
+            //addWeapon("Garlic");
+            //addWeapon("King Bible");
+            //addWeapon("Santa Water");
+            //addWeapon("Runetracer");
+            addWeapon("Lightning Ring");
             break;
     }
 
