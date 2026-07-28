@@ -1,280 +1,300 @@
 #include "States/Menu/ShopState.h"
 #include "States/Menu/MainMenuState.h"
 #include "Core/GameManager.h"
+#include "Core/WindowSettings.h"
 #include "Core/Data/ProfileManager.h"
+#include "Core/Data/PowerUpData.h"
+#include "UI/Components/UIGridLayout.h"
+#include "UI/Components/UIDetailPanel.h"
+#include "UI/Components/UIScrollView.h"
+#include "UI/Components/PowerUpCard.h"
+#include "UI/Elements/GoldDisplayWidget.h"
+#include "UI/Elements/UIButton.h"
 #include <iostream>
-#include <iomanip>
+#include <algorithm>
 
-ShopState::ShopState(GameManager* manager) : m_manager(manager) {
-    if (!m_font.loadFromFile("assets/fonts/Courier_HintedSmooth.ttf")) {
-        std::cerr << "ShopState: Could not load font!\n";
+ShopState::ShopState(GameManager* manager)
+    : m_manager(manager)
+{
+}
+
+ShopState::~ShopState() = default;
+
+void ShopState::enter() {
+    std::cout << "Entering ShopState...\n";
+    m_timeInState = 0.f;
+
+    if (!m_uiInitialized) {
+        initUI();
+        m_uiInitialized = true;
     }
     
-    initUI();
+    // Refresh player gold & progress from disk/singleton before showing
+    m_progressionData.Load("assets/Data/save_data.json");
+    refreshGridData();
+}
+
+void ShopState::SetupCompositeBackground() {
+    if (!m_manager) return;
+    
+    float width = m_manager->getWindow().getSize().x;
+    float height = m_manager->getWindow().getSize().y;
+    
+    m_compositeTexture.create(static_cast<unsigned int>(width), static_cast<unsigned int>(height));
+    m_compositeTexture.clear(sf::Color::Black);
+
+    sf::Texture bgTex;
+    if (bgTex.loadFromFile("assets/Graphics/Backgrounds/introBG_0.png")) {
+        sf::Sprite bgSprite(bgTex);
+        bgSprite.setOrigin(bgTex.getSize().x / 2.0f, bgTex.getSize().y / 2.0f);
+        bgSprite.setPosition(width / 2.0f, height / 2.0f);
+
+        float scaleX = width / static_cast<float>(bgTex.getSize().x);
+        float scaleY = height / static_cast<float>(bgTex.getSize().y);
+        float scale = std::max(scaleX, scaleY);
+        bgSprite.setScale(scale, scale);
+
+        m_compositeTexture.draw(bgSprite);
+    }
+
+    sf::Texture titleTex;
+    if (titleTex.loadFromFile("assets/Graphics/Backgrounds/title.png")) {
+        sf::Sprite titleSprite(titleTex);
+        titleSprite.setOrigin(titleTex.getSize().x / 2.0f, titleTex.getSize().y / 2.0f);
+        titleSprite.setPosition(width / 2.0f, height / 2.0f - 216.f);
+        titleSprite.setScale(1.8f, 1.8f);
+        m_compositeTexture.draw(titleSprite);
+    }
+
+    m_compositeTexture.display();
+    m_compositeSprite.setTexture(m_compositeTexture.getTexture());
 }
 
 void ShopState::initUI() {
-    sf::Vector2u wSize = m_manager->getWindow().getSize();
-    float windowW = static_cast<float>(wSize.x);
-    float windowH = static_cast<float>(wSize.y);
-
-    // Title Text
-    m_titleText.setFont(m_font);
-    m_titleText.setString("META-UPGRADE SHOP");
-    m_titleText.setCharacterSize(44);
-    m_titleText.setFillColor(sf::Color(228, 199, 109)); // Gold
-    m_titleText.setStyle(sf::Text::Bold);
-    m_titleText.setPosition(windowW / 2.f - m_titleText.getGlobalBounds().width / 2.f, 25.f);
-
-    // Gold Text
-    m_goldText.setFont(m_font);
-    m_goldText.setCharacterSize(22);
-    m_goldText.setFillColor(sf::Color::White);
-    m_goldText.setStyle(sf::Text::Bold);
-    m_goldText.setPosition(50.f, 85.f);
-
-    // Buttons at the bottom
-    float btnY = windowH - 85.f;
-    float btnW = 280.f;
-    float btnH = 50.f;
-
-    // Refund Button
-    m_refundBtn.setSize(sf::Vector2f(btnW, btnH));
-    m_refundBtn.setFillColor(sf::Color(120, 30, 30));
-    m_refundBtn.setOutlineThickness(3.f);
-    m_refundBtn.setOutlineColor(sf::Color(228, 199, 109));
-    m_refundBtn.setPosition(windowW / 2.f - btnW - 30.f, btnY);
-
-    m_refundText.setFont(m_font);
-    m_refundText.setString("REFUND ALL");
-    m_refundText.setCharacterSize(20);
-    m_refundText.setFillColor(sf::Color::White);
-    m_refundText.setStyle(sf::Text::Bold);
-    sf::FloatRect rBounds = m_refundText.getLocalBounds();
-    m_refundText.setOrigin(rBounds.left + rBounds.width / 2.f, rBounds.top + rBounds.height / 2.f);
-    m_refundText.setPosition(m_refundBtn.getPosition().x + btnW / 2.f, m_refundBtn.getPosition().y + btnH / 2.f);
-
-    // Back Button
-    m_backBtn.setSize(sf::Vector2f(btnW, btnH));
-    m_backBtn.setFillColor(sf::Color(40, 40, 40));
-    m_backBtn.setOutlineThickness(3.f);
-    m_backBtn.setOutlineColor(sf::Color(228, 199, 109));
-    m_backBtn.setPosition(windowW / 2.f + 30.f, btnY);
-
-    m_backText.setFont(m_font);
-    m_backText.setString("BACK TO MENU");
-    m_backText.setCharacterSize(20);
-    m_backText.setFillColor(sf::Color::White);
-    m_backText.setStyle(sf::Text::Bold);
-    sf::FloatRect bBounds = m_backText.getLocalBounds();
-    m_backText.setOrigin(bBounds.left + bBounds.width / 2.f, bBounds.top + bBounds.height / 2.f);
-    m_backText.setPosition(m_backBtn.getPosition().x + btnW / 2.f, m_backBtn.getPosition().y + btnH / 2.f);
-
-    // Position the 15 Power-ups in a 3 column x 5 row grid
-    const auto& powerUps = ProfileManager::GetInstance().getPowerUpsList();
-    
-    float startX = 50.f;
-    float startY = 135.f;
-    float spacingX = 400.f;
-    float spacingY = 95.f;
-    float panelW = 380.f;
-    float panelH = 85.f;
-
-    // Adjust grid spacing based on window width
-    if (windowW > 1300.f) {
-        startX = (windowW - (3 * panelW + 2 * (spacingX - panelW))) / 2.f;
+    // Use the game's official standard menu font
+    if (!m_font.loadFromFile("assets/fonts/Courier_HintedSmooth.ttf")) {
+        std::cerr << "[ShopState] Failed to load Courier_HintedSmooth font.\n";
+    }
+    if (!m_boldFont.loadFromFile("assets/fonts/Courier_HintedSmooth.ttf")) {
+        m_boldFont = m_font;
     }
 
-    m_uiItems.clear();
-    for (size_t i = 0; i < powerUps.size(); ++i) {
-        int col = i / 5;
-        int row = i % 5;
-        float x = startX + col * spacingX;
-        float y = startY + row * spacingY;
+    // Initialize original composite background
+    SetupCompositeBackground();
 
-        ShopItemUI ui;
-        ui.name = powerUps[i].name;
+    // Load atlases for UI elements, item icons, and menu background illustrations
+    if (!m_atlas.loadFromFile("assets/Graphics/Spritesheets/UI.png", "assets/Data/ui_atlas.json", true)) {
+        std::cerr << "[ShopState] Could not load UI atlas!\n";
+    }
+    if (!m_atlas.loadFromFile("assets/Graphics/Spritesheets/items.png", "assets/Data/items_atlas.json", true)) {
+        std::cerr << "[ShopState] Could not load items atlas!\n";
+    }
+    if (!m_illustAtlas.loadFromFile("assets/Graphics/Spritesheets/illustrations.png", "assets/Data/illustration_atlas.json", true)) {
+        std::cerr << "[ShopState] Could not load illustration atlas!\n";
+    }
 
-        // Background Panel
-        ui.panel.setSize(sf::Vector2f(panelW, panelH));
-        ui.panel.setPosition(x, y);
-        ui.panel.setFillColor(sf::Color(30, 30, 30));
-        ui.panel.setOutlineThickness(2.f);
-        ui.panel.setOutlineColor(sf::Color(80, 80, 80));
-
-        // Name Text
-        ui.nameText.setFont(m_font);
-        ui.nameText.setString(ui.name);
-        ui.nameText.setCharacterSize(18);
-        ui.nameText.setFillColor(sf::Color::White);
-        ui.nameText.setStyle(sf::Text::Bold);
-        ui.nameText.setPosition(x + 15.f, y + 10.f);
-
-        // Description Text
-        ui.descText.setFont(m_font);
-        ui.descText.setString(powerUps[i].description);
-        ui.descText.setCharacterSize(11);
-        ui.descText.setFillColor(sf::Color(170, 170, 170));
-        ui.descText.setPosition(x + 15.f, y + 58.f);
-
-        // Cost Text
-        ui.costText.setFont(m_font);
-        ui.costText.setCharacterSize(15);
-        ui.costText.setFillColor(sf::Color(228, 199, 109));
-        ui.costText.setStyle(sf::Text::Bold);
-        ui.costText.setPosition(x + panelW - 110.f, y + 12.f);
-
-        // Level Indicators
-        float indicatorStartX = x + 15.f;
-        float indicatorStartY = y + 36.f;
-        float boxW = 14.f;
-        float boxH = 10.f;
-        float boxSpacing = 4.f;
-
-        for (int j = 0; j < powerUps[i].maxLevel; ++j) {
-            sf::RectangleShape box(sf::Vector2f(boxW, boxH));
-            box.setPosition(indicatorStartX + j * (boxW + boxSpacing), indicatorStartY);
-            box.setOutlineThickness(1.f);
-            box.setOutlineColor(sf::Color(200, 200, 200));
-            box.setFillColor(sf::Color::Black);
-            ui.levelBoxes.push_back(box);
+    // Setup illustration sprites matching MainMenuState
+    sf::Vector2f windowSize(m_manager->getWindow().getSize().x, m_manager->getWindow().getSize().y);
+    m_illustrations.clear();
+    for (int i = 0; i < 3; ++i) {
+        sf::Sprite sprite;
+        std::string key = "illustrations_" + std::to_string(i);
+        AssetTextureData data = m_illustAtlas.GetTextureData(key);
+        if (data.texture) {
+            sprite.setTexture(*data.texture);
+            sprite.setTextureRect(data.rect);
+            sprite.setOrigin(data.rect.width / 2.0f, data.rect.height / 2.0f);
         }
-
-        m_uiItems.push_back(std::move(ui));
+        
+        sf::Color c = sprite.getColor();
+        if (i == 1) c.a = 90;
+        else if (i == 2) c.a = 150;
+        sprite.setColor(c);
+        
+        m_illustrations.push_back(sprite);
     }
 
-    updateUI();
+    float textureGap = windowSize.x / 3.0f;
+    if (m_illustrations.size() == 3) {
+        m_illustrations[0].setPosition(windowSize.x / 2.0f, windowSize.y / 2.0f + 280.0f);
+        m_illustrations[0].setScale(2.5f, 2.5f);
+        
+        m_illustrations[1].setPosition(windowSize.x / 2.0f - textureGap, windowSize.y / 2.0f + 230.0f);
+        m_illustrations[1].setScale(4.9f, 4.9f);
+        
+        m_illustrations[2].setPosition(windowSize.x / 2.0f + textureGap, windowSize.y / 2.0f);
+        m_illustrations[2].setScale(-3.0f, 3.0f);
+    }
+
+    // Load data structures
+    m_powerUpData.LoadFromJson("assets/Data/POWERUP_DATA.json");
+    m_progressionData.Load("assets/Data/save_data.json");
+
+    // Central window frame (Dark purple with gold border, symmetrically centered)
+    m_mainFrame.SetTexture(m_atlas, "frame_purple");
+    m_mainFrame.SetMargins(15, 15, 15, 15);
+    m_mainFrame.SetSize(sf::Vector2f(830.0f, 680.0f));
+    m_mainFrame.setPosition(449.0f, 100.0f);
+    m_mainFrame.SetCornerScale(2.5f);
+    m_mainFrame.Update();
+
+    // Title text centered inside main frame
+    m_titleText.setFont(m_boldFont);
+    m_titleText.setString("PowerUp Selection");
+    m_titleText.setCharacterSize(38);
+    m_titleText.setFillColor(sf::Color::White);
+    sf::FloatRect textBounds = m_titleText.getLocalBounds();
+    m_titleText.setPosition(864.0f - textBounds.width / 2.0f, 120.0f);
+
+    // Gold Display Widget centered at top bar
+    m_goldDisplay = std::make_unique<GoldDisplayWidget>(m_atlas, &m_progressionData, m_font);
+    m_goldDisplay->SetPosition(sf::Vector2f(720.0f, 18.0f));
+
+    // Back Button placed near top right in alignment with gold display
+    m_backButton = std::make_unique<UIButton>(m_atlas, "button_c5_normal", 10, 10, 10, 10);
+    m_backButton->SetText("BACK", m_font, 26);
+    m_backButton->SetSize(sf::Vector2f(150.0f, 65.0f));
+    m_backButton->SetCornerScale(2.0f);
+    m_backButton->SetPosition(sf::Vector2f(1144.0f, 18.0f));
+    m_backButton->SetOnClickCallback([this]() {
+        if (m_manager) {
+            m_manager->changeState(std::make_unique<MainMenuState>(m_manager));
+        }
+    });
+
+    // Refund PowerUps button directly below title
+    m_refundButton = std::make_unique<UIButton>(m_atlas, "button_c8_normal", 10, 10, 10, 10);
+    m_refundButton->SetText("Refund PowerUps", m_font, 30);
+    m_refundButton->SetSize(sf::Vector2f(740.0f, 55.0f));
+    m_refundButton->SetCornerScale(2.5f);
+    m_refundButton->SetPosition(sf::Vector2f(494.0f, 180.0f));
+    m_refundButton->SetOnClickCallback([this]() {
+        m_progressionData.RefundAllPowerUps(m_powerUpData);
+        syncUpgradesWithProfileManager();
+        refreshGridData();
+    });
+
+    // Detail Panel as a wide horizontal banner directly beneath the main frame
+    m_detailPanel = std::make_unique<UIDetailPanel>(m_atlas, m_font);
+    m_detailPanel->SetSize(sf::Vector2f(830.0f, 185.0f));
+    m_detailPanel->SetCornerScale(2.5f);
+    m_detailPanel->SetPosition(sf::Vector2f(449.0f, 795.0f));
+    m_detailPanel->SetOnBuyClicked([this](const std::string& id) {
+        if (!id.empty()) {
+            int oldLevel = m_progressionData.GetPowerUpLevel(id);
+            m_progressionData.BuyPowerUp(id, m_powerUpData);
+            if (m_progressionData.GetPowerUpLevel(id) > oldLevel) {
+                syncUpgradesWithProfileManager();
+                refreshGridData();
+            }
+        }
+    });
+
+    // 4-Column Card Grid wrapped in UIScrollView with equal spacing and right-hand scrollbar
+    auto grid = std::make_unique<UIGridLayout>(m_atlas, m_font);
+    grid->SetGridProperties(4, 174.0f, 174.0f, 14.0f, 14.0f);
+    grid->SetScale(1.0f);
+    grid->SetPosition(sf::Vector2f(0.0f, 0.0f));
+    grid->SetOnSelectionChangedCallback([this](const PowerUpData& selectedData) {
+        if (m_detailPanel) {
+            m_detailPanel->UpdateContent(selectedData);
+        }
+    });
+    
+    m_gridLayout = grid.get();
+
+    m_scrollView = std::make_unique<UIScrollView>(760.0f, 510.0f, m_atlas);
+    m_scrollView->SetPosition(sf::Vector2f(484.0f, 250.0f));
+    m_scrollView->SetContent(std::move(grid));
 }
 
-void ShopState::updateUI() {
+PowerUpData ShopState::convertToUIData(const std::string& powerUpId) {
+    const PowerUpProfile& profile = m_powerUpData.GetPowerUpById(powerUpId);
+    PowerUpData data;
+    data.id = profile.GetId();
+    data.title = profile.GetName();
+    data.description = profile.GetDescription();
+    data.textureId = profile.GetFrameName();
+    data.currentLevel = m_progressionData.GetPowerUpLevel(data.id);
+    data.maxLevel = profile.GetMaxLevel();
+    
+    if (data.currentLevel < data.maxLevel) {
+        data.price = m_progressionData.GetNextPowerUpPrice(data.id, m_powerUpData);
+    } else {
+        data.price = 0;
+    }
+    
+    data.iconRect = m_atlas.getRect(data.textureId);
+    data.emptyBoxRect = m_atlas.getRect("menu_checkbox_24_bg");
+    data.filledBoxRect = m_atlas.getRect("menu_checkbox_24_checkmark");
+    return data;
+}
+
+void ShopState::refreshGridData() {
+    if (!m_gridLayout) return;
+
+    std::vector<PowerUpData> dataset;
+    const auto& order = m_powerUpData.GetPowerUpOrder();
+    for (const auto& id : order) {
+        dataset.push_back(convertToUIData(id));
+    }
+    
+    int focusedIdx = m_gridLayout->GetFocusedIndex();
+    m_gridLayout->SetDataset(dataset);
+    
+    if (focusedIdx >= 0 && focusedIdx < static_cast<int>(dataset.size())) {
+        m_gridLayout->SelectIndex(focusedIdx);
+    } else if (!dataset.empty()) {
+        m_gridLayout->SelectIndex(0);
+    }
+}
+
+void ShopState::syncUpgradesWithProfileManager() {
     ProfileManager& pm = ProfileManager::GetInstance();
-    
-    // Update Gold Label
-    m_goldText.setString("GOLD COINS: " + std::to_string(pm.getGold()));
-
-    const auto& powerUps = pm.getPowerUpsList();
-    for (size_t i = 0; i < m_uiItems.size(); ++i) {
-        auto& ui = m_uiItems[i];
-        const auto& pu = powerUps[i];
-        int currentRank = pm.getUpgradeRank(ui.name);
-
-        // Update Level Boxes color
-        for (int j = 0; j < pu.maxLevel; ++j) {
-            auto& box = ui.levelBoxes[j];
-            if (j < currentRank) {
-                box.setFillColor(sf::Color(228, 199, 109)); // Gold
-                box.setOutlineColor(sf::Color(228, 199, 109));
-            } else {
-                box.setFillColor(sf::Color::Black);
-                box.setOutlineColor(sf::Color(100, 100, 100));
-            }
-        }
-
-        // Update Cost Label
-        if (currentRank >= pu.maxLevel) {
-            ui.costText.setString("   MAX");
-            ui.costText.setFillColor(sf::Color(100, 220, 100));
-        } else {
-            int cost = pm.calculateRankCost(pu, currentRank + 1);
-            ui.costText.setString("Cost: " + std::to_string(cost));
-            
-            if (pm.getGold() >= cost) {
-                ui.costText.setFillColor(sf::Color(228, 199, 109)); // Gold
-            } else {
-                ui.costText.setFillColor(sf::Color(180, 50, 50)); // Red (can't afford)
-            }
-        }
+    const auto& order = m_powerUpData.GetPowerUpOrder();
+    for (const auto& id : order) {
+        const PowerUpProfile& prof = m_powerUpData.GetPowerUpById(id);
+        int lvl = m_progressionData.GetPowerUpLevel(id);
+        pm.setUpgradeRank(prof.GetName(), lvl);
     }
+    pm.save("save.txt");
 }
 
-void ShopState::enter() {
-    m_timeInState = 0.f;
-    updateUI();
+void ShopState::handleEvent(const sf::Event& event, sf::RenderWindow& window) {
+    if (!m_uiInitialized) return;
+
+    if (m_scrollView) m_scrollView->HandleEvent(event, window);
+    if (m_detailPanel) m_detailPanel->HandleEvent(event, window);
+    if (m_refundButton) m_refundButton->HandleEvent(event, window);
+    if (m_backButton) m_backButton->HandleEvent(event, window);
 }
 
 void ShopState::update(float dt) {
     m_timeInState += dt;
-    sf::Vector2i mousePos = sf::Mouse::getPosition(m_manager->getWindow());
-    sf::Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
+    if (!m_uiInitialized) return;
 
-    // Handle Hover State for Buttons
-    if (m_refundBtn.getGlobalBounds().contains(mousePosF)) {
-        m_refundBtn.setFillColor(sf::Color(160, 40, 40));
-    } else {
-        m_refundBtn.setFillColor(sf::Color(120, 30, 30));
-    }
-
-    if (m_backBtn.getGlobalBounds().contains(mousePosF)) {
-        m_backBtn.setFillColor(sf::Color(70, 70, 70));
-    } else {
-        m_backBtn.setFillColor(sf::Color(40, 40, 40));
-    }
-
-    // Handle Hover State for Upgrades
-    for (auto& ui : m_uiItems) {
-        if (ui.panel.getGlobalBounds().contains(mousePosF)) {
-            ui.panel.setFillColor(sf::Color(55, 55, 55));
-            ui.panel.setOutlineColor(sf::Color(228, 199, 109));
-        } else {
-            ui.panel.setFillColor(sf::Color(30, 30, 30));
-            ui.panel.setOutlineColor(sf::Color(80, 80, 80));
-        }
-    }
-
-    // Handle Click Events
-    if (m_timeInState > 0.2f && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-        m_timeInState = 0.f; // Debounce clicks
-
-        // Refund Click
-        if (m_refundBtn.getGlobalBounds().contains(mousePosF)) {
-            ProfileManager::GetInstance().refundAll();
-            updateUI();
-            std::cout << "Refunded all power-ups!\n";
-        }
-        // Back Click
-        else if (m_backBtn.getGlobalBounds().contains(mousePosF)) {
-            m_manager->changeState(std::make_unique<MainMenuState>(m_manager));
-        }
-        // Upgrade click
-        else {
-            for (auto& ui : m_uiItems) {
-                if (ui.panel.getGlobalBounds().contains(mousePosF)) {
-                    if (ProfileManager::GetInstance().upgradePowerUp(ui.name)) {
-                        std::cout << "Upgraded " << ui.name << " successfully!\n";
-                        updateUI();
-                    }
-                    break;
-                }
-            }
-        }
-    }
+    m_mainFrame.Update();
+    if (m_goldDisplay) m_goldDisplay->Update(dt);
+    if (m_scrollView) m_scrollView->Update(dt);
+    if (m_detailPanel) m_detailPanel->Update(dt);
+    if (m_refundButton) m_refundButton->Update(dt);
+    if (m_backButton) m_backButton->Update(dt);
 }
 
 void ShopState::draw(sf::RenderWindow& window) {
-    window.clear(sf::Color(20, 20, 20));
-
-    window.draw(m_titleText);
-    window.draw(m_goldText);
-
-    // Draw Panels and Texts
-    for (auto& ui : m_uiItems) {
-        window.draw(ui.panel);
-        window.draw(ui.nameText);
-        window.draw(ui.descText);
-        window.draw(ui.costText);
-        
-        // Draw the level indicator boxes for this item
-        for (const auto& box : ui.levelBoxes) {
-            window.draw(box);
-        }
+    window.draw(m_compositeSprite);
+    for (const auto& sprite : m_illustrations) {
+        window.draw(sprite);
     }
-
-    // Draw Buttons
-    window.draw(m_refundBtn);
-    window.draw(m_refundText);
-    window.draw(m_backBtn);
-    window.draw(m_backText);
+    window.draw(m_mainFrame);
+    window.draw(m_titleText);
+    if (m_goldDisplay) m_goldDisplay->Draw(window);
+    if (m_scrollView) m_scrollView->Draw(window);
+    if (m_detailPanel) m_detailPanel->Draw(window);
+    if (m_refundButton) m_refundButton->Draw(window);
+    if (m_backButton) m_backButton->Draw(window);
 }
 
 void ShopState::exit() {
+    std::cout << "Exiting ShopState...\n";
 }

@@ -8,7 +8,6 @@
 class PlayerProgressionManager
 {
 private:
-    int m_gold = 0;
     std::unordered_set<std::string> m_unlockedCharacters;
     std::unordered_map<std::string, int> m_purchasedPowerUps;
 

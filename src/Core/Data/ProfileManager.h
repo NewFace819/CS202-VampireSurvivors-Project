@@ -30,6 +30,7 @@ public:
 
     // PowerUp ranks management
     int getUpgradeRank(const std::string& name) const;
+    void setUpgradeRank(const std::string& name, int rank) { m_upgrades[name] = rank; }
     bool upgradePowerUp(const std::string& name);
     void refundAll();
 

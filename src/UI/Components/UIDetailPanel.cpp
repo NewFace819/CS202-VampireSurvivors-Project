@@ -5,8 +5,9 @@
 UIDetailPanel::UIDetailPanel(TextureAtlas& atlas, const sf::Font& font)
     : m_atlas(atlas), m_font(font)
 {
-    m_background.SetTexture(atlas, "frame1_c2");
+    m_background.SetTexture(atlas, "frame_purple");
     m_background.SetMargins(12, 12, 12, 12);
+
 
     m_titleText.setFont(font);
     m_titleText.setCharacterSize(24);

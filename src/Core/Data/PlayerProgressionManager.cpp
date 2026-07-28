@@ -1,4 +1,5 @@
 #include "PlayerProgressionManager.h"
+#include "Core/Data/ProfileManager.h"
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include <iostream>
@@ -8,7 +9,7 @@ using json = nlohmann::json;
 bool PlayerProgressionManager::Save(const std::string& filepath) const
 {
     json j;
-    j["gold"] = m_gold;
+    j["gold"] = GetGold();
     
     json charsArray = json::array();
     for (const std::string& charId : m_unlockedCharacters)
@@ -55,7 +56,12 @@ bool PlayerProgressionManager::Load(const std::string& filepath)
         return false;
     }
     
-    m_gold = j.value("gold", 0);
+    int jsonGold = j.value("gold", 0);
+    if (ProfileManager::GetInstance().getGold() == 0 && jsonGold > 0)
+    {
+        ProfileManager::GetInstance().addGold(jsonGold);
+        ProfileManager::GetInstance().save("save.txt");
+    }
     
     m_unlockedCharacters.clear();
     if (j.contains("unlockedCharacters") && j["unlockedCharacters"].is_array())
@@ -86,19 +92,20 @@ bool PlayerProgressionManager::Load(const std::string& filepath)
 
 int PlayerProgressionManager::GetGold() const
 {
-    return m_gold;
+    return ProfileManager::GetInstance().getGold();
 }
 
 void PlayerProgressionManager::AddGold(int amount)
 {
-    m_gold += amount;
+    ProfileManager::GetInstance().addGold(amount);
+    ProfileManager::GetInstance().save("save.txt");
 }
 
 bool PlayerProgressionManager::SpendGold(int amount)
 {
-    if (m_gold >= amount)
+    if (ProfileManager::GetInstance().spendGold(amount))
     {
-        m_gold -= amount;
+        ProfileManager::GetInstance().save("save.txt");
         return true;
     }
     return false;
