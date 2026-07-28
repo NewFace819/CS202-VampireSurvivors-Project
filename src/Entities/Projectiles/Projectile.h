@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstdlib>
 #include <unordered_set>
+#include <algorithm>
 #include "Core/Animation/AnimatedSprite.h"
 #include "Core/Data/ProfileManager.h"
 
@@ -111,125 +112,22 @@ public:
         if (!m_active) return;
 
         if (m_isAura) {
-            m_position = playerPos;
-            m_velocity = sf::Vector2f(0.f, 0.f);
+            updateAura(playerPos);
         } else if (m_isOrbiting) {
-            m_orbitAngle += m_orbitSpeed * dt;
-            m_position = playerPos + sf::Vector2f(std::cos(m_orbitAngle) * m_orbitRadius, std::sin(m_orbitAngle) * m_orbitRadius);
-            m_velocity = sf::Vector2f(0.f, 0.f);
+            updateOrbiting(dt, playerPos);
         } else {
-            if (m_hasDelayedAccel && !m_accelTriggered) {
-                m_accelTimer += dt;
-                if (m_accelTimer >= m_accelTimeLimit) {
-                    m_accelTriggered = true;
-                    m_acceleration = m_delayedAcceleration;
-                }
-            }
-
-            m_velocity += m_acceleration * dt;
-            
-            // Cap speed if maxSpeed is set
-            if (m_maxSpeed > 0.f) {
-                float currentSpeedSq = m_velocity.x * m_velocity.x + m_velocity.y * m_velocity.y;
-                if (currentSpeedSq > m_maxSpeed * m_maxSpeed) {
-                    float currentSpeed = std::sqrt(currentSpeedSq);
-                    m_velocity = (m_velocity / currentSpeed) * m_maxSpeed;
-                }
-            }
-
-            m_velocity.y += m_gravity * dt;
-            m_position += m_velocity * dt;
-
-            // Bouncing logic
+            updatePhysics(dt);
             if (m_bounceOffScreen && cameraBounds.width > 0.f) {
-                float left = cameraBounds.left;
-                float right = cameraBounds.left + cameraBounds.width;
-                float top = cameraBounds.top;
-                float bottom = cameraBounds.top + cameraBounds.height;
-                
-                if (m_position.x < left && m_velocity.x < 0) {
-                    m_position.x = left;
-                    m_velocity.x = -m_velocity.x;
-                } else if (m_position.x > right && m_velocity.x > 0) {
-                    m_position.x = right;
-                    m_velocity.x = -m_velocity.x;
-                }
-                
-                if (m_position.y < top && m_velocity.y < 0) {
-                    m_position.y = top;
-                    m_velocity.y = -m_velocity.y;
-                } else if (m_position.y > bottom && m_velocity.y > 0) {
-                    m_position.y = bottom;
-                    m_velocity.y = -m_velocity.y;
-                }
+                handleScreenBounce(cameraBounds);
             }
-
-            // Landing logic for thrown projectiles like Santa Water
             if (m_isLanding && m_position.y >= m_landingY && m_velocity.y > 0.f) {
-                m_position.y = m_landingY;
-                m_velocity = sf::Vector2f(0.f, 0.f);
-                m_gravity = 0.f;
-                m_isLanding = false;
-                m_hasLanded = true;
-                
-                // Change sprite to puddle if needed
-                if (m_landedSpriteTex) {
-                    if (m_isLandedAnimated && !m_landedSpriteFrames.empty()) {
-                        setAnimatedSprite(*m_landedSpriteTex, m_landedSpriteFrames, m_landedAnimFps, m_landedSpriteScale);
-                        m_animSprite.setColor(m_spriteColor);
-                        m_animSprite.setLooping(false); // Play exactly once over its lifetime
-                    } else {
-                        setSprite(*m_landedSpriteTex, m_landedSpriteFrame, m_landedSpriteScale, false, m_spriteColor);
-                    }
-                }
+                handleLanding();
             }
         }
         
-        // Hit interval for continuous damage
-        if (m_hitInterval > 0.f && !m_isLanding) {
-            m_hitIntervalTimer += dt;
-            if (m_hitIntervalTimer >= m_hitInterval) {
-                m_hitIntervalTimer = 0.f; // The wiki says they reset simultaneously
-                m_hitEnemies.clear();
-            }
-        }
-        
-        m_shape.setPosition(m_position);
-        if (m_useRect) m_rectShape.setPosition(m_position);
-        if (m_hasSprite) {
-            if (m_spinSpeed != 0.f) {
-                m_initRotation += m_spinSpeed * dt;
-                m_animSprite.setRotation(m_initRotation);
-            }
-            m_animSprite.setPosition(m_position);
-            m_animSprite.update(dt);
-        }
-        
-        // Spawn trail particles
-        if (m_trailEnabled) {
-            m_trailTimer += dt;
-            while (m_trailTimer >= m_trailInterval) {
-                m_trailTimer -= m_trailInterval;
-                TrailParticle tp;
-                // Slight random offset around current position
-                float ox = ((std::rand() % 100) - 50) * 0.03f;
-                float oy = ((std::rand() % 100) - 50) * 0.03f;
-                tp.pos      = m_position + sf::Vector2f(ox, oy);
-                tp.life     = m_trailLifetime;
-                tp.maxLife  = m_trailLifetime;
-                tp.scale    = m_spriteScale * 0.6f;   // start at 60% of main sprite scale
-                m_trailParticles.push_back(tp);
-            }
-        }
-
-        // Age and cull trail particles
-        for (auto& tp : m_trailParticles) {
-            tp.life -= dt;
-        }
-        m_trailParticles.erase(
-            std::remove_if(m_trailParticles.begin(), m_trailParticles.end(),
-                [](const TrailParticle& tp){ return tp.life <= 0.f; }),
-            m_trailParticles.end());
+        updateHitInterval(dt);
+        updateVisuals(dt);
+        updateTrailAndParticles(dt);
 
         m_lifeTimer += dt;
         if (m_lifeTimer >= m_lifetime) {
@@ -240,58 +138,15 @@ public:
     void draw(sf::RenderWindow& window) {
         if (!m_active) return;
 
-        // Draw trail particles first (behind main sprite)
-        if (m_trailEnabled && m_spriteTex && !m_trailParticles.empty()) {
-            sf::Sprite trailSprite;
-            trailSprite.setTexture(*m_spriteTex);
-            trailSprite.setTextureRect(m_spriteFrame);
-            trailSprite.setOrigin(m_spriteFrame.width / 2.f, m_spriteFrame.height / 2.f);
+        drawTrail(window);
 
-            for (const auto& tp : m_trailParticles) {
-                float t = tp.life / tp.maxLife;       // 1 = fresh, 0 = dead
-                float alpha  = 200.f * t;              // fade out
-                float scale  = tp.scale * t;           // shrink as it fades
-                
-                sf::Color c = m_trailColor;
-                c.a = static_cast<sf::Uint8>(std::max(0.f, alpha));
-
-                trailSprite.setColor(c);
-                trailSprite.setScale(scale, scale);
-                trailSprite.setPosition(tp.pos);
-                window.draw(trailSprite, sf::BlendAdd); // additive blending = glowing
-            }
-        }
-
-        // Draw main projectile
         if (m_hasSprite) {
             m_animSprite.draw(window);
         } else if (m_useRect) {
             window.draw(m_rectShape);
         } else {
             if (m_isGarlicAura) {
-                // Faint yellow background
-                m_shape.setFillColor(sf::Color(255, 255, 200, 40));
-                m_shape.setOutlineThickness(0.f);
-                window.draw(m_shape);
-
-                // Pulsating concentric rings
-                float maxRadius = m_shape.getRadius();
-                float timer = m_lifeTimer * 1.5f;
-                for (int i = 0; i < 4; ++i) {
-                    float phase = std::fmod(timer + i * 0.25f, 1.0f);
-                    float r = maxRadius * phase;
-                    if (r <= 0.1f) continue;
-                    
-                    sf::CircleShape ring(r);
-                    ring.setOrigin(r, r);
-                    ring.setPosition(m_shape.getPosition());
-                    ring.setFillColor(sf::Color::Transparent);
-                    ring.setOutlineThickness(2.f);
-                    
-                    float alpha = 150.f * (1.0f - phase);
-                    ring.setOutlineColor(sf::Color(255, 255, 255, static_cast<sf::Uint8>(alpha)));
-                    window.draw(ring);
-                }
+                drawGarlicAura(window);
             } else {
                 window.draw(m_shape);
             }
@@ -410,6 +265,176 @@ public:
     }
 
 private:
+    void updateAura(const sf::Vector2f& playerPos) {
+        m_position = playerPos;
+        m_velocity = sf::Vector2f(0.f, 0.f);
+    }
+
+    void updateOrbiting(float dt, const sf::Vector2f& playerPos) {
+        m_orbitAngle += m_orbitSpeed * dt;
+        m_position = playerPos + sf::Vector2f(std::cos(m_orbitAngle) * m_orbitRadius, std::sin(m_orbitAngle) * m_orbitRadius);
+        m_velocity = sf::Vector2f(0.f, 0.f);
+    }
+
+    void updatePhysics(float dt) {
+        if (m_hasDelayedAccel && !m_accelTriggered) {
+            m_accelTimer += dt;
+            if (m_accelTimer >= m_accelTimeLimit) {
+                m_accelTriggered = true;
+                m_acceleration = m_delayedAcceleration;
+            }
+        }
+
+        m_velocity += m_acceleration * dt;
+        
+        if (m_maxSpeed > 0.f) {
+            float currentSpeedSq = m_velocity.x * m_velocity.x + m_velocity.y * m_velocity.y;
+            if (currentSpeedSq > m_maxSpeed * m_maxSpeed) {
+                float currentSpeed = std::sqrt(currentSpeedSq);
+                m_velocity = (m_velocity / currentSpeed) * m_maxSpeed;
+            }
+        }
+
+        m_velocity.y += m_gravity * dt;
+        m_position += m_velocity * dt;
+    }
+
+    void handleScreenBounce(const sf::FloatRect& cameraBounds) {
+        float left = cameraBounds.left;
+        float right = cameraBounds.left + cameraBounds.width;
+        float top = cameraBounds.top;
+        float bottom = cameraBounds.top + cameraBounds.height;
+        
+        if (m_position.x < left && m_velocity.x < 0) {
+            m_position.x = left;
+            m_velocity.x = -m_velocity.x;
+        } else if (m_position.x > right && m_velocity.x > 0) {
+            m_position.x = right;
+            m_velocity.x = -m_velocity.x;
+        }
+        
+        if (m_position.y < top && m_velocity.y < 0) {
+            m_position.y = top;
+            m_velocity.y = -m_velocity.y;
+        } else if (m_position.y > bottom && m_velocity.y > 0) {
+            m_position.y = bottom;
+            m_velocity.y = -m_velocity.y;
+        }
+    }
+
+    void handleLanding() {
+        m_position.y = m_landingY;
+        m_velocity = sf::Vector2f(0.f, 0.f);
+        m_gravity = 0.f;
+        m_isLanding = false;
+        m_hasLanded = true;
+        
+        if (m_landedSpriteTex) {
+            if (m_isLandedAnimated && !m_landedSpriteFrames.empty()) {
+                setAnimatedSprite(*m_landedSpriteTex, m_landedSpriteFrames, m_landedAnimFps, m_landedSpriteScale);
+                m_animSprite.setColor(m_spriteColor);
+                m_animSprite.setLooping(false);
+            } else {
+                setSprite(*m_landedSpriteTex, m_landedSpriteFrame, m_landedSpriteScale, false, m_spriteColor);
+            }
+        }
+    }
+
+    void updateHitInterval(float dt) {
+        if (m_hitInterval > 0.f && !m_isLanding) {
+            m_hitIntervalTimer += dt;
+            if (m_hitIntervalTimer >= m_hitInterval) {
+                m_hitIntervalTimer = 0.f;
+                m_hitEnemies.clear();
+            }
+        }
+    }
+
+    void updateVisuals(float dt) {
+        m_shape.setPosition(m_position);
+        if (m_useRect) m_rectShape.setPosition(m_position);
+        if (m_hasSprite) {
+            if (m_spinSpeed != 0.f) {
+                m_initRotation += m_spinSpeed * dt;
+                m_animSprite.setRotation(m_initRotation);
+            }
+            m_animSprite.setPosition(m_position);
+            m_animSprite.update(dt);
+        }
+    }
+
+    void updateTrailAndParticles(float dt) {
+        if (m_trailEnabled) {
+            m_trailTimer += dt;
+            while (m_trailTimer >= m_trailInterval) {
+                m_trailTimer -= m_trailInterval;
+                TrailParticle tp;
+                float ox = ((std::rand() % 100) - 50) * 0.03f;
+                float oy = ((std::rand() % 100) - 50) * 0.03f;
+                tp.pos      = m_position + sf::Vector2f(ox, oy);
+                tp.life     = m_trailLifetime;
+                tp.maxLife  = m_trailLifetime;
+                tp.scale    = m_spriteScale * 0.6f;
+                m_trailParticles.push_back(tp);
+            }
+        }
+
+        for (auto& tp : m_trailParticles) {
+            tp.life -= dt;
+        }
+        m_trailParticles.erase(
+            std::remove_if(m_trailParticles.begin(), m_trailParticles.end(),
+                [](const TrailParticle& tp){ return tp.life <= 0.f; }),
+            m_trailParticles.end());
+    }
+
+    void drawTrail(sf::RenderWindow& window) const {
+        if (!m_trailEnabled || !m_spriteTex || m_trailParticles.empty()) return;
+        
+        sf::Sprite trailSprite;
+        trailSprite.setTexture(*m_spriteTex);
+        trailSprite.setTextureRect(m_spriteFrame);
+        trailSprite.setOrigin(m_spriteFrame.width / 2.f, m_spriteFrame.height / 2.f);
+
+        for (const auto& tp : m_trailParticles) {
+            float t = tp.life / tp.maxLife;
+            float alpha  = 200.f * t;
+            float scale  = tp.scale * t;
+            
+            sf::Color c = m_trailColor;
+            c.a = static_cast<sf::Uint8>(std::max(0.f, alpha));
+
+            trailSprite.setColor(c);
+            trailSprite.setScale(scale, scale);
+            trailSprite.setPosition(tp.pos);
+            window.draw(trailSprite, sf::BlendAdd);
+        }
+    }
+
+    void drawGarlicAura(sf::RenderWindow& window) {
+        m_shape.setFillColor(sf::Color(255, 255, 200, 40));
+        m_shape.setOutlineThickness(0.f);
+        window.draw(m_shape);
+
+        float maxRadius = m_shape.getRadius();
+        float timer = m_lifeTimer * 1.5f;
+        for (int i = 0; i < 4; ++i) {
+            float phase = std::fmod(timer + i * 0.25f, 1.0f);
+            float r = maxRadius * phase;
+            if (r <= 0.1f) continue;
+            
+            sf::CircleShape ring(r);
+            ring.setOrigin(r, r);
+            ring.setPosition(m_shape.getPosition());
+            ring.setFillColor(sf::Color::Transparent);
+            ring.setOutlineThickness(2.f);
+            
+            float alpha = 150.f * (1.0f - phase);
+            ring.setOutlineColor(sf::Color(255, 255, 255, static_cast<sf::Uint8>(alpha)));
+            window.draw(ring);
+        }
+    }
+
     struct TrailParticle {
         sf::Vector2f pos;
         float life;

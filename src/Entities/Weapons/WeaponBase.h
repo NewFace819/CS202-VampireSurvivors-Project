@@ -6,8 +6,10 @@
 #include "Entities/Projectiles/Projectile.h"
 #include "Core/Data/ProfileManager.h"
 
-class EnemyBase; // Forward declaration
-
+#include "Entities/Enemy/EnemyBase.h"
+#include <limits>
+#include <cstdlib>
+#include <cmath>
 // Abstract base class for all weapons (Whips, Magic Wands, Fireballs, etc.)
 // Weapons act as Spawners for Projectiles based on a cooldown timer.
 class WeaponBase {
@@ -70,6 +72,35 @@ public:
     float getTotalDamageDealt() const { return m_totalDamageDealt; }
 
 protected:
+    EnemyBase* getNearestEnemy(const sf::Vector2f& fromPos, const std::vector<EnemyBase*>& enemies) const {
+        float minDistSq = std::numeric_limits<float>::max();
+        EnemyBase* target = nullptr;
+        for (auto* enemy : enemies) {
+            if (!enemy->isActive()) continue;
+            sf::Vector2f diff = enemy->getPosition() - fromPos;
+            float distSq = diff.x * diff.x + diff.y * diff.y;
+            if (distSq < minDistSq) {
+                minDistSq = distSq;
+                target = enemy;
+            }
+        }
+        return target;
+    }
+
+    EnemyBase* getRandomEnemy(const std::vector<EnemyBase*>& enemies) const {
+        if (enemies.empty()) return nullptr;
+        return enemies[std::rand() % enemies.size()];
+    }
+
+    sf::Vector2f getDirectionTo(const sf::Vector2f& from, const sf::Vector2f& to) const {
+        sf::Vector2f diff = to - from;
+        float length = std::sqrt(diff.x * diff.x + diff.y * diff.y);
+        if (length > 0.f) {
+            return diff / length;
+        }
+        return sf::Vector2f(0.f, 0.f);
+    }
+
     // `shotIndex` = which shot in the burst (0..m_amount-1), used for spreading or alternating
     virtual void fire(const sf::Vector2f& startPos, const sf::Vector2f& playerDir, const std::vector<EnemyBase*>& enemies, std::vector<Projectile>& activeProjectiles, int shotIndex = 0) = 0;
 

@@ -37,28 +37,15 @@ protected:
 
         // For extra shots, pick other random enemies; for shot 0 pick the nearest
         if (!enemies.empty()) {
+            EnemyBase* target = nullptr;
             if (shotIndex == 0) {
-                // Nearest enemy
-                float minDistSq = std::numeric_limits<float>::max();
-                EnemyBase* target = nullptr;
-                for (auto* enemy : enemies) {
-                    if (!enemy->isActive()) continue;
-                    sf::Vector2f diff = enemy->getPosition() - startPos;
-                    float distSq = diff.x * diff.x + diff.y * diff.y;
-                    if (distSq < minDistSq) { minDistSq = distSq; target = enemy; }
-                }
-                if (target) {
-                    sf::Vector2f diff = target->getPosition() - startPos;
-                    float len = std::sqrt(diff.x * diff.x + diff.y * diff.y);
-                    if (len > 0) fireDir = diff / len;
-                }
+                target = getNearestEnemy(startPos, enemies);
             } else {
-                // Random enemy for extra shots
-                int idx = std::rand() % enemies.size();
-                EnemyBase* target = enemies[idx];
-                sf::Vector2f diff = target->getPosition() - startPos;
-                float len = std::sqrt(diff.x * diff.x + diff.y * diff.y);
-                if (len > 0) fireDir = diff / len;
+                target = getRandomEnemy(enemies);
+            }
+            if (target) {
+                sf::Vector2f dir = getDirectionTo(startPos, target->getPosition());
+                if (dir.x != 0.f || dir.y != 0.f) fireDir = dir;
             }
         }
 

@@ -32,25 +32,11 @@ protected:
     void fire(const sf::Vector2f& startPos, const sf::Vector2f& playerDir,
               const std::vector<EnemyBase*>& enemies,
               std::vector<Projectile>& activeProjectiles, int shotIndex = 0) override {
-        // Find nearest active enemy
-        float minDistSq = std::numeric_limits<float>::max();
-        EnemyBase* target = nullptr;
-        
-        for (auto* enemy : enemies) {
-            if (!enemy->isActive()) continue;
-            sf::Vector2f diff = enemy->getPosition() - startPos;
-            float distSq = diff.x * diff.x + diff.y * diff.y;
-            if (distSq < minDistSq) {
-                minDistSq = distSq;
-                target = enemy;
-            }
-        }
-        
+        EnemyBase* target = getNearestEnemy(startPos, enemies);
         sf::Vector2f fireDir = playerDir; // Default to facing dir if no enemies
         if (target) {
-            sf::Vector2f diff = target->getPosition() - startPos;
-            float length = std::sqrt(diff.x * diff.x + diff.y * diff.y);
-            if (length > 0) fireDir = diff / length;
+            sf::Vector2f dir = getDirectionTo(startPos, target->getPosition());
+            if (dir.x != 0.f || dir.y != 0.f) fireDir = dir;
         }
 
         Projectile p;
