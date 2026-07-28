@@ -85,6 +85,37 @@ void IconManager::init() {
     if (m_nameToFrame.find("Bloody Tear") == m_nameToFrame.end()) m_nameToFrame["Bloody Tear"] = "Whip2";
     if (m_nameToFrame.find("Death Spiral") == m_nameToFrame.end()) m_nameToFrame["Death Spiral"] = "Scythe";
     
+    // 3. Load vfx_atlas.json
+    {
+        std::ifstream file("assets/Data/vfx_atlas.json");
+        if (file.is_open()) {
+            try {
+                json j;
+                file >> j;
+                for (auto& el : j.items()) {
+                    std::string key = el.key();
+                    auto& rect = el.value();
+                    
+                    if (rect.is_object() && rect.contains("x") && rect.contains("y") && rect.contains("width") && rect.contains("height")) {
+                        int x = rect["x"];
+                        int y = rect["y"];
+                        int w = rect["width"];
+                        int h = rect["height"];
+                        
+                        // Flip Y coordinate because the atlas is bottom-left origin (2048x2048) and SFML is top-left
+                        y = 2048 - y - h;
+                        
+                        m_vfxRects[key] = sf::IntRect(x, y, w, h);
+                    }
+                }
+            } catch (const std::exception& e) {
+                std::cerr << "IconManager: Failed to parse vfx_atlas.json: " << e.what() << "\n";
+            }
+        } else {
+            std::cerr << "IconManager: Failed to open assets/Data/vfx_atlas.json\n";
+        }
+    }
+
     m_initialized = true;
 }
 
@@ -108,5 +139,19 @@ sf::IntRect IconManager::getIconRect(const std::string& itemName) {
     }
     
     std::cerr << "IconManager: Warning: Icon for '" << itemName << "' (frame: '" << frameName << "') not found in items_atlas.json!\n";
+    return sf::IntRect(0, 0, 16, 16);
+}
+
+sf::IntRect IconManager::getVfxRect(const std::string& vfxName) {
+    if (!m_initialized) {
+        init();
+    }
+
+    auto atlasIt = m_vfxRects.find(vfxName);
+    if (atlasIt != m_vfxRects.end()) {
+        return atlasIt->second;
+    }
+    
+    std::cerr << "IconManager: Warning: VFX frame '" << vfxName << "' not found in vfx_atlas.json!\n";
     return sf::IntRect(0, 0, 16, 16);
 }

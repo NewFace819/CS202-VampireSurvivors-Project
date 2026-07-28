@@ -40,6 +40,10 @@ public:
         m_gravity = 0.f;
         m_spinSpeed = 0.f;
         m_isGarlicAura = false;
+        m_isOrbiting = false;
+        m_orbitRadius = 0.f;
+        m_orbitAngle = 0.f;
+        m_orbitSpeed = 0.f;
         
         float areaMult = ProfileManager::GetInstance().getAreaMultiplier();
         m_shape.setRadius(5.f * areaMult);
@@ -96,11 +100,22 @@ public:
         m_trailTimer      = 0.f;
     }
 
-    void update(float dt, const sf::Vector2f& playerPos = sf::Vector2f(0.f, 0.f)) {
+    void setOrbiting(float radius, float startAngle, float speed) {
+        m_isOrbiting = true;
+        m_orbitRadius = radius;
+        m_orbitAngle = startAngle;
+        m_orbitSpeed = speed;
+    }
+
+    void update(float dt, const sf::Vector2f& playerPos = sf::Vector2f(0.f, 0.f), const sf::FloatRect& cameraBounds = sf::FloatRect()) {
         if (!m_active) return;
 
         if (m_isAura) {
             m_position = playerPos;
+            m_velocity = sf::Vector2f(0.f, 0.f);
+        } else if (m_isOrbiting) {
+            m_orbitAngle += m_orbitSpeed * dt;
+            m_position = playerPos + sf::Vector2f(std::cos(m_orbitAngle) * m_orbitRadius, std::sin(m_orbitAngle) * m_orbitRadius);
             m_velocity = sf::Vector2f(0.f, 0.f);
         } else {
             if (m_hasDelayedAccel && !m_accelTriggered) {
@@ -124,6 +139,77 @@ public:
 
             m_velocity.y += m_gravity * dt;
             m_position += m_velocity * dt;
+
+            // Bouncing logic
+            if (m_bounceOffScreen && cameraBounds.width > 0.f) {
+                float left = cameraBounds.left;
+                float right = cameraBounds.left + cameraBounds.width;
+                float top = cameraBounds.top;
+                float bottom = cameraBounds.top + cameraBounds.height;
+                
+                if (m_position.x < left && m_velocity.x < 0) {
+                    m_position.x = left;
+                    m_velocity.x = -m_velocity.x;
+                } else if (m_position.x > right && m_velocity.x > 0) {
+                    m_position.x = right;
+                    m_velocity.x = -m_velocity.x;
+                }
+                
+                if (m_position.y < top && m_velocity.y < 0) {
+                    m_position.y = top;
+                    m_velocity.y = -m_velocity.y;
+                } else if (m_position.y > bottom && m_velocity.y > 0) {
+                    m_position.y = bottom;
+                    m_velocity.y = -m_velocity.y;
+                }
+            }
+
+            // Landing logic for thrown projectiles like Santa Water
+            if (m_isLanding && m_position.y >= m_landingY && m_velocity.y > 0.f) {
+                m_position.y = m_landingY;
+                m_velocity = sf::Vector2f(0.f, 0.f);
+                m_gravity = 0.f;
+                m_isLanding = false;
+                m_hasLanded = true;
+                
+                // Change sprite to puddle if needed
+                if (m_landedSpriteTex) {
+                    if (m_isLandedAnimated && !m_landedSpriteFrames.empty()) {
+                        setAnimatedSprite(*m_landedSpriteTex, m_landedSpriteFrames, m_landedAnimFps, m_landedSpriteScale);
+                        m_animSprite.setColor(m_spriteColor);
+                        m_animSprite.setLooping(false); // Play exactly once over its lifetime
+                    } else {
+                        setSprite(*m_landedSpriteTex, m_landedSpriteFrame, m_landedSpriteScale, false, m_spriteColor);
+                    }
+                } else {
+                    m_hasSprite = false;
+                    // Fallback visual
+                    float areaMult = ProfileManager::GetInstance().getAreaMultiplier();
+                    m_shape.setRadius(50.f * areaMult); // Puddle size
+                    m_shape.setOrigin(50.f * areaMult, 50.f * areaMult);
+                    m_shape.setScale(1.f, 0.5f); // Flatten circle to look like an isometric puddle
+                    m_shape.setFillColor(sf::Color(100, 150, 255, 150));
+                    m_shape.setOutlineThickness(2.f);
+                    m_shape.setOutlineColor(sf::Color(150, 200, 255, 200));
+                    m_shape.setPosition(m_position);
+                }
+            }
+        }
+        
+        // Hit interval for continuous damage
+        if (m_hitInterval > 0.f && m_hasLanded) {
+            m_hitIntervalTimer += dt;
+            if (m_hitIntervalTimer >= m_hitInterval) {
+                m_hitIntervalTimer = 0.f; // The wiki says they reset simultaneously
+                m_hitEnemies.clear();
+            }
+        } else if (m_hitInterval > 0.f && !m_isLanding) {
+            // Continuous damage for non-landing projectiles (e.g. Aura)
+            m_hitIntervalTimer += dt;
+            if (m_hitIntervalTimer >= m_hitInterval) {
+                m_hitIntervalTimer = 0.f;
+                m_hitEnemies.clear();
+            }
         }
         
         m_shape.setPosition(m_position);
@@ -234,6 +320,12 @@ public:
     void deactivate() { m_active = false; }
     bool isPiercing() const { return m_piercing; }
     
+    bool canHit() const {
+        return m_active && (!m_isLanding);
+    }
+    
+    void setBounceOffScreen(bool bounce) { m_bounceOffScreen = bounce; }
+    
     float getDamage() const { return m_damage; }
     float getKnockback() const { return m_knockbackForce; }
     void setKnockback(float force) { m_knockbackForce = force; }
@@ -309,6 +401,32 @@ public:
         m_accelTriggered = false;
     }
 
+    void setLanding(float targetY, const sf::Texture* landedTex, sf::IntRect landedFrame, float landedScale = 1.f) {
+        m_isLanding = true;
+        m_hasLanded = false;
+        m_landingY = targetY;
+        m_landedSpriteTex = landedTex;
+        m_landedSpriteFrame = landedFrame;
+        m_landedSpriteScale = landedScale;
+        m_isLandedAnimated = false;
+    }
+
+    void setLandingAnimated(float targetY, const sf::Texture* landedTex, const std::vector<sf::IntRect>& landedFrames, float fps, float landedScale = 1.f) {
+        m_isLanding = true;
+        m_hasLanded = false;
+        m_landingY = targetY;
+        m_landedSpriteTex = landedTex;
+        m_landedSpriteFrames = landedFrames;
+        m_landedAnimFps = fps;
+        m_landedSpriteScale = landedScale;
+        m_isLandedAnimated = true;
+    }
+
+    void setHitInterval(float interval) {
+        m_hitInterval = interval;
+        m_hitIntervalTimer = 0.f;
+    }
+
 private:
     struct TrailParticle {
         sf::Vector2f pos;
@@ -334,12 +452,19 @@ private:
     bool m_isEnemyProj = false;
     
     float m_maxSpeed = 0.f;
+    bool m_bounceOffScreen = false;
 
     bool m_hasDelayedAccel = false;
     bool m_accelTriggered = false;
     float m_accelTimeLimit = 0.f;
     float m_accelTimer = 0.f;
     sf::Vector2f m_delayedAcceleration;
+
+    bool m_isOrbiting = false;
+    sf::Vector2f m_orbitCenter;
+    float m_orbitRadius = 0.f;
+    float m_orbitAngle = 0.f;
+    float m_orbitSpeed = 0.f;
 
     std::unordered_set<EnemyBase*> m_hitEnemies;
 
@@ -353,6 +478,22 @@ private:
     AnimatedSprite m_animSprite;
     bool m_hasSprite = false;
     float m_initRotation = 0.f;
+
+    // Santa Water landing state
+    bool m_isLanding = false;
+    float m_landingY = 0.f;
+    bool m_hasLanded = false;
+    const sf::Texture* m_landedSpriteTex = nullptr;
+    sf::IntRect m_landedSpriteFrame;
+    float m_landedSpriteScale = 1.f;
+    
+    // Animated landing state
+    bool m_isLandedAnimated = false;
+    std::vector<sf::IntRect> m_landedSpriteFrames;
+    float m_landedAnimFps = 8.f;
+
+    float m_hitInterval = -1.f;
+    float m_hitIntervalTimer = 0.f;
 
     // Cached for trail rendering
     const sf::Texture* m_spriteTex  = nullptr;

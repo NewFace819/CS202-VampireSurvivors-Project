@@ -24,6 +24,7 @@ public:
     void applyKnockback(const sf::Vector2f& dir, float weaponKnockback);
 
     bool isDead() const { return !m_isActive; }
+    bool isDying() const { return m_isDying; }
 
     float getDamage() const { return m_stats.damage; }
     const EnemyStats& getStats() const { return m_stats; }

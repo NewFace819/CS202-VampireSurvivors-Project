@@ -32,15 +32,20 @@ public:
     void pause()  { m_paused = true; }
     void resume() { m_paused = false; }
 
+    void setLooping(bool loop) { m_loop = loop; }
+
     void update(float dt) {
         if (m_frames.empty() || m_paused) return;
         m_timer += dt;
         if (m_timer >= 1.f / m_fps) {
             m_timer -= 1.f / m_fps; // Keep remainder for smoother animation
-            m_currentFrame = (m_currentFrame + 1) % m_frames.size();
-            m_sprite.setTextureRect(m_frames[m_currentFrame]);
-            if (m_autoCenter) {
-                m_sprite.setOrigin(m_frames[m_currentFrame].width / 2.f, m_frames[m_currentFrame].height / 2.f);
+            
+            if (m_loop || m_currentFrame < m_frames.size() - 1) {
+                m_currentFrame = (m_currentFrame + 1) % m_frames.size();
+                m_sprite.setTextureRect(m_frames[m_currentFrame]);
+                if (m_autoCenter) {
+                    m_sprite.setOrigin(m_frames[m_currentFrame].width / 2.f, m_frames[m_currentFrame].height / 2.f);
+                }
             }
         }
     }
@@ -59,4 +64,5 @@ private:
     size_t m_currentFrame = 0;
     bool m_paused = false;
     bool m_autoCenter = false;
+    bool m_loop = true;
 };

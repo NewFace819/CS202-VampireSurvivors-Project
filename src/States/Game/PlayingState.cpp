@@ -25,6 +25,7 @@
 
 PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageType stageType) 
     : m_manager(manager), m_grid(100.0f), m_enemyPool(500), m_shooterPool(150), m_stageType(stageType) { 
+    StatsManager::GetInstance().reset();
     IconManager::GetInstance().init();
 
     if (!m_font.loadFromFile("assets/fonts/Courier_HintedSmooth.ttf")) {
@@ -173,6 +174,9 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
             addWeapon("Axe");
             addWeapon("Cross");
             addWeapon("Garlic");
+            addWeapon("King Bible");
+            addWeapon("Santa Water");
+            addWeapon("Runetracer");
             break;
     }
 
@@ -182,7 +186,6 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
 }
 
 void PlayingState::enter() {
-    StatsManager::GetInstance().reset();
 }
 
 void PlayingState::update(float dt) {
@@ -344,8 +347,16 @@ void PlayingState::update(float dt) {
     }
 
     // Update projectiles
+    sf::Vector2f viewSize = m_manager->getWindow().getDefaultView().getSize();
+    sf::FloatRect cameraBounds(
+        m_player.getPosition().x - viewSize.x / 2.0f,
+        m_player.getPosition().y - viewSize.y / 2.0f,
+        viewSize.x,
+        viewSize.y
+    );
+    
     for (auto& proj : m_activeProjectiles) {
-        proj.update(dt, m_player.getPosition());
+        proj.update(dt, m_player.getPosition(), cameraBounds);
     }
 
     for (auto& proj : m_bossProjectiles) {
@@ -582,48 +593,52 @@ void PlayingState::update(float dt) {
         // Simple O(N*M) collision check for now (Grid will be wired later)
         sf::FloatRect enemyBounds = enemy->getBounds();
         
-        // Check collision with Player (Damage)
-        if (enemyBounds.intersects(m_player.getBounds())) {
-            float armorRed = ProfileManager::GetInstance().getArmorReduction();
-            float dmg = std::max(1.f, 10.f - armorRed);
-            StatsManager::GetInstance().takeDamage(dmg * dt); // 10 damage per second while touching, reduced by armor
+        if (!enemy->isDying()) {
+            // Check collision with Player (Damage)
+            if (enemyBounds.intersects(m_player.getBounds())) {
+                float armorRed = ProfileManager::GetInstance().getArmorReduction();
+                float dmg = std::max(1.f, 10.f - armorRed);
+                StatsManager::GetInstance().takeDamage(dmg * dt); // 10 damage per second while touching, reduced by armor
+            }
+
+            // Enemy-Player Physical Collision (Separation)
+            float playerRadius = 15.f;
+            float enemyRadius = enemy->getRadius();
+            float combinedRadiusPlayer = playerRadius + enemyRadius;
+            if (distToPlayerSq > 0.0001f && distToPlayerSq < (combinedRadiusPlayer * combinedRadiusPlayer)) {
+                float dist = std::sqrt(distToPlayerSq);
+                float overlap = combinedRadiusPlayer - dist;
+                sf::Vector2f pushDir = toPlayer / dist; // From player to enemy
+                enemy->setPosition(enemy->getPosition() + pushDir * overlap);
+            }
         }
 
-        // Enemy-Player Physical Collision (Separation)
-        float playerRadius = 15.f;
-        float enemyRadius = enemy->getRadius();
-        float combinedRadiusPlayer = playerRadius + enemyRadius;
-        if (distToPlayerSq > 0.0001f && distToPlayerSq < (combinedRadiusPlayer * combinedRadiusPlayer)) {
-            float dist = std::sqrt(distToPlayerSq);
-            float overlap = combinedRadiusPlayer - dist;
-            sf::Vector2f pushDir = toPlayer / dist; // From player to enemy
-            enemy->setPosition(enemy->getPosition() + pushDir * overlap);
-        }
+        if (!enemy->isDying()) {
+            for (auto& proj : m_activeProjectiles) {
+                if (proj.canHit() && !proj.isEnemyProj() && proj.getBounds().intersects(enemyBounds)) {
+                    if (proj.hasHitEnemy(enemy)) continue; // Already hit this enemy
+                    proj.addHitEnemy(enemy);
 
-        for (auto& proj : m_activeProjectiles) {
-            if (proj.isActive() && !proj.isEnemyProj() && proj.getBounds().intersects(enemyBounds)) {
-                if (proj.hasHitEnemy(enemy)) continue; // Already hit this enemy
-                proj.addHitEnemy(enemy);
+                    bool killed = enemy->takeDamage(proj.getDamage());
+                    
+                    if (proj.getSourceWeapon()) {
+                        proj.getSourceWeapon()->addDamageDealt(proj.getDamage());
+                    }
 
-                bool killed = enemy->takeDamage(proj.getDamage());
-                
-                if (proj.getSourceWeapon()) {
-                    proj.getSourceWeapon()->addDamageDealt(proj.getDamage());
-                }
-
-                Physics::ApplyKnockback(enemy, proj.getDirection(), proj.getKnockback(), 1.0f);
-                
-                // Bloody Tear lifesteal
-                if (proj.getKnockback() == 150.f) {
-                    StatsManager::GetInstance().heal(8.f);
-                }
-                
-                if (!proj.isPiercing()) {
-                    proj.deactivate();
-                }
-                
-                if (killed) {
-                    m_kills++;
+                    Physics::ApplyKnockback(enemy, proj.getDirection(), proj.getKnockback(), 1.0f);
+                    
+                    // Bloody Tear lifesteal
+                    if (proj.getKnockback() == 150.f) {
+                        StatsManager::GetInstance().heal(8.f);
+                    }
+                    
+                    if (!proj.isPiercing()) {
+                        proj.deactivate();
+                    }
+                    
+                    if (killed) {
+                        m_kills++;
+                    }
                 }
             }
         }
@@ -678,7 +693,7 @@ void PlayingState::update(float dt) {
     // Detect player level-up and show the upgrade screen
     int currentLevel = StatsManager::GetInstance().getLevel();
     if (currentLevel > m_lastLevel) {
-        m_lastLevel = currentLevel;
+        m_lastLevel++;
         m_manager->pushState(std::make_unique<LevelUpState>(m_manager, this));
     }
 

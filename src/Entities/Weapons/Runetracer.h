@@ -1,0 +1,67 @@
+#pragma once
+#include "Entities/Weapons/WeaponBase.h"
+#include "Core/Data/IconManager.h"
+#include <cmath>
+
+class Runetracer : public WeaponBase {
+public:
+    Runetracer(float cooldown = 3.0f, float damage = 10.f)
+        : WeaponBase(cooldown, damage, 400.f) {
+        m_amount = 1;
+        m_duration = 2.25f;
+        loadItemsTexture(); // Load items.png for the diamond sprite
+    }
+
+    std::string getName() const override { return "Runetracer"; }
+
+    std::string getUpgradeDescription() const override {
+        switch (m_level + 1) {
+            case 2: return "Fires 1 more projectile.";
+            case 3: return "Base Damage up by 5.";
+            case 4: return "Base Area up by 10%.\nBase Damage up by 5.";
+            case 5: return "Base Damage up by 5.";
+            case 6: return "Fires 1 more projectile.";
+            case 7: return "Base Damage up by 5.";
+            case 8: return "Base Area up by 20%.\nBase Damage up by 5.";
+            default: return "";
+        }
+    }
+
+    void levelUp() override {
+        m_level++;
+        switch (m_level) {
+            case 2: m_amount += 1; break;
+            case 3: m_damage += 5.f; break;
+            case 4: m_areaScale += 0.1f; m_damage += 5.f; break;
+            case 5: m_damage += 5.f; break;
+            case 6: m_amount += 1; break;
+            case 7: m_damage += 5.f; break;
+            case 8: m_areaScale += 0.2f; m_damage += 5.f; break;
+        }
+    }
+
+protected:
+    void fire(const sf::Vector2f& startPos, const sf::Vector2f& playerDir, const std::vector<EnemyBase*>& enemies, std::vector<Projectile>& activeProjectiles, int shotIndex = 0) override {
+        // Fire in a random direction
+        float angle = static_cast<float>(rand() % 360) * 3.14159f / 180.f;
+        sf::Vector2f dir(std::cos(angle), std::sin(angle));
+
+        Projectile p;
+        p.init(startPos, dir, m_damage, m_speed, m_duration, 5.f, true); // m_piercing is true (last param)
+        p.setHitInterval(0.5f); // Damage same enemy every 0.5s
+        p.setBounceOffScreen(true);
+        
+        if (m_hasItemsTex) {
+            sf::IntRect runeFrame = IconManager::GetInstance().getIconRect("Diamond2");
+            p.setSprite(m_itemsTex, runeFrame, 1.0f * m_areaScale, true, sf::Color(255, 255, 255, 255));
+        }
+        
+        // Add a visible trail
+        p.enableTrail(0.02f, 0.25f, sf::Color(200, 220, 255, 160));
+        
+        activeProjectiles.push_back(p);
+    }
+
+private:
+    float m_duration;
+};
