@@ -1,5 +1,6 @@
 #include "PlayerProgressionManager.h"
 #include "Core/Data/ProfileManager.h"
+#include "CharacterDataManager.h"
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include <iostream>
@@ -130,6 +131,15 @@ void PlayerProgressionManager::UnlockCharacter(const std::string& characterId)
 bool PlayerProgressionManager::IsCharacterUnlocked(const std::string& characterId) const
 {
     return m_unlockedCharacters.find(characterId) != m_unlockedCharacters.end();
+}
+
+int PlayerProgressionManager::GetCharacterUnlockPrice(const std::string& characterId, const CharacterDataManager& dataManager) const
+{
+    const CharacterProfile& profile = dataManager.GetCharacterById(characterId);
+    int basePrice = profile.GetBasePrice();
+    if (basePrice == 0) return 0;
+    int n = static_cast<int>(m_unlockedCharacters.size());
+    return static_cast<int>(basePrice * (10 + n) * (10 + n) / 100);
 }
 
 int PlayerProgressionManager::GetPowerUpLevel(const std::string& powerUpId) const

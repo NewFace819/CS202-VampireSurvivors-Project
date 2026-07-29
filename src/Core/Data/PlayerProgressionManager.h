@@ -24,6 +24,7 @@ public:
     void InitializeUnlockedCharacters(const std::unordered_map<std::string, CharacterProfile>& allCharacters);
     void UnlockCharacter(const std::string& characterId);
     bool IsCharacterUnlocked(const std::string& characterId) const;
+    int GetCharacterUnlockPrice(const std::string& characterId, const class CharacterDataManager& dataManager) const;
 
     int GetPowerUpLevel(const std::string& powerUpId) const;
     void BuyPowerUp(const std::string& powerUpId, const PowerUpDataManager& dataManager);

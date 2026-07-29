@@ -97,9 +97,10 @@ CharacterSelectionView::CharacterSelectionView(TextureAtlas& atlas, const sf::Fo
             }
             else
             {
-                m_confirmButton->SetText("BUY", m_font, 24);
+                int price = progressionManager ? progressionManager->GetCharacterUnlockPrice(characterId, characterData) : 500;
+                m_confirmButton->SetText("BUY " + std::to_string(price), m_font, 22);
                 int gold = progressionManager ? progressionManager->GetGold() : 0;
-                if (gold >= 500 && (m_selectionState == SelectionState::SelectingP1 || m_selectionState == SelectionState::SelectingP2)) {
+                if (gold >= price && (m_selectionState == SelectionState::SelectingP1 || m_selectionState == SelectionState::SelectingP2)) {
                     m_confirmButton->SetState(ButtonState::Normal);
                 } else {
                     m_confirmButton->SetState(ButtonState::Disabled);
@@ -121,9 +122,10 @@ CharacterSelectionView::CharacterSelectionView(TextureAtlas& atlas, const sf::Fo
         {
             if (progressionManager && !progressionManager->IsCharacterUnlocked(m_hoveredCharacterId))
             {
-                if (progressionManager->GetGold() >= 500)
+                int price = progressionManager->GetCharacterUnlockPrice(m_hoveredCharacterId, characterData);
+                if (progressionManager->GetGold() >= price)
                 {
-                    progressionManager->SpendGold(500);
+                    progressionManager->SpendGold(price);
                     progressionManager->UnlockCharacter(m_hoveredCharacterId);
                     progressionManager->Save();
 

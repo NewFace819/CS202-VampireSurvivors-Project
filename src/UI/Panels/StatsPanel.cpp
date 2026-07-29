@@ -253,7 +253,7 @@ void StatsPanel::SetPosition(const sf::Vector2f& pos)
         // Icon: vertically centered in row
         sf::FloatRect ib = row.iconSprite.getLocalBounds();
         float iconH = ib.height * row.iconSprite.getScale().y;
-        row.iconSprite.setPosition(pos.x + PADDING_X, START_Y_OFFSET + currentY + (ROW_PADDING - iconH) * 0.5f - 5.0f);
+        row.iconSprite.setPosition(pos.x + PADDING_X, currentY + (ROW_PADDING - iconH) * 0.5f - 5.0f);
 
         row.labelText.setPosition(labelX, currentY);
         

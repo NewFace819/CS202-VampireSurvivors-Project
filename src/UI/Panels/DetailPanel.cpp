@@ -42,7 +42,7 @@ void DetailPanel::SetCharacterProfile(const CharacterProfile& profile, const Wea
     m_hasProfile = true;
 
     m_nameText.setString(profile.GetName());
-    m_rawDescription = isUnlocked ? profile.GetDescription() : "";
+    m_rawDescription = profile.GetDescription();
     m_descriptionText.setString(m_rawDescription);
 
     // ── Rebuild character sprite using the exact same logic as CharacterCardWidget ──
