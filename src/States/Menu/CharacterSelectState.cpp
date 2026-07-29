@@ -60,11 +60,12 @@ CharacterSelectState::CharacterSelectState(GameManager* manager) : m_manager(man
         
         CharacterType type = CharacterType::Antonio;
         if (characterIds.front() == "IMELDA") type = CharacterType::Imelda;
+        else if (characterIds.front() == "PASQUALINA") type = CharacterType::Pasqualina;
         else if (characterIds.front() == "GENNARO") type = CharacterType::Gennaro;
         else if (characterIds.front() == "ARCA") type = CharacterType::Arca;
         else if (characterIds.front() == "PORTA") type = CharacterType::Porta;
         else if (characterIds.front() == "LAMA") type = CharacterType::Lama;
-        else if (characterIds.front() == "POE") type = CharacterType::Poe;
+        else if (characterIds.front() == "CAMILLO" || characterIds.front() == "POE") type = CharacterType::Poe;
         else if (characterIds.front() == "CLERICI") type = CharacterType::Clerici;
         else if (characterIds.front() == "DOMMARIO") type = CharacterType::Dommario;
         else if (characterIds.front() == "KROCHI") type = CharacterType::Krochi;

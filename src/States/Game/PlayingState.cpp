@@ -137,6 +137,33 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
         return frames;
     };
 
+    auto getIndividualCharFrames = [&](const std::string& texPath, const std::string& atlasPath, const std::string& prefix, int frameCount) -> std::vector<sf::IntRect> {
+        std::vector<sf::IntRect> frames;
+        sf::Texture tempTex;
+        if (!tempTex.loadFromFile(texPath)) return frames;
+        int texHeight = static_cast<int>(tempTex.getSize().y);
+        std::ifstream atlasFile(atlasPath);
+        if (atlasFile.is_open()) {
+            try {
+                nlohmann::json json;
+                atlasFile >> json;
+                for (int i = 1; i <= frameCount; ++i) {
+                    std::string key = prefix + "_0" + std::to_string(i);
+                    auto it = json.find(key);
+                    if (it != json.end()) {
+                        int x = it->value("x", 0);
+                        int y = it->value("y", 0);
+                        int w = it->value("width", 32);
+                        int h = it->value("height", 32);
+                        int y_sfml = texHeight - y - h;
+                        frames.push_back(sf::IntRect(x, y_sfml, w, h));
+                    }
+                }
+            } catch (...) {}
+        }
+        return frames;
+    };
+
     switch (charType) {
         case CharacterType::Antonio:
             m_player.setSprite("assets/Graphics/Characters/characters.png", 
@@ -161,8 +188,22 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
         case CharacterType::Lama:
             m_player.setSprite("assets/Graphics/Characters/characters.png", 
                                getFrames("Lama"));
-                               //{{0, 0, 32, 32}, {32, 0, 32, 32}, {64, 32, 32, 32}, {64, 64, 32, 32}});
             addWeapon("Axe");
+            break;
+        case CharacterType::Pasqualina:
+            m_player.setSprite("assets/Graphics/Characters/character_pasqualina.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_pasqualina.png", "assets/Data/CharacterAtlas/character_pasqualina_atlas.json", "Pasqualina", 4));
+            addWeapon("Runetracer");
+            break;
+        case CharacterType::Porta:
+            m_player.setSprite("assets/Graphics/Characters/character_porta.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_porta.png", "assets/Data/CharacterAtlas/character_porta_atlas.json", "Porta", 4));
+            addWeapon("Lightning Ring");
+            break;
+        case CharacterType::Poe:
+            m_player.setSprite("assets/Graphics/Characters/character_poe.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_poe.png", "assets/Data/CharacterAtlas/character_poe_atlas.json", "Old3", 4));
+            addWeapon("Garlic");
             break;
         case CharacterType::Sigma:
             m_player.setSprite("assets/Graphics/Characters/characters.png", 
