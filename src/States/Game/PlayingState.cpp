@@ -220,6 +220,21 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
                                getIndividualCharFrames("assets/Graphics/Characters/character_krochi.png", "assets/Data/CharacterAtlas/character_krochi_atlas.json", "Krochi", 4));
             addWeapon("Cross");
             break;
+        case CharacterType::Christine:
+            m_player.setSprite("assets/Graphics/Characters/character_christine.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_christine.png", "assets/Data/CharacterAtlas/character_christine_atlas.json", "Christine", 4));
+            addWeapon("PENTAGRAM");
+            break;
+        case CharacterType::Pugnala:
+            m_player.setSprite("assets/Graphics/Characters/character_pugnala.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_pugnala.png", "assets/Data/CharacterAtlas/character_pugnala_atlas.json", "Pugnala", 4));
+            addWeapon("GUNS");
+            break;
+        case CharacterType::Giovanna:
+            m_player.setSprite("assets/Graphics/Characters/character_giovanna.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_giovanna.png", "assets/Data/CharacterAtlas/character_giovanna_atlas.json", "Giovanna", 5));
+            addWeapon("GATTI");
+            break;
         case CharacterType::Sigma:
             m_player.setSprite("assets/Graphics/Characters/characters.png", 
                                getFrames("Sigma"));

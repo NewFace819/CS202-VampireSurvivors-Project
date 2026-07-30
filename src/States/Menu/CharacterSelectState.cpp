@@ -69,7 +69,7 @@ CharacterSelectState::CharacterSelectState(GameManager* manager) : m_manager(man
         else if (characterIds.front() == "GERMANA" || characterIds.front() == "CLERICI") type = CharacterType::Clerici;
         else if (characterIds.front() == "DOMMARIO") type = CharacterType::Dommario;
         else if (characterIds.front() == "CROCI" || characterIds.front() == "KROCHI") type = CharacterType::Krochi;
-        else if (characterIds.front() == "CHRISTINE") type = CharacterType::Christine;
+        else if (characterIds.front() == "CRISTINA" || characterIds.front() == "CHRISTINE") type = CharacterType::Christine;
         else if (characterIds.front() == "PUGNALA") type = CharacterType::Pugnala;
         else if (characterIds.front() == "GIOVANNA") type = CharacterType::Giovanna;
         else if (characterIds.front() == "POPPEA") type = CharacterType::Poppea;

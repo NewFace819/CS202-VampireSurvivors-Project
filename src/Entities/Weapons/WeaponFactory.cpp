@@ -16,8 +16,10 @@ std::unique_ptr<WeaponBase> WeaponFactory::createWeapon(const std::string& weapo
     if (weaponName == "Garlic" || weaponName == "GARLIC") return std::make_unique<Garlic>();
     if (weaponName == "King Bible" || weaponName == "HOLYBOOK") return std::make_unique<KingBible>();
     if (weaponName == "Santa Water" || weaponName == "HOLYWATER") return std::make_unique<SantaWater>();
-    if (weaponName == "Runetracer" || weaponName == "DIAMOND") return std::make_unique<Runetracer>();
-    if (weaponName == "Lightning Ring" || weaponName == "LIGHTNING") return std::make_unique<LightningRing>();
+    if (weaponName == "Runetracer" || weaponName == "DIAMOND" || weaponName == "GATTI") return std::make_unique<Runetracer>();
+    if (weaponName == "Lightning Ring" || weaponName == "LIGHTNING" || weaponName == "PENTAGRAM") return std::make_unique<LightningRing>();
+    // ponytail: fallback existing weapon mechanics used for GUNS (Magic Wand) since multi-gun projectile logic is unbuilt; upgrade when weapon class is added
+    if (weaponName == "GUNS") return std::make_unique<MagicWand>();
     
     return nullptr;
 }
