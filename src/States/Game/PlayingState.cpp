@@ -235,6 +235,21 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
                                getIndividualCharFrames("assets/Graphics/Characters/character_giovanna.png", "assets/Data/CharacterAtlas/character_giovanna_atlas.json", "Giovanna", 5));
             addWeapon("GATTI");
             break;
+        case CharacterType::Poppea:
+            m_player.setSprite("assets/Graphics/Characters/character_poppea.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_poppea.png", "assets/Data/CharacterAtlas/character_poppea_atlas.json", "Poppea", 4));
+            addWeapon("SONG");
+            break;
+        case CharacterType::Concetta:
+            m_player.setSprite("assets/Graphics/Characters/character_concetta.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_concetta.png", "assets/Data/CharacterAtlas/character_concetta_atlas.json", "Concetta_i", 4));
+            addWeapon("TRAPANO");
+            break;
+        case CharacterType::Mortaccio:
+            m_player.setSprite("assets/Graphics/Characters/character_mortaccio.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_mortaccio.png", "assets/Data/CharacterAtlas/character_mortaccio_atlas.json", "Mortaccio", 4));
+            addWeapon("BONE");
+            break;
         case CharacterType::Sigma:
             m_player.setSprite("assets/Graphics/Characters/characters.png", 
                                getFrames("Sigma"));
