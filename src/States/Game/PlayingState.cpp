@@ -150,6 +150,8 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
                 for (int i = 1; i <= frameCount; ++i) {
                     std::string key = prefix + "_0" + std::to_string(i);
                     auto it = json.find(key);
+                    if (it == json.end()) it = json.find(prefix + "_i0" + std::to_string(i));
+                    if (it == json.end()) it = json.find(prefix + "0" + std::to_string(i));
                     if (it != json.end()) {
                         int x = it->value("x", 0);
                         int y = it->value("y", 0);
@@ -242,7 +244,7 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
             break;
         case CharacterType::Concetta:
             m_player.setSprite("assets/Graphics/Characters/character_concetta.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_concetta.png", "assets/Data/CharacterAtlas/character_concetta_atlas.json", "Concetta_i", 4));
+                               getIndividualCharFrames("assets/Graphics/Characters/character_concetta.png", "assets/Data/CharacterAtlas/character_concetta_atlas.json", "Concetta", 4));
             addWeapon("TRAPANO");
             break;
         case CharacterType::Mortaccio:
