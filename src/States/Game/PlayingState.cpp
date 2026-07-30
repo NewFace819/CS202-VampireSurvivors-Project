@@ -205,6 +205,21 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
                                getIndividualCharFrames("assets/Graphics/Characters/character_poe.png", "assets/Data/CharacterAtlas/character_poe_atlas.json", "Old3", 4));
             addWeapon("Garlic");
             break;
+        case CharacterType::Clerici:
+            m_player.setSprite("assets/Graphics/Characters/character_suora.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_suora.png", "assets/Data/CharacterAtlas/character_suora_atlas.json", "Suora", 4));
+            addWeapon("Santa Water");
+            break;
+        case CharacterType::Dommario:
+            m_player.setSprite("assets/Graphics/Characters/character_dommario.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_dommario.png", "assets/Data/CharacterAtlas/character_dommario_atlas.json", "Dommario", 4));
+            addWeapon("King Bible");
+            break;
+        case CharacterType::Krochi:
+            m_player.setSprite("assets/Graphics/Characters/character_krochi.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_krochi.png", "assets/Data/CharacterAtlas/character_krochi_atlas.json", "Krochi", 4));
+            addWeapon("Cross");
+            break;
         case CharacterType::Sigma:
             m_player.setSprite("assets/Graphics/Characters/characters.png", 
                                getFrames("Sigma"));

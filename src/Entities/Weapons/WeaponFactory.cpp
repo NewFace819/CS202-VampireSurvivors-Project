@@ -12,10 +12,10 @@ std::unique_ptr<WeaponBase> WeaponFactory::createWeapon(const std::string& weapo
     if (weaponName == "Hellfire") return std::make_unique<Hellfire>();
     if (weaponName == "Axe") return std::make_unique<Axe>();
     if (weaponName == "Death Spiral") return std::make_unique<DeathSpiral>();
-    if (weaponName == "Cross") return std::make_unique<Cross>();
+    if (weaponName == "Cross" || weaponName == "CROSS") return std::make_unique<Cross>();
     if (weaponName == "Garlic" || weaponName == "GARLIC") return std::make_unique<Garlic>();
-    if (weaponName == "King Bible") return std::make_unique<KingBible>();
-    if (weaponName == "Santa Water") return std::make_unique<SantaWater>();
+    if (weaponName == "King Bible" || weaponName == "HOLYBOOK") return std::make_unique<KingBible>();
+    if (weaponName == "Santa Water" || weaponName == "HOLYWATER") return std::make_unique<SantaWater>();
     if (weaponName == "Runetracer" || weaponName == "DIAMOND") return std::make_unique<Runetracer>();
     if (weaponName == "Lightning Ring" || weaponName == "LIGHTNING") return std::make_unique<LightningRing>();
     
