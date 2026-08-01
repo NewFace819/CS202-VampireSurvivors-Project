@@ -30,7 +30,7 @@ void ShopState::enter() {
     }
     
     // Refresh player gold & progress from disk/singleton before showing
-    m_progressionData.Load("assets/Data/save_data.json");
+    m_progressionData.Load("save_data.json");
     refreshGridData();
 }
 
@@ -128,7 +128,7 @@ void ShopState::initUI() {
 
     // Load data structures
     m_powerUpData.LoadFromJson("assets/Data/POWERUP_DATA.json");
-    m_progressionData.Load("assets/Data/save_data.json");
+    m_progressionData.Load("save_data.json");
 
     // Central window frame (Dark purple with gold border, symmetrically centered)
     m_mainFrame.SetTexture(m_atlas, "frame_purple");

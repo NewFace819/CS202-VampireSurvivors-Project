@@ -64,6 +64,16 @@ inline std::vector<PassiveItem> createDefaultPassiveItems() {
             0, 5,
             sf::IntRect(467, 598, 15, 16), // Candelabra
             "area", 0.10f
-        }
+        },
+        { "Clover", "Increases Luck by 10%.", 0, 5, sf::IntRect(0, 0, 16, 16), "luck", 0.10f },
+        { "Pummarola", "Character recovers 0.2 HP per second.", 0, 5, sf::IntRect(0, 0, 16, 16), "regen", 0.20f },
+        { "Spellbinder", "Increases weapon effect duration by 10%.", 0, 5, sf::IntRect(0, 0, 16, 16), "duration", 0.10f },
+        { "Attractorb", "Increases item pickup radius by 25%.", 0, 5, sf::IntRect(0, 0, 16, 16), "magnet", 0.25f },
+        { "Armor", "Reduces incoming damage by 1 per level.", 0, 5, sf::IntRect(0, 0, 16, 16), "armor", 1.0f },
+        { "Duplicator", "Fires +1 extra projectile for all weapons.", 0, 2, sf::IntRect(0, 0, 16, 16), "amount", 1.0f },
+        { "Tiragisu", "Revives once with 50% HP.", 0, 2, sf::IntRect(0, 0, 16, 16), "revival", 1.0f },
+        { "Stone Mask", "Increases gold coin value by 10%.", 0, 5, sf::IntRect(0, 0, 16, 16), "greed", 0.10f },
+        { "Skull O'Maniac", "Increases enemy frequency, HP, and speed by 10%.", 0, 5, sf::IntRect(0, 0, 16, 16), "curse", 0.10f },
+        { "Wings", "Increases character move speed by 10%.", 0, 5, sf::IntRect(0, 0, 16, 16), "moveSpeed", 0.10f }
     };
 }

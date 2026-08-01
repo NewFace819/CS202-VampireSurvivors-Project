@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 project(VampireSurvivorsClone)
 
+# Support CMake 4.x when fetching older third-party dependencies (nlohmann/json)
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5 CACHE STRING "" FORCE)
+
 # Require C++20
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -10,13 +13,15 @@ include(FetchContent)
 FetchContent_Declare(
     SFML
     URL https://github.com/SFML/SFML/archive/refs/tags/2.6.1.zip
+    DOWNLOAD_EXTRACT_TIMESTAMP true
 )
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(SFML)
 
 # Fetch nlohmann/json
 FetchContent_Declare(json
-  URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz
+    URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz
+    DOWNLOAD_EXTRACT_TIMESTAMP true
 )
 FetchContent_MakeAvailable(json)
 
@@ -37,9 +42,4 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     sfml-system
     sfml-audio
     nlohmann_json::nlohmann_json
-)
-
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
-    COMMAND cmd /C "if not exist \"$<TARGET_FILE_DIR:${PROJECT_NAME}>/assets\" mklink /J \"$<TARGET_FILE_DIR:${PROJECT_NAME}>/assets\" \"${CMAKE_SOURCE_DIR}/assets\""
 )

@@ -95,3 +95,20 @@ protected:
         activeProjectiles.push_back(p);
     }
 };
+
+// Thunder Loop — Evolved Lightning Ring (Lightning Ring + Duplicator)
+class ThunderLoop : public LightningRing {
+public:
+    ThunderLoop() : LightningRing(2.0f, 60.0f, 0.0f) {
+        m_level = 8;
+        m_isEvolved = true;
+        m_amount = 5;
+        m_areaScale = 2.0f;
+    }
+
+    std::string getName() const override { return "Thunder Loop"; }
+    int getMaxLevel() const override { return 8; }
+    std::string getUpgradeDescription() const override { return "Evolved weapon. Cannot be upgraded further."; }
+    void levelUp() override {}
+};
+

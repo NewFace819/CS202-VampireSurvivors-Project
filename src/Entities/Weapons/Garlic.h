@@ -60,3 +60,19 @@ protected:
         activeProjectiles.push_back(p);
     }
 };
+
+// Soul Eater — Evolved Garlic (Garlic + Pummarola)
+class SoulEater : public Garlic {
+public:
+    SoulEater() : Garlic(1.0f, 20.0f, 0.0f) {
+        m_level = 8;
+        m_isEvolved = true;
+        m_areaScale = 1.5f;
+    }
+
+    std::string getName() const override { return "Soul Eater"; }
+    int getMaxLevel() const override { return 8; }
+    std::string getUpgradeDescription() const override { return "Evolved weapon. Cannot be upgraded further."; }
+    void levelUp() override {}
+};
+

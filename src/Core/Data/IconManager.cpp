@@ -84,6 +84,12 @@ void IconManager::init() {
     // Some hardcoded fallbacks just in case
     if (m_nameToFrame.find("Bloody Tear") == m_nameToFrame.end()) m_nameToFrame["Bloody Tear"] = "Whip2";
     if (m_nameToFrame.find("Death Spiral") == m_nameToFrame.end()) m_nameToFrame["Death Spiral"] = "Scythe";
+    if (m_nameToFrame.find("Heaven Sword") == m_nameToFrame.end()) m_nameToFrame["Heaven Sword"] = "HeavenSword";
+    if (m_nameToFrame.find("Soul Eater") == m_nameToFrame.end()) m_nameToFrame["Soul Eater"] = "Garlic";
+    if (m_nameToFrame.find("Unholy Vespers") == m_nameToFrame.end()) m_nameToFrame["Unholy Vespers"] = "HolyBook";
+    if (m_nameToFrame.find("La Borra") == m_nameToFrame.end()) m_nameToFrame["La Borra"] = "HolyWater";
+    if (m_nameToFrame.find("NO FUTURE") == m_nameToFrame.end()) m_nameToFrame["NO FUTURE"] = "Diamond2";
+    if (m_nameToFrame.find("Thunder Loop") == m_nameToFrame.end()) m_nameToFrame["Thunder Loop"] = "LightningRing";
     
     // 3. Load vfx_atlas.json
     {

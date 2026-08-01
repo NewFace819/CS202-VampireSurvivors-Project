@@ -6,6 +6,7 @@
 #include "Core/Data/StatsManager.h"
 #include "Core/Data/ProfileManager.h"
 #include "Entities/Weapons/EvolutionRegistry.h"
+#include "Core/Data/IconManager.h"
 #include <iostream>
 #include <cmath>
 #include <algorithm>
@@ -13,21 +14,6 @@
 
 // Helper to get item coordinates
 static sf::IntRect getItemIconRect(const std::string& name, PlayingState* playing) {
-    if (name == "Money Bag")     return sf::IntRect(97, 786, 16, 16);
-    if (name == "Floor Chicken") return sf::IntRect(301, 752, 16, 16);
-    if (name == "Whip")          return sf::IntRect(396, 790, 16, 16);
-    if (name == "Magic Wand")    return sf::IntRect(472, 793, 16, 16);
-    if (name == "Knife")         return sf::IntRect(116, 858, 16, 11);
-    if (name == "Fire Wand")     return sf::IntRect(434, 788, 16, 16);
-    if (name == "Axe")           return sf::IntRect(485, 660, 16, 16);
-
-    // Evolutions
-    if (name == "Bloody Tear")   return sf::IntRect(412, 790, 16, 16);
-    if (name == "Holy Wand")     return sf::IntRect(488, 793, 16, 16);
-    if (name == "Thousand Edge") return sf::IntRect(132, 858, 16, 11);
-    if (name == "Hellfire")      return sf::IntRect(450, 788, 16, 16);
-    if (name == "Death Spiral")  return sf::IntRect(501, 660, 16, 16);
-
     if (playing) {
         for (const auto& p : playing->getPassiveItems()) {
             if (p.name == name) {
@@ -35,7 +21,7 @@ static sf::IntRect getItemIconRect(const std::string& name, PlayingState* playin
             }
         }
     }
-    return sf::IntRect(0, 0, 16, 16);
+    return IconManager::GetInstance().getIconRect(name);
 }
 
 TreasureChestState::TreasureChestState(GameManager* manager, PlayingState* playing)
@@ -98,15 +84,20 @@ TreasureChestState::TreasureChestState(GameManager* manager, PlayingState* playi
     m_chestSprite.setScale(3.8f, 3.8f);
     m_chestSprite.setPosition(panelX + panelW / 2.f, panelY + panelH - 120.f);
 
+    // Default Item Icon Sprite
+    m_rewardSprite.setTexture(m_itemsTex);
+    m_rewardSprite.setScale(4.f, 4.f);
+    m_rewardSprite.setPosition(panelX + (panelW - 64.f) / 2.f, panelY + 130.f);
+
     // Set up Reward labels
     m_rewardNameText.setFont(m_font);
-    m_rewardNameText.setCharacterSize(28);
-    m_rewardNameText.setFillColor(sf::Color::White);
+    m_rewardNameText.setCharacterSize(24);
+    m_rewardNameText.setFillColor(sf::Color(255, 255, 255));
     m_rewardNameText.setStyle(sf::Text::Bold);
 
     m_rewardDescText.setFont(m_font);
     m_rewardDescText.setCharacterSize(16);
-    m_rewardDescText.setFillColor(sf::Color(240, 240, 150));
+    m_rewardDescText.setFillColor(sf::Color(220, 220, 220));
 
     m_goldBonusText.setFont(m_font);
     m_goldBonusText.setCharacterSize(22);
@@ -116,6 +107,8 @@ TreasureChestState::TreasureChestState(GameManager* manager, PlayingState* playi
     m_goldIconSprite.setTexture(m_itemsTex);
     m_goldIconSprite.setTextureRect(getItemIconRect("Money Bag", nullptr));
     m_goldIconSprite.setScale(2.5f, 2.5f);
+
+    determineReward();
 }
 
 void TreasureChestState::determineReward() {
@@ -131,10 +124,7 @@ void TreasureChestState::determineReward() {
         m_isLevelUp = false;
         m_rewardName = recipe.evolvedWeapon;
 
-        // Perform weapon upgrade & banishment
-        m_playing->addWeapon(recipe.evolvedWeapon); // Add new evolved weapon
-        
-        // Remove base weapon
+        // Remove base weapon first to prevent erasure of replacement weapon if names coincide
         m_playing->banishItem(recipe.baseWeapon);
         auto& mutableWeapons = const_cast<std::vector<std::unique_ptr<WeaponBase>>&>(m_playing->getWeapons());
         mutableWeapons.erase(
@@ -142,6 +132,9 @@ void TreasureChestState::determineReward() {
                 [&](const std::unique_ptr<WeaponBase>& w) { return w->getName() == recipe.baseWeapon; }),
             mutableWeapons.end()
         );
+
+        // Add new evolved weapon after base weapon removal
+        m_playing->addWeapon(recipe.evolvedWeapon);
 
         m_rewardIconRect = getItemIconRect(m_rewardName, m_playing);
         m_rewardDescText.setString("EVOLUTION ACQUIRED!");

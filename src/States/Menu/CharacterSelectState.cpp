@@ -76,8 +76,8 @@ CharacterSelectState::CharacterSelectState(GameManager* manager) : m_manager(man
         else if (characterIds.front() == "CONCETTA") type = CharacterType::Concetta;
         else if (characterIds.front() == "MORTACCIO") type = CharacterType::Mortaccio;
         else if (characterIds.front() == "CAVALLO") type = CharacterType::Cavallo;
-        else if (characterIds.front() == "BIANCA_RAMBA") type = CharacterType::Ramba;
-        else if (characterIds.front() == "O_SOLE") type = CharacterType::OSole;
+        else if (characterIds.front() == "MARIA" || characterIds.front() == "BIANCA_RAMBA") type = CharacterType::Ramba;
+        else if (characterIds.front() == "TATANKA" || characterIds.front() == "O_SOLE") type = CharacterType::OSole;
         else if (characterIds.front() == "AMBROJOE") type = CharacterType::Ambrojoe;
         else if (characterIds.front() == "IGANA_GALLO") type = CharacterType::Gallo;
         else if (characterIds.front() == "DIVANO") type = CharacterType::Divano;

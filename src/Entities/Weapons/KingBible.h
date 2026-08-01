@@ -106,7 +106,25 @@ protected:
         activeProjectiles.push_back(p);
     }
     
-private:
+protected:
     float m_duration;
     float m_currentRandomOffset = 0.f;
 };
+
+// Unholy Vespers — Evolved King Bible (King Bible + Spellbinder)
+class UnholyVespers : public KingBible {
+public:
+    UnholyVespers() : KingBible(1.0f, 30.0f, 2.5f) {
+        m_level = 8;
+        m_isEvolved = true;
+        m_areaScale = 1.4f;
+        m_amount = 4;
+        m_duration = 10000.0f; // Permanent orbit without disappearing
+    }
+
+    std::string getName() const override { return "Unholy Vespers"; }
+    int getMaxLevel() const override { return 8; }
+    std::string getUpgradeDescription() const override { return "Evolved weapon. Cannot be upgraded further."; }
+    void levelUp() override {}
+};
+

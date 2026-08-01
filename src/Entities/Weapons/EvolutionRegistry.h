@@ -15,11 +15,28 @@ struct EvolutionRecipe {
 // Static registry of all weapon evolution recipes.
 inline const std::vector<EvolutionRecipe>& getEvolutionRecipes() {
     static const std::vector<EvolutionRecipe> recipes = {
-        { "Whip",       "Hollow Heart",   "Bloody Tear"   },
-        { "Magic Wand", "Empty Tome",     "Holy Wand"     },
-        { "Knife",      "Bracer",         "Thousand Edge" },
-        { "Fire Wand",  "Spinach",        "Hellfire"      },
-        { "Axe",        "Candelabrador",  "Death Spiral"  }
+        { "Whip",           "Hollow Heart",   "Bloody Tear"    },
+        { "Magic Wand",     "Empty Tome",     "Holy Wand"      },
+        { "Knife",          "Bracer",         "Thousand Edge"  },
+        { "Fire Wand",      "Spinach",        "Hellfire"       },
+        { "Axe",            "Candelabrador",  "Death Spiral"   },
+        { "Cross",          "Clover",         "Heaven Sword"   },
+        { "CROSS",          "Clover",         "HEAVENSWORD"    },
+        { "Garlic",         "Pummarola",      "Soul Eater"     },
+        { "GARLIC",         "Pummarola",      "SOULEATER"      },
+        { "King Bible",     "Spellbinder",    "Unholy Vespers" },
+        { "HOLYBOOK",       "Spellbinder",    "VESPERS"        },
+        { "Santa Water",    "Attractorb",     "La Borra"       },
+        { "HOLYWATER",      "Attractorb",     "BORRA"          },
+        { "Runetracer",     "Armor",          "NO FUTURE"      },
+        { "DIAMOND",        "Armor",          "NOFUTURE"       },
+        { "Lightning Ring", "Duplicator",     "Thunder Loop"   },
+        { "LIGHTNING",      "Duplicator",     "THUNDERLOOP"    },
+        { "GUNS",           "Tiragisu",       "GUNS3"          },
+        { "GUNS2",          "Tiragisu",       "GUNS3"          },
+        { "GATTI",          "Stone Mask",     "STIGRANGATTI"   },
+        { "SONG",           "Skull O'Maniac", "MANNAJA"        },
+        { "TRAPANO",        "Wings",          "TRAPANO2"       }
     };
     return recipes;
 }

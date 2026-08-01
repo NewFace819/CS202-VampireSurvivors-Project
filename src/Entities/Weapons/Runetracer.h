@@ -62,6 +62,25 @@ protected:
         activeProjectiles.push_back(p);
     }
 
-private:
+protected:
     float m_duration;
 };
+
+// NO FUTURE — Evolved Runetracer (Runetracer + Armor)
+class NoFuture : public Runetracer {
+public:
+    NoFuture() : Runetracer(1.5f, 30.0f) {
+        m_level = 8;
+        m_isEvolved = true;
+        m_amount = 3;
+        m_speed = 600.f;
+        m_areaScale = 1.5f;
+        m_duration = 5.0f;
+    }
+
+    std::string getName() const override { return "NO FUTURE"; }
+    int getMaxLevel() const override { return 8; }
+    std::string getUpgradeDescription() const override { return "Evolved weapon. Cannot be upgraded further."; }
+    void levelUp() override {}
+};
+

@@ -103,3 +103,21 @@ protected:
         activeProjectiles.push_back(p);
     }
 };
+
+// La Borra — Evolved Santa Water (Santa Water + Attractorb)
+class LaBorra : public SantaWater {
+public:
+    LaBorra() : SantaWater(2.5f, 35.0f, 0.0f) {
+        m_level = 8;
+        m_isEvolved = true;
+        m_amount = 3;
+        m_areaScale = 2.0f;
+        m_duration = 5.0f;
+    }
+
+    std::string getName() const override { return "La Borra"; }
+    int getMaxLevel() const override { return 8; }
+    std::string getUpgradeDescription() const override { return "Evolved weapon. Cannot be upgraded further."; }
+    void levelUp() override {}
+};
+

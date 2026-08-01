@@ -111,6 +111,9 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
 
     // Initialize passive items pool
     m_passiveItems = createDefaultPassiveItems();
+    for (auto& p : m_passiveItems) {
+        p.iconRect = IconManager::GetInstance().getIconRect(p.name);
+    }
     
     m_levelText.setFont(m_font);
     m_levelText.setCharacterSize(8);
@@ -252,19 +255,34 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
                                getIndividualCharFrames("assets/Graphics/Characters/character_mortaccio.png", "assets/Data/CharacterAtlas/character_mortaccio_atlas.json", "Mortaccio", 4));
             addWeapon("BONE");
             break;
+        case CharacterType::Cavallo:
+            m_player.setSprite("assets/Graphics/Characters/character_cavallo.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_cavallo.png", "assets/Data/CharacterAtlas/character_cavallo_atlas.json", "Cavallo", 4));
+            addWeapon("CHERRY");
+            break;
+        case CharacterType::Ramba:
+            m_player.setSprite("assets/Graphics/Characters/character_ramba.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_ramba.png", "assets/Data/CharacterAtlas/character_ramba_atlas.json", "Ramba", 4));
+            addWeapon("CART2");
+            break;
+        case CharacterType::OSole:
+            m_player.setSprite("assets/Graphics/Characters/character_osole.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_osole.png", "assets/Data/CharacterAtlas/character_osole_atlas.json", "Dog", 5));
+            addWeapon("FLOWER");
+            break;
         case CharacterType::Sigma:
             m_player.setSprite("assets/Graphics/Characters/characters.png", 
                                getFrames("Sigma"));
-            //addWeapon("Whip");
-            //addWeapon("Magic Wand");
-            //addWeapon("Knife");
-            //addWeapon("Fire Wand");
-            //addWeapon("Axe");
-            //addWeapon("Cross");
-            //addWeapon("Garlic");
-            //addWeapon("King Bible");
-            //addWeapon("Santa Water");
-            //addWeapon("Runetracer");
+            addWeapon("Whip");
+            addWeapon("Magic Wand");
+            addWeapon("Knife");
+            addWeapon("Fire Wand");
+            addWeapon("Axe");
+            addWeapon("Cross");
+            addWeapon("Garlic");
+            addWeapon("King Bible");
+            addWeapon("Santa Water");
+            addWeapon("Runetracer");
             addWeapon("Lightning Ring");
             break;
     }
@@ -358,34 +376,24 @@ void PlayingState::update(float dt) {
     if (!m_cheatApplied && sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt) && sf::Keyboard::isKeyPressed(sf::Keyboard::C)) {
         m_cheatApplied = true;
         
-        // Add & Max all weapons
-        std::vector<std::string> baseWeapons = {"Whip", "Magic Wand", "Knife", "Fire Wand", "Axe"};
-        for (const auto& wName : baseWeapons) {
-            WeaponBase* found = nullptr;
-            for (auto& w : m_weapons) {
-                if (w->getName() == wName) {
-                    found = w.get();
-                    break;
-                }
-            }
-            if (!found) {
-                addWeapon(wName);
-                found = m_weapons.back().get();
-            }
-            while (!found->isMaxLevel()) {
-                found->levelUp();
-            }
+        // Add all core weapons if not already present
+        std::vector<std::string> allWeapons = {"Whip", "Magic Wand", "Knife", "Fire Wand", "Axe", "Cross", "Garlic", "King Bible", "Santa Water", "Runetracer", "Lightning Ring"};
+        for (const auto& wName : allWeapons) {
+            bool found = false;
+            for (auto& w : m_weapons) if (w->getName() == wName) { found = true; break; }
+            if (!found) addWeapon(wName);
+        }
+        // Max level all owned weapons (including unique starting character weapons)
+        for (auto& w : m_weapons) {
+            while (!w->isMaxLevel()) w->levelUp();
         }
 
-        // Max all passives
-        std::vector<std::string> passives = {"Hollow Heart", "Empty Tome", "Bracer", "Spinach", "Candelabrador"};
-        for (const auto& pName : passives) {
-            for (int level = 0; level < 5; ++level) {
-                addOrUpgradePassive(pName);
-            }
+        // Max all passive items directly without hardcoded string filtering
+        for (auto& p : m_passiveItems) {
+            p.level = p.maxLevel;
         }
         
-        std::cout << "CHEAT: All weapons and passives maxed!\n";
+        std::cout << "CHEAT: All active weapons and passive items added and maxed!\n";
     }
 
     // Cheat Code: Alt+T = Spawn Treasure Chest 150px to the right of player for testing evolutions

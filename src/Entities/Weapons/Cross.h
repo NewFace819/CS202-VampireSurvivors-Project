@@ -88,3 +88,20 @@ private:
     sf::IntRect m_crossFrame;
     sf::Vector2f m_currentTargetDir;
 };
+
+// Heaven Sword — Evolved Cross (Cross + Clover)
+class HeavenSword : public Cross {
+public:
+    HeavenSword() : Cross(1.5f, 77.0f, 700.0f) {
+        m_level = 8;
+        m_isEvolved = true;
+        m_amount = 3;
+        m_areaScale = 1.8f;
+    }
+
+    std::string getName() const override { return "Heaven Sword"; }
+    int getMaxLevel() const override { return 8; }
+    std::string getUpgradeDescription() const override { return "Evolved weapon. Cannot be upgraded further."; }
+    void levelUp() override {}
+};
+
