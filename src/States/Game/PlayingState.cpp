@@ -443,6 +443,16 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
                                getIndividualCharFrames("assets/Graphics/Characters/character_gyoruntin.png", "assets/Data/CharacterAtlas/character_gyoruntin_atlas.json", "Gyoruntin", 5));
             addWeapon("ROCHER");
             break;
+        case CharacterType::Secretino:
+            m_player.setSprite("assets/Graphics/Characters/character_secretino.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_secretino.png", "assets/Data/CharacterAtlas/character_secretino_atlas.json", "secretino", 4));
+            addWeapon("EX_MAGISTONE2");
+            break;
+        case CharacterType::SpaceDette:
+            m_player.setSprite("assets/Graphics/Characters/character_spacedette.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_spacedette.png", "assets/Data/CharacterAtlas/character_spacedette_atlas.json", "SDette", 4));
+            addWeapon("PHASER2");
+            break;
     }
 
     if (m_stageType == StageType::InlaidLibrary) {
