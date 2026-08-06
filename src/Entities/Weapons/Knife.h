@@ -17,12 +17,12 @@ public:
     std::string getUpgradeDescription() const override {
         switch (m_level + 1) {
             case 2: return "Fires 1 more projectile.";
-            case 3: return "Base Damage up by 5.";
+            case 3: return "Fires 1 more projectile. Base Damage up by 5.";
             case 4: return "Fires 1 more projectile.";
-            case 5: return "Base Damage up by 5.";
+            case 5: return "Passes through 1 more enemy.";
             case 6: return "Fires 1 more projectile.";
-            case 7: return "Base Damage up by 5.";
-            case 8: return "Fires 1 more projectile.";
+            case 7: return "Fires 1 more projectile. Base Damage up by 5.";
+            case 8: return "Passes through 1 more enemy.";
             default: return "Max level reached.";
         }
     }
@@ -30,12 +30,12 @@ public:
     void levelUp() override {
         switch (m_level + 1) {
             case 2: m_amount++; break;
-            case 3: m_damage += 5.f; break;
+            case 3: m_amount++; m_damage += 5.f; break;
             case 4: m_amount++; break;
-            case 5: m_damage += 5.f; break;
+            case 5: m_pierce++; break;
             case 6: m_amount++; break;
-            case 7: m_damage += 5.f; break;
-            case 8: m_amount++; break;
+            case 7: m_amount++; m_damage += 5.f; break;
+            case 8: m_pierce++; break;
         }
         m_level++;
     }
@@ -58,11 +58,12 @@ protected:
         }
 
         Projectile p;
-        p.init(startPos, fireDir, m_damage, m_speed, 800.0f, 2.0f, false);
+        p.init(startPos, fireDir, m_damage, m_speed, 800.0f, 2.0f, m_pierce > 0);
         p.setKnockback(0.5f);
         
         if (m_hasItemsTex) {
             p.setSprite(m_itemsTex, m_knifeFrame, 2.f);
+            p.enableTrail(0.01f, 0.2f, sf::Color(200, 200, 200, 150));
         } else {
             p.setCustomShape(sf::Vector2f(20.f, 5.f), sf::Color::White);
         }
@@ -72,4 +73,5 @@ protected:
 
 private:
     sf::IntRect m_knifeFrame;
+    int m_pierce = 0;
 };

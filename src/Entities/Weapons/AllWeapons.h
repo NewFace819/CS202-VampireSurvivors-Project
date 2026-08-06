@@ -16,3 +16,8 @@
 #include "Entities/Weapons/Cross.h"
 #include "Entities/Weapons/Garlic.h"
 #include "Entities/Weapons/KingBible.h"
+#include "Bone.h"
+#include "CherryBomb.h"
+#include "SongOfMana.h"
+#include "PhieraDerTuphello.h"
+#include "EightTheSparrow.h"

@@ -45,6 +45,9 @@ public:
         m_orbitRadius = 0.f;
         m_orbitAngle = 0.f;
         m_orbitSpeed = 0.f;
+        m_bouncing = false;
+        m_exploding = false;
+        m_explosionChance = 0.f;
         
         float areaMult = ProfileManager::GetInstance().getAreaMultiplier();
         m_shape.setRadius(5.f * areaMult);
@@ -114,7 +117,7 @@ public:
         if (!m_active) return;
 
         if (m_isAura) {
-            updateAura(playerPos);
+            updateAura(dt, playerPos);
         } else if (m_isOrbiting) {
             updateOrbiting(dt, playerPos);
         } else {
@@ -160,10 +163,17 @@ public:
     bool isPiercing() const { return m_piercing; }
     
     bool canHit() const {
-        return m_active && (!m_isLanding);
+        return m_active && (!m_isLanding) && (!m_isVisualOnly);
     }
     
     void setBounceOffScreen(bool bounce) { m_bounceOffScreen = bounce; }
+    
+    void setBouncing(bool bounce) { m_bouncing = bounce; }
+    bool isBouncing() const { return m_bouncing; }
+
+    void setExploding(bool exploding, float chance) { m_exploding = exploding; m_explosionChance = chance; }
+    bool isExploding() const { return m_exploding; }
+    float getExplosionChance() const { return m_explosionChance; }
     
     float getDamage() const { return m_damage; }
     float getKnockback() const { return m_knockbackForce; }
@@ -180,6 +190,7 @@ public:
     sf::Vector2f getDirection() const { return m_direction; }
 
     void setCustomShape(const sf::Vector2f& size, sf::Color color) {
+        m_baseColor = color;
         // Switch to a rectangle for things like Whip (when no sprite)
         float areaMult = ProfileManager::GetInstance().getAreaMultiplier();
         sf::Vector2f scaledSize = size * areaMult;
@@ -190,6 +201,7 @@ public:
     }
 
     void setCircleShape(float radius, sf::Color color) {
+        m_baseColor = color;
         float areaMult = ProfileManager::GetInstance().getAreaMultiplier();
         float scaledRadius = radius * areaMult;
         m_shape.setRadius(scaledRadius);
@@ -219,6 +231,12 @@ public:
 
     void setIsAura(bool isAura) { m_isAura = isAura; }
     void setGarlicAura(bool garlic) { m_isGarlicAura = garlic; }
+    void setPulsateVisual(bool pulsate) { m_pulsateVisual = pulsate; }
+    void setVisualOnly(bool visualOnly) { m_isVisualOnly = visualOnly; }
+    void setFadeOut(bool fadeOut) { m_fadeOut = fadeOut; }
+    void setAuraOffset(const sf::Vector2f& offset) { m_auraOffset = offset; m_hasAuraOffset = true; }
+    void setAuraBounceSize(const sf::Vector2f& size) { m_auraBounceSize = size; }
+    void setAuraSineWave(bool isSine, float phase) { m_auraIsSineWave = isSine; m_auraPhase = phase; }
 
     void setSourceWeapon(WeaponBase* weapon) { m_sourceWeapon = weapon; }
     WeaponBase* getSourceWeapon() const { return m_sourceWeapon; }
@@ -270,9 +288,35 @@ public:
     }
 
 private:
-    void updateAura(const sf::Vector2f& playerPos) {
-        m_position = playerPos;
-        m_velocity = sf::Vector2f(0.f, 0.f);
+    void updateAura(float dt, const sf::Vector2f& playerPos) {
+        if (m_hasAuraOffset) {
+            m_auraOffset += m_velocity * dt;
+            if (m_auraIsSineWave) {
+                // Sine wave path based on Y position and time
+                m_auraOffset.x = (m_auraBounceSize.x / 2.f) * std::sin(m_auraOffset.y * 0.02f + m_auraPhase);
+            } else if (m_auraBounceSize.x > 0.f) {
+                if (m_auraOffset.x < -m_auraBounceSize.x / 2.f) {
+                    m_auraOffset.x = -m_auraBounceSize.x / 2.f;
+                    m_velocity.x = -m_velocity.x;
+                } else if (m_auraOffset.x > m_auraBounceSize.x / 2.f) {
+                    m_auraOffset.x = m_auraBounceSize.x / 2.f;
+                    m_velocity.x = -m_velocity.x;
+                }
+            }
+            if (m_auraBounceSize.y > 0.f) {
+                if (m_auraOffset.y < -m_auraBounceSize.y / 2.f) {
+                    m_auraOffset.y = -m_auraBounceSize.y / 2.f;
+                    m_velocity.y = -m_velocity.y;
+                } else if (m_auraOffset.y > m_auraBounceSize.y / 2.f) {
+                    m_auraOffset.y = m_auraBounceSize.y / 2.f;
+                    m_velocity.y = -m_velocity.y;
+                }
+            }
+            m_position = playerPos + m_auraOffset;
+        } else {
+            m_position = playerPos;
+            m_velocity = sf::Vector2f(0.f, 0.f);
+        }
     }
 
     void updateOrbiting(float dt, const sf::Vector2f& playerPos) {
@@ -356,6 +400,37 @@ private:
     }
 
     void updateVisuals(float dt) {
+        // ponytail: visual simplifications. The true game uses a particle engine for this. We use a pulsating width on our static rectangle to simulate the wave bouncing within the column limits. Upgrade path: build a real particle system (or integrate SFML particles) if we need 1:1 visual fidelity.
+        if (m_pulsateVisual) {
+            float scaleX = 1.0f + 0.3f * std::sin(m_lifeTimer * 15.0f);
+            if (m_useRect) {
+                m_rectShape.setScale(scaleX, 1.0f);
+            } else {
+                m_shape.setScale(scaleX, 1.0f);
+            }
+        }
+        
+        if (m_fadeOut && m_lifetime > 0.f) {
+            float progress = m_lifeTimer / m_lifetime;
+            if (progress > 0.7f) {
+                float alphaRatio = 1.0f - (progress - 0.7f) / 0.3f; // Fade out during last 30% of lifetime
+                if (alphaRatio < 0.f) alphaRatio = 0.f;
+                if (m_hasSprite) {
+                    sf::Color current = m_spriteColor;
+                    current.a = static_cast<sf::Uint8>(current.a * alphaRatio);
+                    m_animSprite.setColor(current);
+                } else if (m_useRect) {
+                    sf::Color current = m_baseColor;
+                    current.a = static_cast<sf::Uint8>(current.a * alphaRatio);
+                    m_rectShape.setFillColor(current);
+                } else {
+                    sf::Color current = m_baseColor;
+                    current.a = static_cast<sf::Uint8>(current.a * alphaRatio);
+                    m_shape.setFillColor(current);
+                }
+            }
+        }
+        
         m_shape.setPosition(m_position);
         if (m_useRect) m_rectShape.setPosition(m_position);
         if (m_hasSprite) {
@@ -440,6 +515,7 @@ private:
         }
     }
 
+public:
     struct TrailParticle {
         sf::Vector2f pos;
         float life;
@@ -465,11 +541,23 @@ private:
     
     float m_maxSpeed = 0.f;
     bool m_bounceOffScreen = false;
+    bool m_bouncing = false;
+    bool m_exploding = false;
+    float m_explosionChance = 0.f;
 
     bool m_hasDelayedAccel = false;
     bool m_accelTriggered = false;
     float m_accelTimeLimit = 0.f;
     float m_accelTimer = 0.f;
+    bool m_pulsateVisual = false;
+    bool m_isVisualOnly = false;
+    bool m_fadeOut = false;
+    sf::Color m_baseColor = sf::Color::White;
+    sf::Vector2f m_auraOffset;
+    bool m_hasAuraOffset = false;
+    sf::Vector2f m_auraBounceSize;
+    bool m_auraIsSineWave = false;
+    float m_auraPhase = 0.f;
     sf::Vector2f m_delayedAcceleration;
 
     bool m_isOrbiting = false;

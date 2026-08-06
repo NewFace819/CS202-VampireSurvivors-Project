@@ -1,4 +1,4 @@
-#include "States/Game/PlayingState.h"
+#include "PlayingState.h"
 #include "States/Game/PauseState.h"
 #include "States/Game/LevelUpState.h"
 #include "States/Game/TreasureChestState.h"
@@ -19,6 +19,7 @@
 #include <cstdlib>
 #include <algorithm>
 #include <iostream>
+#include <set>
 
 #include "Core/Data/ProfileManager.h"
 #include "Core/Data/IconManager.h"
@@ -284,6 +285,13 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
             addWeapon("Santa Water");
             addWeapon("Runetracer");
             addWeapon("Lightning Ring");
+            addWeapon("Bone");
+            addWeapon("Cherry Bomb");
+            addWeapon("Song Of Mana");
+
+            addWeapon("GUNS1");
+            addWeapon("GUNS2");
+
             break;
     }
 
@@ -588,6 +596,8 @@ void PlayingState::update(float dt) {
 
     // 1. Clear grid and insert all active enemies
     m_grid.clear();
+    std::vector<Projectile> newProjectiles;
+    
     for (auto* enemy : m_activeEnemies) {
         if (enemy->isActive()) {
             m_grid.insertEntity(enemy);
@@ -727,7 +737,48 @@ void PlayingState::update(float dt) {
                         StatsManager::GetInstance().heal(8.f);
                     }
                     
-                    if (!proj.isPiercing()) {
+                    if (proj.isBouncing()) {
+                        sf::Vector2f diff = proj.getPosition() - enemy->getPosition();
+                        float distSq = diff.x * diff.x + diff.y * diff.y;
+                        if (distSq > 0.0001f) {
+                            float dist = std::sqrt(distSq);
+                            sf::Vector2f normal = diff / dist;
+                            
+                            sf::Vector2f dir = proj.getDirection();
+                            float dot = dir.x * normal.x + dir.y * normal.y;
+                            sf::Vector2f reflect = dir - 2.f * dot * normal;
+                            
+                            // Normalize reflect just in case
+                            float rLen = std::sqrt(reflect.x*reflect.x + reflect.y*reflect.y);
+                            if (rLen > 0) reflect /= rLen;
+                            
+                            // Just reflect velocity and direction without resetting the entire projectile
+                            float currentSpeed = std::sqrt(proj.m_velocity.x * proj.m_velocity.x + proj.m_velocity.y * proj.m_velocity.y);
+                            proj.m_direction = reflect;
+                            proj.m_velocity = reflect * currentSpeed;
+                            
+                            // Re-apply rotation if needed
+                            if (proj.m_hasSprite && currentSpeed > 0) {
+                                proj.m_initRotation = std::atan2(reflect.y, reflect.x) * 180.f / 3.14159265f;
+                                proj.m_animSprite.setRotation(proj.m_initRotation);
+                            }
+                        }
+                    }
+
+                    if (proj.isExploding()) {
+                        float roll = static_cast<float>(std::rand()) / RAND_MAX;
+                        if (roll <= proj.getExplosionChance()) {
+                            Projectile explosion;
+                            float radius = 50.f * ProfileManager::GetInstance().getAreaMultiplier();
+                            explosion.init(proj.getPosition(), sf::Vector2f(0.f, 0.f), proj.getDamage() * 2.f, 0.f, 0.f, 0.2f, true);
+                            explosion.setCircleShape(radius, sf::Color(255, 100, 100, 150));
+                            explosion.setHitInterval(0.5f);
+                            explosion.setSourceWeapon(proj.getSourceWeapon());
+                            newProjectiles.push_back(explosion);
+                        }
+                    }
+                    
+                    if (!proj.isPiercing() && !proj.isBouncing()) {
                         proj.deactivate();
                     }
                     
@@ -752,7 +803,11 @@ void PlayingState::update(float dt) {
         }
     }
 
-    // Update collectibles and handle collection
+    for (const auto& p : newProjectiles) {
+        m_activeProjectiles.push_back(p);
+    }
+    
+    // Pickups collision logic (Gems, Coins, Chests, Ground items) collection
     for (auto& item : m_activeCollectibles) {
         item->update(dt, &m_player);
         if (item->isActive() && item->getBounds().intersects(m_player.getBounds())) {

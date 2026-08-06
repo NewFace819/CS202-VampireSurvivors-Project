@@ -1,5 +1,5 @@
 #pragma once
-#include "Entities/Weapons/WeaponBase.h"
+#include "WeaponBase.h"
 #include "Entities/Enemy/EnemyBase.h"
 #include <cmath>
 #include <limits>
@@ -20,11 +20,11 @@ public:
     std::string getUpgradeDescription() const override {
         switch (m_level + 1) {
             case 2: return "Fires 1 more projectile.";
-            case 3: return "Cooldown reduced by 0.2s.";
+            case 3: return "Cooldown reduced by 0.2 seconds.";
             case 4: return "Fires 1 more projectile.";
             case 5: return "Base Damage up by 10.";
             case 6: return "Fires 1 more projectile.";
-            case 7: return "Pierce up by 1.";
+            case 7: return "Passes through 1 more enemy.";
             case 8: return "Base Damage up by 10.";
             default: return "Max level reached.";
         }
@@ -63,6 +63,7 @@ protected:
         if (m_hasVfxTex) {
             // Blue/White glowing missile
             p.setSprite(m_vfxTex, m_wandFrame, 1.0f, true, sf::Color(100, 200, 255));
+            p.enableTrail(0.015f, 0.3f, sf::Color(100, 200, 255, 200));
         }
         activeProjectiles.push_back(p);
     }

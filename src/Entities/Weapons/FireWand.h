@@ -69,6 +69,7 @@ protected:
         
         if (m_hasVfxTex) {
             p.setSprite(m_vfxTex, m_fireballFrame, 1.0f);
+            p.enableTrail(0.02f, 0.4f, sf::Color(255, 100, 0, 200));
         } else {
             p.setCustomShape(sf::Vector2f(20.f, 20.f), sf::Color::Red);
         }

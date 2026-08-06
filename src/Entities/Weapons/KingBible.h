@@ -92,6 +92,7 @@ protected:
         p.init(startPos, sf::Vector2f(1, 0), m_damage, 0.f, 0.f, actualDuration, true); // Piercing = true
         p.setOrbiting(radius, startAngle, m_speed * ProfileManager::GetInstance().getProjectileSpeedMultiplier());
         p.setKnockback(1.0f);
+        p.setFadeOut(true);
         
         if (m_hasItemsTex) {
             sf::IntRect iconRect = IconManager::GetInstance().getIconRect("HolyBook");
@@ -99,6 +100,7 @@ protected:
                 iconRect = sf::IntRect(257, 459, 12, 16); // Fallback
             }
             p.setSprite(m_itemsTex, iconRect, 2.0f, false); // applyRotation = false, stay upright
+            p.enableTrail(0.02f, 0.3f, sf::Color(255, 255, 200, 150));
         } else {
             p.setCustomShape(sf::Vector2f(12.f, 16.f), sf::Color(200, 200, 200));
         }

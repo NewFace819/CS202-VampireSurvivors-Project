@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <string>
-#include "Entities/Weapons/WeaponBase.h"
+#include "WeaponBase.h"
 
 class WeaponFactory {
 public:

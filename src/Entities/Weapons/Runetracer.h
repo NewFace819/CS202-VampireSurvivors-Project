@@ -16,13 +16,13 @@ public:
 
     std::string getUpgradeDescription() const override {
         switch (m_level + 1) {
-            case 2: return "Fires 1 more projectile.";
-            case 3: return "Base Damage up by 5.";
-            case 4: return "Base Area up by 10%.\nBase Damage up by 5.";
-            case 5: return "Base Damage up by 5.";
-            case 6: return "Fires 1 more projectile.";
-            case 7: return "Base Damage up by 5.";
-            case 8: return "Base Area up by 20%.\nBase Damage up by 5.";
+            case 2: return "Base Damage up by 5. Base Speed up by 20%.";
+            case 3: return "Effect lasts 0.3 seconds longer. Base Damage up by 5.";
+            case 4: return "Fires 1 more projectile.";
+            case 5: return "Base Damage up by 5. Base Speed up by 20%.";
+            case 6: return "Effect lasts 0.3 seconds longer. Base Damage up by 5.";
+            case 7: return "Fires 1 more projectile.";
+            case 8: return "Effect lasts 0.5 seconds longer.";
             default: return "";
         }
     }
@@ -30,13 +30,13 @@ public:
     void levelUp() override {
         m_level++;
         switch (m_level) {
-            case 2: m_amount += 1; break;
-            case 3: m_damage += 5.f; break;
-            case 4: m_areaScale += 0.1f; m_damage += 5.f; break;
-            case 5: m_damage += 5.f; break;
-            case 6: m_amount += 1; break;
-            case 7: m_damage += 5.f; break;
-            case 8: m_areaScale += 0.2f; m_damage += 5.f; break;
+            case 2: m_damage += 5.f; m_speed *= 1.2f; break;
+            case 3: m_duration += 0.3f; m_damage += 5.f; break;
+            case 4: m_amount += 1; break;
+            case 5: m_damage += 5.f; m_speed *= 1.2f; break;
+            case 6: m_duration += 0.3f; m_damage += 5.f; break;
+            case 7: m_amount += 1; break;
+            case 8: m_duration += 0.5f; break;
         }
     }
 

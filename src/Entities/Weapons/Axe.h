@@ -18,12 +18,12 @@ public:
 
     std::string getUpgradeDescription() const override {
         switch (m_level + 1) {
-            case 2: return "Base Damage up by 10.";
-            case 3: return "Fires 1 more projectile.";
-            case 4: return "Base Damage up by 10.";
+            case 2: return "Fires 1 more projectile.";
+            case 3: return "Base Damage up by 20.";
+            case 4: return "Passes through 2 more enemies.";
             case 5: return "Fires 1 more projectile.";
-            case 6: return "Base Damage up by 10.";
-            case 7: return "Fires 1 more projectile.";
+            case 6: return "Base Damage up by 20.";
+            case 7: return "Passes through 2 more enemies.";
             case 8: return "Base Damage up by 20.";
             default: return "Max level reached.";
         }
@@ -31,12 +31,12 @@ public:
 
     void levelUp() override {
         switch (m_level + 1) {
-            case 2: m_damage += 10.f; break;
-            case 3: m_amount++; break;
-            case 4: m_damage += 10.f; break;
+            case 2: m_amount++; break;
+            case 3: m_damage += 20.f; break;
+            case 4: m_pierce += 2; break;
             case 5: m_amount++; break;
-            case 6: m_damage += 10.f; break;
-            case 7: m_amount++; break;
+            case 6: m_damage += 20.f; break;
+            case 7: m_pierce += 2; break;
             case 8: m_damage += 20.f; break;
         }
         m_level++;
@@ -63,6 +63,7 @@ protected:
         
         if (m_hasItemsTex) {
             p.setSprite(m_itemsTex, m_axeFrame, 2.f);
+            p.enableTrail(0.015f, 0.25f, sf::Color(150, 150, 150, 150));
         } else {
             p.setCustomShape(sf::Vector2f(20.f, 20.f), sf::Color::Cyan);
         }
@@ -72,4 +73,5 @@ protected:
 
 private:
     sf::IntRect m_axeFrame;
+    int m_pierce = 0;
 };

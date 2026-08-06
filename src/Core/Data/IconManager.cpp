@@ -78,8 +78,13 @@ void IconManager::init() {
     }
 
     // Passive Items - Map them directly if they aren't in WEAPON_DATA
-    m_nameToFrame["Money Bag"] = "CoinBag";
+    m_nameToFrame["Money Bag"] = "MoneyPile";
     m_nameToFrame["Floor Chicken"] = "Roast";
+    m_nameToFrame["Tiragisu"] = "Tiramisu";
+    m_nameToFrame["GUNS"] = "Guns";
+    m_nameToFrame["GATTI"] = "Cat";
+    m_nameToFrame["SONG"] = "Song";
+    m_nameToFrame["TRAPANO"] = "trapano";
     
     // Some hardcoded fallbacks just in case
     if (m_nameToFrame.find("Bloody Tear") == m_nameToFrame.end()) m_nameToFrame["Bloody Tear"] = "Whip2";
