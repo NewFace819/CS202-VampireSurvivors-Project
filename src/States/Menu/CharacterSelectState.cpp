@@ -85,12 +85,12 @@ CharacterSelectState::CharacterSelectState(GameManager* manager) : m_manager(man
         else if (characterIds.front() == "EXDASH") type = CharacterType::Exdash;
         else if (characterIds.front() == "PANINI" || characterIds.front() == "TOASTY" || characterIds.front() == "TOASTIE") type = CharacterType::Toasty;
         else if (characterIds.front() == "SMITH" || characterIds.front() == "SMITH_IV") type = CharacterType::Smith;
-        else if (characterIds.front() == "RANDOM") type = CharacterType::Random;
-        else if (characterIds.front() == "MINNAH") type = CharacterType::Minnah;
-        else if (characterIds.front() == "LEDA") type = CharacterType::Leda;
-        else if (characterIds.front() == "COSMO") type = CharacterType::Cosmo;
+        else if (characterIds.front() == "ARENGIJUS" || characterIds.front() == "RANDOM") type = CharacterType::Random;
+        else if (characterIds.front() == "GRAZIELLA" || characterIds.front() == "MINNAH") type = CharacterType::Minnah;
+        else if (characterIds.front() == "VERANDA" || characterIds.front() == "LEDA") type = CharacterType::Leda;
+        else if (characterIds.front() == "PAVONE" || characterIds.front() == "COSMO") type = CharacterType::Cosmo;
         else if (characterIds.front() == "PEPPINO") type = CharacterType::Peppino;
-        else if (characterIds.front() == "BIG_TROUSERS") type = CharacterType::BigTrouser;
+        else if (characterIds.front() == "PANTALONE" || characterIds.front() == "BIG_TROUSERS" || characterIds.front() == "BIG_TROUSER" || characterIds.front() == "TROUSER") type = CharacterType::BigTrouser;
         else if (characterIds.front() == "MISSINGNO") type = CharacterType::MissingN0;
         else if (characterIds.front() == "GAINS") type = CharacterType::Gains;
         else if (characterIds.front() == "GYORUNTON") type = CharacterType::Gyorunton;

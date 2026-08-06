@@ -151,10 +151,12 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
                 nlohmann::json json;
                 atlasFile >> json;
                 for (int i = 1; i <= frameCount; ++i) {
-                    std::string key = prefix + "_0" + std::to_string(i);
+                    std::string numStr = (i < 10 ? "0" : "") + std::to_string(i);
+                    std::string key = prefix + "_" + numStr;
                     auto it = json.find(key);
-                    if (it == json.end()) it = json.find(prefix + "_i0" + std::to_string(i));
-                    if (it == json.end()) it = json.find(prefix + "0" + std::to_string(i));
+                    if (it == json.end()) it = json.find(prefix + "_i" + numStr);
+                    if (it == json.end()) it = json.find(prefix + numStr);
+                    if (it == json.end()) it = json.find(prefix + "_" + std::to_string(i));
                     if (it != json.end()) {
                         int x = it->value("x", 0);
                         int y = it->value("y", 0);
@@ -304,6 +306,36 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
             m_player.setSprite("assets/Graphics/Characters/character_smith.png", 
                                getIndividualCharFrames("assets/Graphics/Characters/character_smith.png", "assets/Data/CharacterAtlas/character_smith_atlas.json", "nExdash", 6));
             addWeapon("SILF3");
+            break;
+        case CharacterType::Random:
+            m_player.setSprite("assets/Graphics/Characters/character_random.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_random.png", "assets/Data/CharacterAtlas/character_random_atlas.json", "random", 30));
+            addWeapon("VOID");
+            break;
+        case CharacterType::Minnah:
+            m_player.setSprite("assets/Graphics/Characters/character_minnah.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_minnah.png", "assets/Data/CharacterAtlas/character_minnah_atlas.json", "Minnah", 4));
+            addWeapon("VAMPIRICA");
+            break;
+        case CharacterType::Leda:
+            m_player.setSprite("assets/Graphics/Characters/character_leda.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_leda.png", "assets/Data/CharacterAtlas/character_leda_atlas.json", "XLLeda", 4));
+            addWeapon("HOLY_MISSILE");
+            break;
+        case CharacterType::Cosmo:
+            m_player.setSprite("assets/Graphics/Characters/character_cosmo.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_cosmo.png", "assets/Data/CharacterAtlas/character_cosmo_atlas.json", "Cosmic", 4));
+            addWeapon("VOID");
+            break;
+        case CharacterType::Peppino:
+            m_player.setSprite("assets/Graphics/Characters/character_peppino.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_peppino.png", "assets/Data/CharacterAtlas/character_peppino_atlas.json", "Peppino", 1));
+            addWeapon("VORTEX");
+            break;
+        case CharacterType::BigTrouser:
+            m_player.setSprite("assets/Graphics/Characters/character_trouser.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_trouser.png", "assets/Data/CharacterAtlas/character_trouser_atlas.json", "Pantalone", 4));
+            addWeapon("CANDYBOX");
             break;
         case CharacterType::Sigma:
             m_player.setSprite("assets/Graphics/Characters/characters.png", 
