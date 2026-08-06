@@ -397,6 +397,21 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
                                getIndividualCharFrames("assets/Graphics/Characters/character_shemoon.png", "assets/Data/CharacterAtlas/character_shemoon_atlas.json", "Sheemonita", 5));
             addWeapon("ICELANCE");
             break;
+        case CharacterType::Santa:
+            m_player.setSprite("assets/Graphics/Characters/character_santa.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_santa.png", "assets/Data/CharacterAtlas/character_santa_atlas.json", "Santa", 4));
+            addWeapon("SANTAJAVELIN");
+            break;
+        case CharacterType::Gazebo:
+            m_player.setSprite("assets/Graphics/Characters/character_gazebo.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_gazebo.png", "assets/Data/CharacterAtlas/character_gazebo_atlas.json", "Gazebo", 4));
+            addWeapon("EX_GAEA1");
+            break;
+        case CharacterType::ChulaReh:
+            m_player.setSprite("assets/Graphics/Characters/character_chulareh.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_chulareh.png", "assets/Data/CharacterAtlas/character_chulareh_atlas.json", "chulareh", 4));
+            addWeapon("EX_MAGISTONE1");
+            break;
     }
 
     if (m_stageType == StageType::InlaidLibrary) {

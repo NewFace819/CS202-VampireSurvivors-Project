@@ -24,7 +24,7 @@ enum class CharacterType {
     Antonio, Imelda, Pasqualina, Gennaro, Arca, Porta, Lama, Poe, Clerici, Dommario, Krochi,
     Christine, Pugnala, Giovanna, Poppea, Concetta, Mortaccio, Cavallo, Ramba,
     OSole, Ambrojoe, Gallo, Divano, ZiAssunta, Exdash, Toasty, Smith, Random,
-    Minnah, Leda, Cosmo, Peppino, BigTrouser, MissingN0, Gains, Gyorunton, Sigma, Marrabbio, Avatar, RedDeath, Robbert, ZiAppunta, SheMoon
+    Minnah, Leda, Cosmo, Peppino, BigTrouser, MissingN0, Gains, Gyorunton, Sigma, Marrabbio, Avatar, RedDeath, Robbert, ZiAppunta, SheMoon, Santa, Gazebo, ChulaReh
 };
 
 enum class StageType {
