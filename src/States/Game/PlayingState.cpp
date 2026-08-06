@@ -270,6 +270,41 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
                                getIndividualCharFrames("assets/Graphics/Characters/character_osole.png", "assets/Data/CharacterAtlas/character_osole_atlas.json", "Dog", 5));
             addWeapon("FLOWER");
             break;
+        case CharacterType::Ambrojoe:
+            m_player.setSprite("assets/Graphics/Characters/character_ambrojoe.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_ambrojoe.png", "assets/Data/CharacterAtlas/character_ambrojoe_atlas.json", "Hat", 4));
+            addWeapon("ROBBA");
+            break;
+        case CharacterType::Gallo:
+            m_player.setSprite("assets/Graphics/Characters/character_gallo.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_gallo.png", "assets/Data/CharacterAtlas/character_gallo_atlas.json", "Gallo", 4));
+            addWeapon("LANCET");
+            break;
+        case CharacterType::Divano:
+            m_player.setSprite("assets/Graphics/Characters/character_divano.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_divano.png", "assets/Data/CharacterAtlas/character_divano_atlas.json", "Divano", 4));
+            addWeapon("LAUREL");
+            break;
+        case CharacterType::ZiAssunta:
+            m_player.setSprite("assets/Graphics/Characters/character_assunta.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_assunta.png", "assets/Data/CharacterAtlas/character_assunta_atlas.json", "Assunta", 4));
+            addWeapon("VENTO");
+            break;
+        case CharacterType::Exdash:
+            m_player.setSprite("assets/Graphics/Characters/character_exdash.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_exdash.png", "assets/Data/CharacterAtlas/character_exdash_atlas.json", "Exdash", 6));
+            addWeapon("SILF2");
+            break;
+        case CharacterType::Toasty:
+            m_player.setSprite("assets/Graphics/Characters/character_panini.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_panini.png", "assets/Data/CharacterAtlas/character_panini_atlas.json", "uExdash", 6));
+            addWeapon("SILF");
+            break;
+        case CharacterType::Smith:
+            m_player.setSprite("assets/Graphics/Characters/character_smith.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_smith.png", "assets/Data/CharacterAtlas/character_smith_atlas.json", "nExdash", 6));
+            addWeapon("SILF3");
+            break;
         case CharacterType::Sigma:
             m_player.setSprite("assets/Graphics/Characters/characters.png", 
                                getFrames("Sigma"));

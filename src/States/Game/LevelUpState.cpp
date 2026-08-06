@@ -25,7 +25,11 @@ static const std::vector<std::string> ALL_WEAPON_NAMES = {
     "Fire Wand",
     "Axe",
     "Cross",
-    "Garlic"
+    "Garlic",
+    "King Bible",
+    "Santa Water",
+    "Runetracer",
+    "Lightning Ring"
 };
 
 // Helper function to get icon texture coordinates for any item
@@ -179,13 +183,17 @@ void LevelUpState::buildOptions() {
             opt.isPassive      = false;
             opt.currentLevel   = 0;
             opt.rarity         = 80; // Slightly rarer to find specific new weapons
-            if (name == "Whip")            opt.description = "Attacks horizontally, passes through enemies.";
-            else if (name == "Magic Wand") opt.description = "Fires a magic missile at the nearest enemy.";
-            else if (name == "Knife")      opt.description = "Throws a fast knife in your facing direction.";
-            else if (name == "Fire Wand")  opt.description = "Hurls a slow fireball at a random enemy.";
-            else if (name == "Axe")        opt.description = "Throws an axe in an arc, pierces through enemies.";
-            else if (name == "Cross")      opt.description = "Aims at nearest enemy, has boomerang effect.";
-            else if (name == "Garlic")     opt.description = "Damages nearby enemies. Reduces resistance to knockback and freeze.";
+            if (name == "Whip")                 opt.description = "Attacks horizontally, passes through enemies.";
+            else if (name == "Magic Wand")      opt.description = "Fires a magic missile at the nearest enemy.";
+            else if (name == "Knife")           opt.description = "Throws a fast knife in your facing direction.";
+            else if (name == "Fire Wand")       opt.description = "Hurls a slow fireball at a random enemy.";
+            else if (name == "Axe")             opt.description = "Throws an axe in an arc, pierces through enemies.";
+            else if (name == "Cross")           opt.description = "Aims at nearest enemy, has boomerang effect.";
+            else if (name == "Garlic")          opt.description = "Damages nearby enemies. Reduces resistance to knockback and freeze.";
+            else if (name == "King Bible")      opt.description = "Orbits around the character, striking nearby enemies.";
+            else if (name == "Santa Water")     opt.description = "Drops holy water from above that damages burning pools.";
+            else if (name == "Runetracer")      opt.description = "Passes through enemies and bounces off edges.";
+            else if (name == "Lightning Ring")  opt.description = "Strikes random enemies with lightning discharges.";
             pool.push_back(opt);
         }
     }

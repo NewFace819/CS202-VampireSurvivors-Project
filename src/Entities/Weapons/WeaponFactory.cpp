@@ -2,7 +2,7 @@
 #include "AllWeapons.h"
 
 std::unique_ptr<WeaponBase> WeaponFactory::createWeapon(const std::string& weaponName) {
-    if (weaponName == "Whip") return std::make_unique<Whip>();
+    if (weaponName == "Whip" || weaponName == "VENTO") return std::make_unique<Whip>();
     if (weaponName == "Bloody Tear") return std::make_unique<BloodyTear>();
     if (weaponName == "Magic Wand") return std::make_unique<MagicWand>();
     if (weaponName == "Holy Wand") return std::make_unique<HolyWand>();
@@ -25,10 +25,11 @@ std::unique_ptr<WeaponBase> WeaponFactory::createWeapon(const std::string& weapo
     if (weaponName == "Lightning Ring" || weaponName == "LIGHTNING" || weaponName == "PENTAGRAM") return std::make_unique<LightningRing>();
     if (weaponName == "Thunder Loop" || weaponName == "THUNDERLOOP") return std::make_unique<ThunderLoop>();
     // ponytail: fallback existing weapon mechanics used for unbuilt projectile logic and evolutions; upgrade when standalone weapon classes are added
-    if (weaponName == "GUNS" || weaponName == "GUNS2" || weaponName == "GUNS3" || weaponName == "PHIERAGGI") return std::make_unique<MagicWand>();
-    if (weaponName == "SONG" || weaponName == "MANNAJA") return std::make_unique<Garlic>();
+    if (weaponName == "GUNS" || weaponName == "GUNS2" || weaponName == "GUNS3" || weaponName == "PHIERAGGI" || weaponName == "LANCET") return std::make_unique<MagicWand>();
+    if (weaponName == "SONG" || weaponName == "MANNAJA" || weaponName == "LAUREL") return std::make_unique<Garlic>();
     if (weaponName == "TRAPANO" || weaponName == "TRAPANO2") return std::make_unique<Knife>();
-    if (weaponName == "CHERRY" || weaponName == "CART" || weaponName == "CART2" || weaponName == "FLOWER" || weaponName == "STIGRANGATTI") return std::make_unique<Runetracer>();
+    if (weaponName == "CHERRY" || weaponName == "CART" || weaponName == "CART2" || weaponName == "FLOWER" || weaponName == "ROBBA" || weaponName == "STIGRANGATTI") return std::make_unique<Runetracer>();
+    if (weaponName == "SILF" || weaponName == "SILF2" || weaponName == "SILF3") return std::make_unique<KingBible>();
     
     return nullptr;
 }

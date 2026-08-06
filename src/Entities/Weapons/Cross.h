@@ -74,7 +74,7 @@ protected:
         p.setMaxSpeed(m_speed * 1.5f);
         
         if (m_hasVfxTex) {
-            p.setSprite(m_vfxTex, m_crossFrame, 1.5f, false, sf::Color::White);
+            p.setSprite(m_vfxTex, m_crossFrame, 1.5f * m_areaScale, false, sf::Color::White);
             p.setSpinSpeed(1000.f); // Rotate really fast
         } else {
             p.setCustomShape(sf::Vector2f(16.f, 16.f), sf::Color::Blue);
@@ -84,8 +84,10 @@ protected:
         activeProjectiles.push_back(p);
     }
 
-private:
+protected:
     sf::IntRect m_crossFrame;
+
+private:
     sf::Vector2f m_currentTargetDir;
 };
 
@@ -97,6 +99,8 @@ public:
         m_isEvolved = true;
         m_amount = 3;
         m_areaScale = 1.8f;
+        // ProjectileSword from vfx.png: x=550, y=118, w=32, h=15 -> SFML y = 2048 - 118 - 15 = 1915
+        m_crossFrame = sf::IntRect(550, 1915, 32, 15);
     }
 
     std::string getName() const override { return "Heaven Sword"; }
