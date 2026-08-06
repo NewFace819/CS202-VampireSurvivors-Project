@@ -7,11 +7,11 @@ std::unique_ptr<WeaponBase> WeaponFactory::createWeapon(const std::string& weapo
     if (weaponName == "Magic Wand") return std::make_unique<MagicWand>();
     if (weaponName == "Holy Wand" || weaponName == "HOLY_MISSILE") return std::make_unique<HolyWand>();
     if (weaponName == "Knife") return std::make_unique<Knife>();
-    if (weaponName == "Thousand Edge") return std::make_unique<ThousandEdge>();
-    if (weaponName == "Fire Wand") return std::make_unique<FireWand>();
+    if (weaponName == "Thousand Edge" || weaponName == "THOUSAND") return std::make_unique<ThousandEdge>();
+    if (weaponName == "Fire Wand" || weaponName == "MISSPELL") return std::make_unique<FireWand>();
     if (weaponName == "Hellfire") return std::make_unique<Hellfire>();
     if (weaponName == "Axe") return std::make_unique<Axe>();
-    if (weaponName == "Death Spiral") return std::make_unique<DeathSpiral>();
+    if (weaponName == "Death Spiral" || weaponName == "SCYTHE") return std::make_unique<DeathSpiral>();
     if (weaponName == "Cross" || weaponName == "CROSS") return std::make_unique<Cross>();
     if (weaponName == "Heaven Sword" || weaponName == "HEAVENSWORD") return std::make_unique<HeavenSword>();
     if (weaponName == "Garlic" || weaponName == "GARLIC") return std::make_unique<Garlic>();

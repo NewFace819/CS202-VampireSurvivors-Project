@@ -367,6 +367,21 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
             addWeapon("Runetracer");
             addWeapon("Lightning Ring");
             break;
+        case CharacterType::Marrabbio:
+            m_player.setSprite("assets/Graphics/Characters/character_marrabbio.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_marrabbio.png", "assets/Data/CharacterAtlas/character_marrabbio_atlas.json", "Marrabbio", 4));
+            addWeapon("THOUSAND");
+            break;
+        case CharacterType::Avatar:
+            m_player.setSprite("assets/Graphics/Characters/character_avatar.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_avatar.png", "assets/Data/CharacterAtlas/character_avatar_atlas.json", "v", 4));
+            addWeapon("MISSPELL");
+            break;
+        case CharacterType::RedDeath:
+            m_player.setSprite("assets/Graphics/Characters/character_reddeath.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_reddeath.png", "assets/Data/CharacterAtlas/character_reddeath_atlas.json", "newXLReaper", 5));
+            addWeapon("SCYTHE");
+            break;
     }
 
     if (m_stageType == StageType::InlaidLibrary) {

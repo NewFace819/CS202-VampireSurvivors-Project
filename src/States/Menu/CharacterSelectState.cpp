@@ -94,6 +94,9 @@ CharacterSelectState::CharacterSelectState(GameManager* manager) : m_manager(man
         else if (characterIds.front() == "FINO" || characterIds.front() == "MISSINGNO" || characterIds.front() == "MISSINGN0") type = CharacterType::MissingN0;
         else if (characterIds.front() == "BOROS" || characterIds.front() == "GAINS") type = CharacterType::Gains;
         else if (characterIds.front() == "DRAGOGION" || characterIds.front() == "GYORUNTON") type = CharacterType::Gyorunton;
+        else if (characterIds.front() == "NEO" || characterIds.front() == "MARRABBIO") type = CharacterType::Marrabbio;
+        else if (characterIds.front() == "AVATAR") type = CharacterType::Avatar;
+        else if (characterIds.front() == "NOSTRO" || characterIds.front() == "RED_DEATH" || characterIds.front() == "RED") type = CharacterType::RedDeath;
         else if (characterIds.front() == "SIGMA") type = CharacterType::Sigma;
 
         m_manager->changeState(std::make_unique<StageSelectState>(m_manager, type));
