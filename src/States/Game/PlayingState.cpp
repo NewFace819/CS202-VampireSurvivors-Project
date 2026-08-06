@@ -382,6 +382,21 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
                                getIndividualCharFrames("assets/Graphics/Characters/character_reddeath.png", "assets/Data/CharacterAtlas/character_reddeath_atlas.json", "newXLReaper", 5));
             addWeapon("SCYTHE");
             break;
+        case CharacterType::Robbert:
+            m_player.setSprite("assets/Graphics/Characters/character_robbert.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_robbert.png", "assets/Data/CharacterAtlas/character_robbert_atlas.json", "Robert", 5));
+            addWeapon("BATTILIA");
+            break;
+        case CharacterType::ZiAppunta:
+            m_player.setSprite("assets/Graphics/Characters/character_ziappunta.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_ziappunta.png", "assets/Data/CharacterAtlas/character_ziappunta_atlas.json", "player_ziappunta", 4));
+            addWeapon("EX_AMMO1");
+            break;
+        case CharacterType::SheMoon:
+            m_player.setSprite("assets/Graphics/Characters/character_shemoon.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_shemoon.png", "assets/Data/CharacterAtlas/character_shemoon_atlas.json", "Sheemonita", 5));
+            addWeapon("ICELANCE");
+            break;
     }
 
     if (m_stageType == StageType::InlaidLibrary) {

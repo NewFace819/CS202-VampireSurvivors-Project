@@ -98,6 +98,9 @@ CharacterSelectState::CharacterSelectState(GameManager* manager) : m_manager(man
         else if (characterIds.front() == "AVATAR") type = CharacterType::Avatar;
         else if (characterIds.front() == "NOSTRO" || characterIds.front() == "RED_DEATH" || characterIds.front() == "RED") type = CharacterType::RedDeath;
         else if (characterIds.front() == "SIGMA") type = CharacterType::Sigma;
+        else if (characterIds.front() == "TUPU" || characterIds.front() == "ROBBERT") type = CharacterType::Robbert;
+        else if (characterIds.front() == "EX_ZIAPPUNTA" || characterIds.front() == "ZIAPPUNTA") type = CharacterType::ZiAppunta;
+        else if (characterIds.front() == "SHEMOONITA" || characterIds.front() == "SHEMOON" || characterIds.front() == "SHE_MOON") type = CharacterType::SheMoon;
 
         m_manager->changeState(std::make_unique<StageSelectState>(m_manager, type));
     });
