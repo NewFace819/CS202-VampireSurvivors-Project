@@ -427,6 +427,22 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
                                getIndividualCharFrames("assets/Graphics/Characters/character_rose.png", "assets/Data/CharacterAtlas/character_rose_atlas.json", "xRose", 4));
             addWeapon("VENTO2");
             break;
+        case CharacterType::Torino:
+            m_player.setSprite("assets/Graphics/Characters/character_torino.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_torino.png", "assets/Data/CharacterAtlas/character_torino_atlas.json", "Torino", 4));
+            addWeapon("VOID");
+            break;
+        case CharacterType::ScorejOni:
+            m_player.setSprite("assets/Graphics/Characters/character_scorej.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_scorej.png", "assets/Data/CharacterAtlas/character_scorej_atlas.json", "Scorej", 4));
+            addWeapon("VOID");
+            addWeapon("LIGHTNING");
+            break;
+        case CharacterType::Gyoruntin:
+            m_player.setSprite("assets/Graphics/Characters/character_gyoruntin.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_gyoruntin.png", "assets/Data/CharacterAtlas/character_gyoruntin_atlas.json", "Gyoruntin", 5));
+            addWeapon("ROCHER");
+            break;
     }
 
     if (m_stageType == StageType::InlaidLibrary) {

@@ -107,6 +107,9 @@ CharacterSelectState::CharacterSelectState(GameManager* manager) : m_manager(man
         else if (characterIds.front() == "SPACEDUDE" || characterIds.front() == "SPACE_DUDE" || characterIds.front() == "SPACE") type = CharacterType::SpaceDude;
         else if (characterIds.front() == "BATSBATSBATS" || characterIds.front() == "BATS" || characterIds.front() == "BAT_BAT") type = CharacterType::BatsBatsBats;
         else if (characterIds.front() == "ROSE") type = CharacterType::Rose;
+        else if (characterIds.front() == "TORINO") type = CharacterType::Torino;
+        else if (characterIds.front() == "SCOREJ" || characterIds.front() == "SCOREJ_ONI" || characterIds.front() == "SCOREJ-ONI") type = CharacterType::ScorejOni;
+        else if (characterIds.front() == "GYORUNTIN") type = CharacterType::Gyoruntin;
 
         m_manager->changeState(std::make_unique<StageSelectState>(m_manager, type));
     });
