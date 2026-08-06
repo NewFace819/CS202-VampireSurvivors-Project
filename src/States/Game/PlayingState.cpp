@@ -152,10 +152,12 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
                 nlohmann::json json;
                 atlasFile >> json;
                 for (int i = 1; i <= frameCount; ++i) {
-                    std::string key = prefix + "_0" + std::to_string(i);
+                    std::string numStr = (i < 10 ? "0" : "") + std::to_string(i);
+                    std::string key = prefix + "_" + numStr;
                     auto it = json.find(key);
-                    if (it == json.end()) it = json.find(prefix + "_i0" + std::to_string(i));
-                    if (it == json.end()) it = json.find(prefix + "0" + std::to_string(i));
+                    if (it == json.end()) it = json.find(prefix + "_i" + numStr);
+                    if (it == json.end()) it = json.find(prefix + numStr);
+                    if (it == json.end()) it = json.find(prefix + "_" + std::to_string(i));
                     if (it != json.end()) {
                         int x = it->value("x", 0);
                         int y = it->value("y", 0);
@@ -271,6 +273,86 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
                                getIndividualCharFrames("assets/Graphics/Characters/character_osole.png", "assets/Data/CharacterAtlas/character_osole_atlas.json", "Dog", 5));
             addWeapon("FLOWER");
             break;
+        case CharacterType::Ambrojoe:
+            m_player.setSprite("assets/Graphics/Characters/character_ambrojoe.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_ambrojoe.png", "assets/Data/CharacterAtlas/character_ambrojoe_atlas.json", "Hat", 4));
+            addWeapon("ROBBA");
+            break;
+        case CharacterType::Gallo:
+            m_player.setSprite("assets/Graphics/Characters/character_gallo.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_gallo.png", "assets/Data/CharacterAtlas/character_gallo_atlas.json", "Gallo", 4));
+            addWeapon("LANCET");
+            break;
+        case CharacterType::Divano:
+            m_player.setSprite("assets/Graphics/Characters/character_divano.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_divano.png", "assets/Data/CharacterAtlas/character_divano_atlas.json", "Divano", 4));
+            addWeapon("LAUREL");
+            break;
+        case CharacterType::ZiAssunta:
+            m_player.setSprite("assets/Graphics/Characters/character_assunta.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_assunta.png", "assets/Data/CharacterAtlas/character_assunta_atlas.json", "Assunta", 4));
+            addWeapon("VENTO");
+            break;
+        case CharacterType::Exdash:
+            m_player.setSprite("assets/Graphics/Characters/character_exdash.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_exdash.png", "assets/Data/CharacterAtlas/character_exdash_atlas.json", "Exdash", 6));
+            addWeapon("SILF2");
+            break;
+        case CharacterType::Toasty:
+            m_player.setSprite("assets/Graphics/Characters/character_panini.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_panini.png", "assets/Data/CharacterAtlas/character_panini_atlas.json", "uExdash", 6));
+            addWeapon("SILF");
+            break;
+        case CharacterType::Smith:
+            m_player.setSprite("assets/Graphics/Characters/character_smith.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_smith.png", "assets/Data/CharacterAtlas/character_smith_atlas.json", "nExdash", 6));
+            addWeapon("SILF3");
+            break;
+        case CharacterType::Random:
+            m_player.setSprite("assets/Graphics/Characters/character_random.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_random.png", "assets/Data/CharacterAtlas/character_random_atlas.json", "random", 30));
+            addWeapon("VOID");
+            break;
+        case CharacterType::Minnah:
+            m_player.setSprite("assets/Graphics/Characters/character_minnah.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_minnah.png", "assets/Data/CharacterAtlas/character_minnah_atlas.json", "Minnah", 4));
+            addWeapon("VAMPIRICA");
+            break;
+        case CharacterType::Leda:
+            m_player.setSprite("assets/Graphics/Characters/character_leda.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_leda.png", "assets/Data/CharacterAtlas/character_leda_atlas.json", "XLLeda", 4));
+            addWeapon("HOLY_MISSILE");
+            break;
+        case CharacterType::Cosmo:
+            m_player.setSprite("assets/Graphics/Characters/character_cosmo.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_cosmo.png", "assets/Data/CharacterAtlas/character_cosmo_atlas.json", "Cosmic", 4));
+            addWeapon("VOID");
+            break;
+        case CharacterType::Peppino:
+            m_player.setSprite("assets/Graphics/Characters/character_peppino.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_peppino.png", "assets/Data/CharacterAtlas/character_peppino_atlas.json", "Peppino", 1));
+            addWeapon("VORTEX");
+            break;
+        case CharacterType::BigTrouser:
+            m_player.setSprite("assets/Graphics/Characters/character_trouser.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_trouser.png", "assets/Data/CharacterAtlas/character_trouser_atlas.json", "Pantalone", 4));
+            addWeapon("CANDYBOX");
+            break;
+        case CharacterType::MissingN0:
+            m_player.setSprite("assets/Graphics/Characters/character_missing.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_missing.png", "assets/Data/CharacterAtlas/character_missing_atlas.json", "_0x00000000", 4));
+            addWeapon("VOID");
+            break;
+        case CharacterType::Gains:
+            m_player.setSprite("assets/Graphics/Characters/character_boros.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_boros.png", "assets/Data/CharacterAtlas/character_boros_atlas.json", "Gains", 5));
+            addWeapon("HEAVENSWORD");
+            break;
+        case CharacterType::Gyorunton:
+            m_player.setSprite("assets/Graphics/Characters/character_dragogion.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_dragogion.png", "assets/Data/CharacterAtlas/character_dragogion_atlas.json", "Dragogion", 4));
+            addWeapon("TRIASSO1");
+            break;
         case CharacterType::Sigma:
             m_player.setSprite("assets/Graphics/Characters/characters.png", 
                                getFrames("Sigma"));
@@ -292,6 +374,92 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
             addWeapon("GUNS1");
             addWeapon("GUNS2");
 
+            break;
+        case CharacterType::Marrabbio:
+            m_player.setSprite("assets/Graphics/Characters/character_marrabbio.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_marrabbio.png", "assets/Data/CharacterAtlas/character_marrabbio_atlas.json", "Marrabbio", 4));
+            addWeapon("THOUSAND");
+            break;
+        case CharacterType::Avatar:
+            m_player.setSprite("assets/Graphics/Characters/character_avatar.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_avatar.png", "assets/Data/CharacterAtlas/character_avatar_atlas.json", "v", 4));
+            addWeapon("MISSPELL");
+            break;
+        case CharacterType::RedDeath:
+            m_player.setSprite("assets/Graphics/Characters/character_reddeath.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_reddeath.png", "assets/Data/CharacterAtlas/character_reddeath_atlas.json", "newXLReaper", 5));
+            addWeapon("SCYTHE");
+            break;
+        case CharacterType::Robbert:
+            m_player.setSprite("assets/Graphics/Characters/character_robbert.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_robbert.png", "assets/Data/CharacterAtlas/character_robbert_atlas.json", "Robert", 5));
+            addWeapon("BATTILIA");
+            break;
+        case CharacterType::ZiAppunta:
+            m_player.setSprite("assets/Graphics/Characters/character_ziappunta.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_ziappunta.png", "assets/Data/CharacterAtlas/character_ziappunta_atlas.json", "player_ziappunta", 4));
+            addWeapon("EX_AMMO1");
+            break;
+        case CharacterType::SheMoon:
+            m_player.setSprite("assets/Graphics/Characters/character_shemoon.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_shemoon.png", "assets/Data/CharacterAtlas/character_shemoon_atlas.json", "Sheemonita", 5));
+            addWeapon("ICELANCE");
+            break;
+        case CharacterType::Santa:
+            m_player.setSprite("assets/Graphics/Characters/character_santa.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_santa.png", "assets/Data/CharacterAtlas/character_santa_atlas.json", "Santa", 4));
+            addWeapon("SANTAJAVELIN");
+            break;
+        case CharacterType::Gazebo:
+            m_player.setSprite("assets/Graphics/Characters/character_gazebo.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_gazebo.png", "assets/Data/CharacterAtlas/character_gazebo_atlas.json", "Gazebo", 4));
+            addWeapon("EX_GAEA1");
+            break;
+        case CharacterType::ChulaReh:
+            m_player.setSprite("assets/Graphics/Characters/character_chulareh.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_chulareh.png", "assets/Data/CharacterAtlas/character_chulareh_atlas.json", "chulareh", 4));
+            addWeapon("EX_MAGISTONE1");
+            break;
+        case CharacterType::SpaceDude:
+            m_player.setSprite("assets/Graphics/Characters/character_spacedude.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_spacedude.png", "assets/Data/CharacterAtlas/character_spacedude_atlas.json", "xSpaceDude", 4));
+            addWeapon("PHASER");
+            break;
+        case CharacterType::BatsBatsBats:
+            m_player.setSprite("assets/Graphics/Characters/character_batsbatsbats.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_batsbatsbats.png", "assets/Data/CharacterAtlas/character_batsbatsbats_atlas.json", "bbbats", 4));
+            addWeapon("BATTILIA2");
+            break;
+        case CharacterType::Rose:
+            m_player.setSprite("assets/Graphics/Characters/character_rose.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_rose.png", "assets/Data/CharacterAtlas/character_rose_atlas.json", "xRose", 4));
+            addWeapon("VENTO2");
+            break;
+        case CharacterType::Torino:
+            m_player.setSprite("assets/Graphics/Characters/character_torino.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_torino.png", "assets/Data/CharacterAtlas/character_torino_atlas.json", "Torino", 4));
+            addWeapon("VOID");
+            break;
+        case CharacterType::ScorejOni:
+            m_player.setSprite("assets/Graphics/Characters/character_scorej.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_scorej.png", "assets/Data/CharacterAtlas/character_scorej_atlas.json", "Scorej", 4));
+            addWeapon("VOID");
+            addWeapon("LIGHTNING");
+            break;
+        case CharacterType::Gyoruntin:
+            m_player.setSprite("assets/Graphics/Characters/character_gyoruntin.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_gyoruntin.png", "assets/Data/CharacterAtlas/character_gyoruntin_atlas.json", "Gyoruntin", 5));
+            addWeapon("ROCHER");
+            break;
+        case CharacterType::Secretino:
+            m_player.setSprite("assets/Graphics/Characters/character_secretino.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_secretino.png", "assets/Data/CharacterAtlas/character_secretino_atlas.json", "secretino", 4));
+            addWeapon("EX_MAGISTONE2");
+            break;
+        case CharacterType::SpaceDette:
+            m_player.setSprite("assets/Graphics/Characters/character_spacedette.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_spacedette.png", "assets/Data/CharacterAtlas/character_spacedette_atlas.json", "SDette", 4));
+            addWeapon("PHASER2");
             break;
     }
 

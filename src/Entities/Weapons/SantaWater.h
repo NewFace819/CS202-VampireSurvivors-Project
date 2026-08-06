@@ -94,7 +94,7 @@ protected:
         }
         
         if (m_hasItemsTex) {
-            sf::IntRect bottleFrame = IconManager::GetInstance().getIconRect("Santa Water");
+            sf::IntRect bottleFrame = IconManager::GetInstance().getIconRect(m_isEvolved ? "La Borra" : "Santa Water");
             p.setSprite(m_itemsTex, bottleFrame, 1.5f, false, sf::Color(255, 255, 255, 255));
         }
         

@@ -52,7 +52,7 @@ protected:
         p.setBounceOffScreen(true);
         
         if (m_hasItemsTex) {
-            sf::IntRect runeFrame = IconManager::GetInstance().getIconRect("Diamond2");
+            sf::IntRect runeFrame = IconManager::GetInstance().getIconRect(m_isEvolved ? "NO FUTURE" : "Runetracer");
             p.setSprite(m_itemsTex, runeFrame, 1.0f * m_areaScale, true, sf::Color(255, 255, 255, 255));
         }
         

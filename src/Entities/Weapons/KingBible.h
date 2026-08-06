@@ -95,7 +95,7 @@ protected:
         p.setFadeOut(true);
         
         if (m_hasItemsTex) {
-            sf::IntRect iconRect = IconManager::GetInstance().getIconRect("HolyBook");
+            sf::IntRect iconRect = IconManager::GetInstance().getIconRect(m_isEvolved ? "Unholy Vespers" : "King Bible");
             if (iconRect.width == 0) {
                 iconRect = sf::IntRect(257, 459, 12, 16); // Fallback
             }

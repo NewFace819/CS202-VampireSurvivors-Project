@@ -50,12 +50,15 @@ protected:
         p.setIsAura(true);
         p.setGarlicAura(true);
 
-        // Make it a transparent yellow circle with an outline
+        // Make it a transparent circle with an outline
         float radius = 50.f; // Base radius
-        p.setCircleShape(radius, sf::Color(255, 255, 200, 100)); // Will internally multiply by areaScale
-        
-        // Custom visual: add outline
-        p.setOutline(2.f, sf::Color(255, 255, 200, 200));
+        if (m_isEvolved) {
+            p.setCircleShape(radius, sf::Color(150, 0, 150, 120));
+            p.setOutline(2.f, sf::Color(200, 50, 200, 220));
+        } else {
+            p.setCircleShape(radius, sf::Color(255, 255, 200, 100)); // Will internally multiply by areaScale
+            p.setOutline(2.f, sf::Color(255, 255, 200, 200));
+        }
 
         activeProjectiles.push_back(p);
     }

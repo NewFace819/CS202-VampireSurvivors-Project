@@ -86,15 +86,29 @@ void IconManager::init() {
     m_nameToFrame["SONG"] = "Song";
     m_nameToFrame["TRAPANO"] = "trapano";
     
-    // Some hardcoded fallbacks just in case
+    // Explicit weapon & evolution icon fallbacks to ensure authentic UI representations
+    if (m_nameToFrame.find("Whip") == m_nameToFrame.end()) m_nameToFrame["Whip"] = "Whip";
     if (m_nameToFrame.find("Bloody Tear") == m_nameToFrame.end()) m_nameToFrame["Bloody Tear"] = "Whip2";
+    if (m_nameToFrame.find("Magic Wand") == m_nameToFrame.end()) m_nameToFrame["Magic Wand"] = "WandHoly";
+    if (m_nameToFrame.find("Holy Wand") == m_nameToFrame.end()) m_nameToFrame["Holy Wand"] = "WandHoly2";
+    if (m_nameToFrame.find("Knife") == m_nameToFrame.end()) m_nameToFrame["Knife"] = "Knife";
+    if (m_nameToFrame.find("Thousand Edge") == m_nameToFrame.end()) m_nameToFrame["Thousand Edge"] = "Knife2";
+    if (m_nameToFrame.find("Fire Wand") == m_nameToFrame.end()) m_nameToFrame["Fire Wand"] = "WandFire";
+    if (m_nameToFrame.find("Hellfire") == m_nameToFrame.end()) m_nameToFrame["Hellfire"] = "Hellfire";
+    if (m_nameToFrame.find("Axe") == m_nameToFrame.end()) m_nameToFrame["Axe"] = "Axe";
     if (m_nameToFrame.find("Death Spiral") == m_nameToFrame.end()) m_nameToFrame["Death Spiral"] = "Scythe";
+    if (m_nameToFrame.find("Cross") == m_nameToFrame.end()) m_nameToFrame["Cross"] = "Cross";
     if (m_nameToFrame.find("Heaven Sword") == m_nameToFrame.end()) m_nameToFrame["Heaven Sword"] = "HeavenSword";
-    if (m_nameToFrame.find("Soul Eater") == m_nameToFrame.end()) m_nameToFrame["Soul Eater"] = "Garlic";
-    if (m_nameToFrame.find("Unholy Vespers") == m_nameToFrame.end()) m_nameToFrame["Unholy Vespers"] = "HolyBook";
-    if (m_nameToFrame.find("La Borra") == m_nameToFrame.end()) m_nameToFrame["La Borra"] = "HolyWater";
-    if (m_nameToFrame.find("NO FUTURE") == m_nameToFrame.end()) m_nameToFrame["NO FUTURE"] = "Diamond2";
-    if (m_nameToFrame.find("Thunder Loop") == m_nameToFrame.end()) m_nameToFrame["Thunder Loop"] = "LightningRing";
+    if (m_nameToFrame.find("Garlic") == m_nameToFrame.end()) m_nameToFrame["Garlic"] = "Garlic";
+    if (m_nameToFrame.find("Soul Eater") == m_nameToFrame.end()) m_nameToFrame["Soul Eater"] = "OrbOrange";
+    if (m_nameToFrame.find("King Bible") == m_nameToFrame.end()) m_nameToFrame["King Bible"] = "HolyBook";
+    if (m_nameToFrame.find("Unholy Vespers") == m_nameToFrame.end()) m_nameToFrame["Unholy Vespers"] = "UnholyBook";
+    if (m_nameToFrame.find("Santa Water") == m_nameToFrame.end()) m_nameToFrame["Santa Water"] = "HolyWater";
+    if (m_nameToFrame.find("La Borra") == m_nameToFrame.end()) m_nameToFrame["La Borra"] = "Water2";
+    if (m_nameToFrame.find("Runetracer") == m_nameToFrame.end()) m_nameToFrame["Runetracer"] = "Diamond2";
+    if (m_nameToFrame.find("NO FUTURE") == m_nameToFrame.end()) m_nameToFrame["NO FUTURE"] = "Carnage";
+    if (m_nameToFrame.find("Lightning Ring") == m_nameToFrame.end()) m_nameToFrame["Lightning Ring"] = "LighningRing";
+    if (m_nameToFrame.find("Thunder Loop") == m_nameToFrame.end()) m_nameToFrame["Thunder Loop"] = "Thunderloop";
     
     // 3. Load vfx_atlas.json
     {
