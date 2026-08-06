@@ -412,6 +412,21 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
                                getIndividualCharFrames("assets/Graphics/Characters/character_chulareh.png", "assets/Data/CharacterAtlas/character_chulareh_atlas.json", "chulareh", 4));
             addWeapon("EX_MAGISTONE1");
             break;
+        case CharacterType::SpaceDude:
+            m_player.setSprite("assets/Graphics/Characters/character_spacedude.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_spacedude.png", "assets/Data/CharacterAtlas/character_spacedude_atlas.json", "xSpaceDude", 4));
+            addWeapon("PHASER");
+            break;
+        case CharacterType::BatsBatsBats:
+            m_player.setSprite("assets/Graphics/Characters/character_batsbatsbats.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_batsbatsbats.png", "assets/Data/CharacterAtlas/character_batsbatsbats_atlas.json", "bbbats", 4));
+            addWeapon("BATTILIA2");
+            break;
+        case CharacterType::Rose:
+            m_player.setSprite("assets/Graphics/Characters/character_rose.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_rose.png", "assets/Data/CharacterAtlas/character_rose_atlas.json", "xRose", 4));
+            addWeapon("VENTO2");
+            break;
     }
 
     if (m_stageType == StageType::InlaidLibrary) {

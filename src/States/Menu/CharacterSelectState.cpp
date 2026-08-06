@@ -104,6 +104,9 @@ CharacterSelectState::CharacterSelectState(GameManager* manager) : m_manager(man
         else if (characterIds.front() == "SANTA") type = CharacterType::Santa;
         else if (characterIds.front() == "YOLO" || characterIds.front() == "GAZEBO") type = CharacterType::Gazebo;
         else if (characterIds.front() == "EX_CHULAREH" || characterIds.front() == "CHULAREH" || characterIds.front() == "CHULA_REH") type = CharacterType::ChulaReh;
+        else if (characterIds.front() == "SPACEDUDE" || characterIds.front() == "SPACE_DUDE" || characterIds.front() == "SPACE") type = CharacterType::SpaceDude;
+        else if (characterIds.front() == "BATSBATSBATS" || characterIds.front() == "BATS" || characterIds.front() == "BAT_BAT") type = CharacterType::BatsBatsBats;
+        else if (characterIds.front() == "ROSE") type = CharacterType::Rose;
 
         m_manager->changeState(std::make_unique<StageSelectState>(m_manager, type));
     });
