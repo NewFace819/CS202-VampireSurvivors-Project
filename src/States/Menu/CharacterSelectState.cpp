@@ -91,9 +91,9 @@ CharacterSelectState::CharacterSelectState(GameManager* manager) : m_manager(man
         else if (characterIds.front() == "PAVONE" || characterIds.front() == "COSMO") type = CharacterType::Cosmo;
         else if (characterIds.front() == "PEPPINO") type = CharacterType::Peppino;
         else if (characterIds.front() == "PANTALONE" || characterIds.front() == "BIG_TROUSERS" || characterIds.front() == "BIG_TROUSER" || characterIds.front() == "TROUSER") type = CharacterType::BigTrouser;
-        else if (characterIds.front() == "MISSINGNO") type = CharacterType::MissingN0;
-        else if (characterIds.front() == "GAINS") type = CharacterType::Gains;
-        else if (characterIds.front() == "GYORUNTON") type = CharacterType::Gyorunton;
+        else if (characterIds.front() == "FINO" || characterIds.front() == "MISSINGNO" || characterIds.front() == "MISSINGN0") type = CharacterType::MissingN0;
+        else if (characterIds.front() == "BOROS" || characterIds.front() == "GAINS") type = CharacterType::Gains;
+        else if (characterIds.front() == "DRAGOGION" || characterIds.front() == "GYORUNTON") type = CharacterType::Gyorunton;
         else if (characterIds.front() == "SIGMA") type = CharacterType::Sigma;
 
         m_manager->changeState(std::make_unique<StageSelectState>(m_manager, type));

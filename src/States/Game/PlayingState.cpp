@@ -337,6 +337,21 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
                                getIndividualCharFrames("assets/Graphics/Characters/character_trouser.png", "assets/Data/CharacterAtlas/character_trouser_atlas.json", "Pantalone", 4));
             addWeapon("CANDYBOX");
             break;
+        case CharacterType::MissingN0:
+            m_player.setSprite("assets/Graphics/Characters/character_missing.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_missing.png", "assets/Data/CharacterAtlas/character_missing_atlas.json", "_0x00000000", 4));
+            addWeapon("VOID");
+            break;
+        case CharacterType::Gains:
+            m_player.setSprite("assets/Graphics/Characters/character_boros.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_boros.png", "assets/Data/CharacterAtlas/character_boros_atlas.json", "Gains", 5));
+            addWeapon("HEAVENSWORD");
+            break;
+        case CharacterType::Gyorunton:
+            m_player.setSprite("assets/Graphics/Characters/character_dragogion.png", 
+                               getIndividualCharFrames("assets/Graphics/Characters/character_dragogion.png", "assets/Data/CharacterAtlas/character_dragogion_atlas.json", "Dragogion", 4));
+            addWeapon("TRIASSO1");
+            break;
         case CharacterType::Sigma:
             m_player.setSprite("assets/Graphics/Characters/characters.png", 
                                getFrames("Sigma"));

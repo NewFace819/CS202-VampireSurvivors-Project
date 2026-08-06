@@ -28,7 +28,7 @@ std::unique_ptr<WeaponBase> WeaponFactory::createWeapon(const std::string& weapo
     if (weaponName == "GUNS" || weaponName == "GUNS2" || weaponName == "GUNS3" || weaponName == "PHIERAGGI" || weaponName == "LANCET" || weaponName == "VOID") return std::make_unique<MagicWand>();
     if (weaponName == "SONG" || weaponName == "MANNAJA" || weaponName == "LAUREL" || weaponName == "VORTEX") return std::make_unique<Garlic>();
     if (weaponName == "TRAPANO" || weaponName == "TRAPANO2") return std::make_unique<Knife>();
-    if (weaponName == "CHERRY" || weaponName == "CART" || weaponName == "CART2" || weaponName == "FLOWER" || weaponName == "ROBBA" || weaponName == "STIGRANGATTI" || weaponName == "CANDYBOX" || weaponName == "CANDYBOX2") return std::make_unique<Runetracer>();
+    if (weaponName == "CHERRY" || weaponName == "CART" || weaponName == "CART2" || weaponName == "FLOWER" || weaponName == "ROBBA" || weaponName == "STIGRANGATTI" || weaponName == "CANDYBOX" || weaponName == "CANDYBOX2" || weaponName == "TRIASSO" || weaponName == "TRIASSO1" || weaponName == "TRIASSO2" || weaponName == "TRIASSO3") return std::make_unique<Runetracer>();
     if (weaponName == "SILF" || weaponName == "SILF2" || weaponName == "SILF3") return std::make_unique<KingBible>();
     
     return nullptr;
