@@ -25,6 +25,9 @@
 #include "Core/Data/IconManager.h"
 
 PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageType stageType) 
+    : PlayingState(manager, std::vector<CharacterType>{charType}, stageType) {}
+
+PlayingState::PlayingState(GameManager* manager, const std::vector<CharacterType>& charTypes, StageType stageType) 
     : m_manager(manager), m_grid(100.0f), m_enemyPool(500), m_shooterPool(150), m_stageType(stageType) { 
     StatsManager::GetInstance().reset();
     IconManager::GetInstance().init();
@@ -172,299 +175,308 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
         return frames;
     };
 
-    switch (charType) {
-        case CharacterType::Antonio:
-            m_player.setSprite("assets/Graphics/Characters/characters.png", 
-                               getFrames("Antonio"));
-            addWeapon("Whip");
-            break;
-        case CharacterType::Imelda:
-            m_player.setSprite("assets/Graphics/Characters/characters.png", 
-                               getFrames("Imelda"));
-            addWeapon("Magic Wand");
-            break;
-        case CharacterType::Gennaro:
-            m_player.setSprite("assets/Graphics/Characters/characters.png", 
-                               getFrames("Gennaro"));
-            addWeapon("Knife");
-            break;
-        case CharacterType::Arca:
-            m_player.setSprite("assets/Graphics/Characters/characters.png", 
-                               getFrames("Arca"));
-            addWeapon("Fire Wand");
-            break;
-        case CharacterType::Lama:
-            m_player.setSprite("assets/Graphics/Characters/characters.png", 
-                               getFrames("Lama"));
-            addWeapon("Axe");
-            break;
-        case CharacterType::Pasqualina:
-            m_player.setSprite("assets/Graphics/Characters/character_pasqualina.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_pasqualina.png", "assets/Data/CharacterAtlas/character_pasqualina_atlas.json", "Pasqualina", 4));
-            addWeapon("Runetracer");
-            break;
-        case CharacterType::Porta:
-            m_player.setSprite("assets/Graphics/Characters/character_porta.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_porta.png", "assets/Data/CharacterAtlas/character_porta_atlas.json", "Porta", 4));
-            addWeapon("Lightning Ring");
-            break;
-        case CharacterType::Poe:
-            m_player.setSprite("assets/Graphics/Characters/character_poe.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_poe.png", "assets/Data/CharacterAtlas/character_poe_atlas.json", "Old3", 4));
-            addWeapon("Garlic");
-            break;
-        case CharacterType::Clerici:
-            m_player.setSprite("assets/Graphics/Characters/character_suora.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_suora.png", "assets/Data/CharacterAtlas/character_suora_atlas.json", "Suora", 4));
-            addWeapon("Santa Water");
-            break;
-        case CharacterType::Dommario:
-            m_player.setSprite("assets/Graphics/Characters/character_dommario.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_dommario.png", "assets/Data/CharacterAtlas/character_dommario_atlas.json", "Dommario", 4));
-            addWeapon("King Bible");
-            break;
-        case CharacterType::Krochi:
-            m_player.setSprite("assets/Graphics/Characters/character_krochi.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_krochi.png", "assets/Data/CharacterAtlas/character_krochi_atlas.json", "Krochi", 4));
-            addWeapon("Cross");
-            break;
-        case CharacterType::Christine:
-            m_player.setSprite("assets/Graphics/Characters/character_christine.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_christine.png", "assets/Data/CharacterAtlas/character_christine_atlas.json", "Christine", 4));
-            addWeapon("PENTAGRAM");
-            break;
-        case CharacterType::Pugnala:
-            m_player.setSprite("assets/Graphics/Characters/character_pugnala.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_pugnala.png", "assets/Data/CharacterAtlas/character_pugnala_atlas.json", "Pugnala", 4));
-            addWeapon("GUNS");
-            break;
-        case CharacterType::Giovanna:
-            m_player.setSprite("assets/Graphics/Characters/character_giovanna.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_giovanna.png", "assets/Data/CharacterAtlas/character_giovanna_atlas.json", "Giovanna", 5));
-            addWeapon("GATTI");
-            break;
-        case CharacterType::Poppea:
-            m_player.setSprite("assets/Graphics/Characters/character_poppea.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_poppea.png", "assets/Data/CharacterAtlas/character_poppea_atlas.json", "Poppea", 4));
-            addWeapon("SONG");
-            break;
-        case CharacterType::Concetta:
-            m_player.setSprite("assets/Graphics/Characters/character_concetta.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_concetta.png", "assets/Data/CharacterAtlas/character_concetta_atlas.json", "Concetta", 4));
-            addWeapon("TRAPANO");
-            break;
-        case CharacterType::Mortaccio:
-            m_player.setSprite("assets/Graphics/Characters/character_mortaccio.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_mortaccio.png", "assets/Data/CharacterAtlas/character_mortaccio_atlas.json", "Mortaccio", 4));
-            addWeapon("BONE");
-            break;
-        case CharacterType::Cavallo:
-            m_player.setSprite("assets/Graphics/Characters/character_cavallo.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_cavallo.png", "assets/Data/CharacterAtlas/character_cavallo_atlas.json", "Cavallo", 4));
-            addWeapon("CHERRY");
-            break;
-        case CharacterType::Ramba:
-            m_player.setSprite("assets/Graphics/Characters/character_ramba.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_ramba.png", "assets/Data/CharacterAtlas/character_ramba_atlas.json", "Ramba", 4));
-            addWeapon("CART2");
-            break;
-        case CharacterType::OSole:
-            m_player.setSprite("assets/Graphics/Characters/character_osole.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_osole.png", "assets/Data/CharacterAtlas/character_osole_atlas.json", "Dog", 5));
-            addWeapon("FLOWER");
-            break;
-        case CharacterType::Ambrojoe:
-            m_player.setSprite("assets/Graphics/Characters/character_ambrojoe.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_ambrojoe.png", "assets/Data/CharacterAtlas/character_ambrojoe_atlas.json", "Hat", 4));
-            addWeapon("ROBBA");
-            break;
-        case CharacterType::Gallo:
-            m_player.setSprite("assets/Graphics/Characters/character_gallo.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_gallo.png", "assets/Data/CharacterAtlas/character_gallo_atlas.json", "Gallo", 4));
-            addWeapon("LANCET");
-            break;
-        case CharacterType::Divano:
-            m_player.setSprite("assets/Graphics/Characters/character_divano.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_divano.png", "assets/Data/CharacterAtlas/character_divano_atlas.json", "Divano", 4));
-            addWeapon("LAUREL");
-            break;
-        case CharacterType::ZiAssunta:
-            m_player.setSprite("assets/Graphics/Characters/character_assunta.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_assunta.png", "assets/Data/CharacterAtlas/character_assunta_atlas.json", "Assunta", 4));
-            addWeapon("VENTO");
-            break;
-        case CharacterType::Exdash:
-            m_player.setSprite("assets/Graphics/Characters/character_exdash.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_exdash.png", "assets/Data/CharacterAtlas/character_exdash_atlas.json", "Exdash", 6));
-            addWeapon("SILF2");
-            break;
-        case CharacterType::Toasty:
-            m_player.setSprite("assets/Graphics/Characters/character_panini.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_panini.png", "assets/Data/CharacterAtlas/character_panini_atlas.json", "uExdash", 6));
-            addWeapon("SILF");
-            break;
-        case CharacterType::Smith:
-            m_player.setSprite("assets/Graphics/Characters/character_smith.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_smith.png", "assets/Data/CharacterAtlas/character_smith_atlas.json", "nExdash", 6));
-            addWeapon("SILF3");
-            break;
-        case CharacterType::Random:
-            m_player.setSprite("assets/Graphics/Characters/character_random.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_random.png", "assets/Data/CharacterAtlas/character_random_atlas.json", "random", 30));
-            addWeapon("VOID");
-            break;
-        case CharacterType::Minnah:
-            m_player.setSprite("assets/Graphics/Characters/character_minnah.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_minnah.png", "assets/Data/CharacterAtlas/character_minnah_atlas.json", "Minnah", 4));
-            addWeapon("VAMPIRICA");
-            break;
-        case CharacterType::Leda:
-            m_player.setSprite("assets/Graphics/Characters/character_leda.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_leda.png", "assets/Data/CharacterAtlas/character_leda_atlas.json", "XLLeda", 4));
-            addWeapon("HOLY_MISSILE");
-            break;
-        case CharacterType::Cosmo:
-            m_player.setSprite("assets/Graphics/Characters/character_cosmo.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_cosmo.png", "assets/Data/CharacterAtlas/character_cosmo_atlas.json", "Cosmic", 4));
-            addWeapon("VOID");
-            break;
-        case CharacterType::Peppino:
-            m_player.setSprite("assets/Graphics/Characters/character_peppino.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_peppino.png", "assets/Data/CharacterAtlas/character_peppino_atlas.json", "Peppino", 1));
-            addWeapon("VORTEX");
-            break;
-        case CharacterType::BigTrouser:
-            m_player.setSprite("assets/Graphics/Characters/character_trouser.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_trouser.png", "assets/Data/CharacterAtlas/character_trouser_atlas.json", "Pantalone", 4));
-            addWeapon("CANDYBOX");
-            break;
-        case CharacterType::MissingN0:
-            m_player.setSprite("assets/Graphics/Characters/character_missing.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_missing.png", "assets/Data/CharacterAtlas/character_missing_atlas.json", "_0x00000000", 4));
-            addWeapon("VOID");
-            break;
-        case CharacterType::Gains:
-            m_player.setSprite("assets/Graphics/Characters/character_boros.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_boros.png", "assets/Data/CharacterAtlas/character_boros_atlas.json", "Gains", 5));
-            addWeapon("HEAVENSWORD");
-            break;
-        case CharacterType::Gyorunton:
-            m_player.setSprite("assets/Graphics/Characters/character_dragogion.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_dragogion.png", "assets/Data/CharacterAtlas/character_dragogion_atlas.json", "Dragogion", 4));
-            addWeapon("TRIASSO1");
-            break;
-        case CharacterType::Sigma:
-            m_player.setSprite("assets/Graphics/Characters/characters.png", 
-                               getFrames("Sigma"));
-            addWeapon("Whip");
-            addWeapon("Magic Wand");
-            addWeapon("Knife");
-            addWeapon("Fire Wand");
-            addWeapon("Axe");
-            addWeapon("Cross");
-            addWeapon("Garlic");
-            addWeapon("King Bible");
-            addWeapon("Santa Water");
-            addWeapon("Runetracer");
-            addWeapon("Lightning Ring");
-            addWeapon("Bone");
-            addWeapon("Cherry Bomb");
-            addWeapon("Song Of Mana");
+    size_t count = charTypes.empty() ? 1 : charTypes.size();
+    m_players.resize(count);
 
-            addWeapon("GUNS1");
-            addWeapon("GUNS2");
+    for (size_t i = 0; i < count; ++i) {
+        CharacterType cType = charTypes.empty() ? CharacterType::Antonio : charTypes[i];
+        Player& p = m_players[i];
+        p.setPlayerId(static_cast<int>(i + 1));
 
-            break;
-        case CharacterType::Marrabbio:
-            m_player.setSprite("assets/Graphics/Characters/character_marrabbio.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_marrabbio.png", "assets/Data/CharacterAtlas/character_marrabbio_atlas.json", "Marrabbio", 4));
-            addWeapon("THOUSAND");
-            break;
-        case CharacterType::Avatar:
-            m_player.setSprite("assets/Graphics/Characters/character_avatar.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_avatar.png", "assets/Data/CharacterAtlas/character_avatar_atlas.json", "v", 4));
-            addWeapon("MISSPELL");
-            break;
-        case CharacterType::RedDeath:
-            m_player.setSprite("assets/Graphics/Characters/character_reddeath.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_reddeath.png", "assets/Data/CharacterAtlas/character_reddeath_atlas.json", "newXLReaper", 5));
-            addWeapon("SCYTHE");
-            break;
-        case CharacterType::Robbert:
-            m_player.setSprite("assets/Graphics/Characters/character_robbert.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_robbert.png", "assets/Data/CharacterAtlas/character_robbert_atlas.json", "Robert", 5));
-            addWeapon("BATTILIA");
-            break;
-        case CharacterType::ZiAppunta:
-            m_player.setSprite("assets/Graphics/Characters/character_ziappunta.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_ziappunta.png", "assets/Data/CharacterAtlas/character_ziappunta_atlas.json", "player_ziappunta", 4));
-            addWeapon("EX_AMMO1");
-            break;
-        case CharacterType::SheMoon:
-            m_player.setSprite("assets/Graphics/Characters/character_shemoon.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_shemoon.png", "assets/Data/CharacterAtlas/character_shemoon_atlas.json", "Sheemonita", 5));
-            addWeapon("ICELANCE");
-            break;
-        case CharacterType::Santa:
-            m_player.setSprite("assets/Graphics/Characters/character_santa.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_santa.png", "assets/Data/CharacterAtlas/character_santa_atlas.json", "Santa", 4));
-            addWeapon("SANTAJAVELIN");
-            break;
-        case CharacterType::Gazebo:
-            m_player.setSprite("assets/Graphics/Characters/character_gazebo.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_gazebo.png", "assets/Data/CharacterAtlas/character_gazebo_atlas.json", "Gazebo", 4));
-            addWeapon("EX_GAEA1");
-            break;
-        case CharacterType::ChulaReh:
-            m_player.setSprite("assets/Graphics/Characters/character_chulareh.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_chulareh.png", "assets/Data/CharacterAtlas/character_chulareh_atlas.json", "chulareh", 4));
-            addWeapon("EX_MAGISTONE1");
-            break;
-        case CharacterType::SpaceDude:
-            m_player.setSprite("assets/Graphics/Characters/character_spacedude.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_spacedude.png", "assets/Data/CharacterAtlas/character_spacedude_atlas.json", "xSpaceDude", 4));
-            addWeapon("PHASER");
-            break;
-        case CharacterType::BatsBatsBats:
-            m_player.setSprite("assets/Graphics/Characters/character_batsbatsbats.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_batsbatsbats.png", "assets/Data/CharacterAtlas/character_batsbatsbats_atlas.json", "bbbats", 4));
-            addWeapon("BATTILIA2");
-            break;
-        case CharacterType::Rose:
-            m_player.setSprite("assets/Graphics/Characters/character_rose.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_rose.png", "assets/Data/CharacterAtlas/character_rose_atlas.json", "xRose", 4));
-            addWeapon("VENTO2");
-            break;
-        case CharacterType::Torino:
-            m_player.setSprite("assets/Graphics/Characters/character_torino.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_torino.png", "assets/Data/CharacterAtlas/character_torino_atlas.json", "Torino", 4));
-            addWeapon("VOID");
-            break;
-        case CharacterType::ScorejOni:
-            m_player.setSprite("assets/Graphics/Characters/character_scorej.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_scorej.png", "assets/Data/CharacterAtlas/character_scorej_atlas.json", "Scorej", 4));
-            addWeapon("VOID");
-            addWeapon("LIGHTNING");
-            break;
-        case CharacterType::Gyoruntin:
-            m_player.setSprite("assets/Graphics/Characters/character_gyoruntin.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_gyoruntin.png", "assets/Data/CharacterAtlas/character_gyoruntin_atlas.json", "Gyoruntin", 5));
-            addWeapon("ROCHER");
-            break;
-        case CharacterType::Secretino:
-            m_player.setSprite("assets/Graphics/Characters/character_secretino.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_secretino.png", "assets/Data/CharacterAtlas/character_secretino_atlas.json", "secretino", 4));
-            addWeapon("EX_MAGISTONE2");
-            break;
-        case CharacterType::SpaceDette:
-            m_player.setSprite("assets/Graphics/Characters/character_spacedette.png", 
-                               getIndividualCharFrames("assets/Graphics/Characters/character_spacedette.png", "assets/Data/CharacterAtlas/character_spacedette_atlas.json", "SDette", 4));
-            addWeapon("PHASER2");
-            break;
-    }
+        // Initial positions
+        float startX = 1280.f / 2.f;
+        float startY = 720.f / 2.f;
+        if (m_stageType == StageType::InlaidLibrary) {
+            startX = 640.f;
+            startY = 1024.f;
+        }
+        if (count > 1) {
+            startX += (i == 0 ? -50.f : 50.f);
+        }
+        p.setPosition(startX, startY);
 
-    if (m_stageType == StageType::InlaidLibrary) {
-        m_player.setPosition(640.f, 1024.f);
+        switch (cType) {
+            case CharacterType::Antonio:
+                p.setSprite("assets/Graphics/Characters/characters.png", getFrames("Antonio"));
+                addWeaponForPlayer(i, "Whip");
+                break;
+            case CharacterType::Imelda:
+                p.setSprite("assets/Graphics/Characters/characters.png", getFrames("Imelda"));
+                addWeaponForPlayer(i, "Magic Wand");
+                break;
+            case CharacterType::Gennaro:
+                p.setSprite("assets/Graphics/Characters/characters.png", getFrames("Gennaro"));
+                addWeaponForPlayer(i, "Knife");
+                break;
+            case CharacterType::Arca:
+                p.setSprite("assets/Graphics/Characters/characters.png", getFrames("Arca"));
+                addWeaponForPlayer(i, "Fire Wand");
+                break;
+            case CharacterType::Lama:
+                p.setSprite("assets/Graphics/Characters/characters.png", getFrames("Lama"));
+                addWeaponForPlayer(i, "Axe");
+                break;
+            case CharacterType::Pasqualina:
+                p.setSprite("assets/Graphics/Characters/character_pasqualina.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_pasqualina.png", "assets/Data/CharacterAtlas/character_pasqualina_atlas.json", "Pasqualina", 4));
+                addWeaponForPlayer(i, "Runetracer");
+                break;
+            case CharacterType::Porta:
+                p.setSprite("assets/Graphics/Characters/character_porta.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_porta.png", "assets/Data/CharacterAtlas/character_porta_atlas.json", "Porta", 4));
+                addWeaponForPlayer(i, "Lightning Ring");
+                break;
+            case CharacterType::Poe:
+                p.setSprite("assets/Graphics/Characters/character_poe.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_poe.png", "assets/Data/CharacterAtlas/character_poe_atlas.json", "Old3", 4));
+                addWeaponForPlayer(i, "Garlic");
+                break;
+            case CharacterType::Clerici:
+                p.setSprite("assets/Graphics/Characters/character_suora.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_suora.png", "assets/Data/CharacterAtlas/character_suora_atlas.json", "Suora", 4));
+                addWeaponForPlayer(i, "Santa Water");
+                break;
+            case CharacterType::Dommario:
+                p.setSprite("assets/Graphics/Characters/character_dommario.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_dommario.png", "assets/Data/CharacterAtlas/character_dommario_atlas.json", "Dommario", 4));
+                addWeaponForPlayer(i, "King Bible");
+                break;
+            case CharacterType::Krochi:
+                p.setSprite("assets/Graphics/Characters/character_krochi.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_krochi.png", "assets/Data/CharacterAtlas/character_krochi_atlas.json", "Krochi", 4));
+                addWeaponForPlayer(i, "Cross");
+                break;
+            case CharacterType::Christine:
+                p.setSprite("assets/Graphics/Characters/character_christine.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_christine.png", "assets/Data/CharacterAtlas/character_christine_atlas.json", "Christine", 4));
+                addWeaponForPlayer(i, "PENTAGRAM");
+                break;
+            case CharacterType::Pugnala:
+                p.setSprite("assets/Graphics/Characters/character_pugnala.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_pugnala.png", "assets/Data/CharacterAtlas/character_pugnala_atlas.json", "Pugnala", 4));
+                addWeaponForPlayer(i, "GUNS");
+                break;
+            case CharacterType::Giovanna:
+                p.setSprite("assets/Graphics/Characters/character_giovanna.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_giovanna.png", "assets/Data/CharacterAtlas/character_giovanna_atlas.json", "Giovanna", 5));
+                addWeaponForPlayer(i, "GATTI");
+                break;
+            case CharacterType::Poppea:
+                p.setSprite("assets/Graphics/Characters/character_poppea.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_poppea.png", "assets/Data/CharacterAtlas/character_poppea_atlas.json", "Poppea", 4));
+                addWeaponForPlayer(i, "SONG");
+                break;
+            case CharacterType::Concetta:
+                p.setSprite("assets/Graphics/Characters/character_concetta.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_concetta.png", "assets/Data/CharacterAtlas/character_concetta_atlas.json", "Concetta", 4));
+                addWeaponForPlayer(i, "TRAPANO");
+                break;
+            case CharacterType::Mortaccio:
+                p.setSprite("assets/Graphics/Characters/character_mortaccio.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_mortaccio.png", "assets/Data/CharacterAtlas/character_mortaccio_atlas.json", "Mortaccio", 4));
+                addWeaponForPlayer(i, "BONE");
+                break;
+            case CharacterType::Cavallo:
+                p.setSprite("assets/Graphics/Characters/character_cavallo.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_cavallo.png", "assets/Data/CharacterAtlas/character_cavallo_atlas.json", "Cavallo", 4));
+                addWeaponForPlayer(i, "CHERRY");
+                break;
+            case CharacterType::Ramba:
+                p.setSprite("assets/Graphics/Characters/character_ramba.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_ramba.png", "assets/Data/CharacterAtlas/character_ramba_atlas.json", "Ramba", 4));
+                addWeaponForPlayer(i, "CART2");
+                break;
+            case CharacterType::OSole:
+                p.setSprite("assets/Graphics/Characters/character_osole.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_osole.png", "assets/Data/CharacterAtlas/character_osole_atlas.json", "Dog", 5));
+                addWeaponForPlayer(i, "FLOWER");
+                break;
+            case CharacterType::Ambrojoe:
+                p.setSprite("assets/Graphics/Characters/character_ambrojoe.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_ambrojoe.png", "assets/Data/CharacterAtlas/character_ambrojoe_atlas.json", "Hat", 4));
+                addWeaponForPlayer(i, "ROBBA");
+                break;
+            case CharacterType::Gallo:
+                p.setSprite("assets/Graphics/Characters/character_gallo.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_gallo.png", "assets/Data/CharacterAtlas/character_gallo_atlas.json", "Gallo", 4));
+                addWeaponForPlayer(i, "LANCET");
+                break;
+            case CharacterType::Divano:
+                p.setSprite("assets/Graphics/Characters/character_divano.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_divano.png", "assets/Data/CharacterAtlas/character_divano_atlas.json", "Divano", 4));
+                addWeaponForPlayer(i, "LAUREL");
+                break;
+            case CharacterType::ZiAssunta:
+                p.setSprite("assets/Graphics/Characters/character_assunta.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_assunta.png", "assets/Data/CharacterAtlas/character_assunta_atlas.json", "Assunta", 4));
+                addWeaponForPlayer(i, "VENTO");
+                break;
+            case CharacterType::Exdash:
+                p.setSprite("assets/Graphics/Characters/character_exdash.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_exdash.png", "assets/Data/CharacterAtlas/character_exdash_atlas.json", "Exdash", 6));
+                addWeaponForPlayer(i, "SILF2");
+                break;
+            case CharacterType::Toasty:
+                p.setSprite("assets/Graphics/Characters/character_panini.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_panini.png", "assets/Data/CharacterAtlas/character_panini_atlas.json", "uExdash", 6));
+                addWeaponForPlayer(i, "SILF");
+                break;
+            case CharacterType::Smith:
+                p.setSprite("assets/Graphics/Characters/character_smith.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_smith.png", "assets/Data/CharacterAtlas/character_smith_atlas.json", "nExdash", 6));
+                addWeaponForPlayer(i, "SILF3");
+                break;
+            case CharacterType::Random:
+                p.setSprite("assets/Graphics/Characters/character_random.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_random.png", "assets/Data/CharacterAtlas/character_random_atlas.json", "random", 30));
+                addWeaponForPlayer(i, "VOID");
+                break;
+            case CharacterType::Minnah:
+                p.setSprite("assets/Graphics/Characters/character_minnah.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_minnah.png", "assets/Data/CharacterAtlas/character_minnah_atlas.json", "Minnah", 4));
+                addWeaponForPlayer(i, "VAMPIRICA");
+                break;
+            case CharacterType::Leda:
+                p.setSprite("assets/Graphics/Characters/character_leda.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_leda.png", "assets/Data/CharacterAtlas/character_leda_atlas.json", "XLLeda", 4));
+                addWeaponForPlayer(i, "HOLY_MISSILE");
+                break;
+            case CharacterType::Cosmo:
+                p.setSprite("assets/Graphics/Characters/character_cosmo.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_cosmo.png", "assets/Data/CharacterAtlas/character_cosmo_atlas.json", "Cosmic", 4));
+                addWeaponForPlayer(i, "VOID");
+                break;
+            case CharacterType::Peppino:
+                p.setSprite("assets/Graphics/Characters/character_peppino.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_peppino.png", "assets/Data/CharacterAtlas/character_peppino_atlas.json", "Peppino", 1));
+                addWeaponForPlayer(i, "VORTEX");
+                break;
+            case CharacterType::BigTrouser:
+                p.setSprite("assets/Graphics/Characters/character_trouser.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_trouser.png", "assets/Data/CharacterAtlas/character_trouser_atlas.json", "Pantalone", 4));
+                addWeaponForPlayer(i, "CANDYBOX");
+                break;
+            case CharacterType::MissingN0:
+                p.setSprite("assets/Graphics/Characters/character_missing.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_missing.png", "assets/Data/CharacterAtlas/character_missing_atlas.json", "_0x00000000", 4));
+                addWeaponForPlayer(i, "VOID");
+                break;
+            case CharacterType::Gains:
+                p.setSprite("assets/Graphics/Characters/character_boros.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_boros.png", "assets/Data/CharacterAtlas/character_boros_atlas.json", "Gains", 5));
+                addWeaponForPlayer(i, "HEAVENSWORD");
+                break;
+            case CharacterType::Gyorunton:
+                p.setSprite("assets/Graphics/Characters/character_dragogion.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_dragogion.png", "assets/Data/CharacterAtlas/character_dragogion_atlas.json", "Dragogion", 4));
+                addWeaponForPlayer(i, "TRIASSO1");
+                break;
+            case CharacterType::Sigma:
+                p.setSprite("assets/Graphics/Characters/characters.png", getFrames("Sigma"));
+                addWeaponForPlayer(i, "Whip");
+                addWeaponForPlayer(i, "Magic Wand");
+                addWeaponForPlayer(i, "Knife");
+                addWeaponForPlayer(i, "Fire Wand");
+                addWeaponForPlayer(i, "Axe");
+                addWeaponForPlayer(i, "Cross");
+                addWeaponForPlayer(i, "Garlic");
+                addWeaponForPlayer(i, "King Bible");
+                addWeaponForPlayer(i, "Santa Water");
+                addWeaponForPlayer(i, "Runetracer");
+                addWeaponForPlayer(i, "Lightning Ring");
+                addWeaponForPlayer(i, "Bone");
+                addWeaponForPlayer(i, "Cherry Bomb");
+                addWeaponForPlayer(i, "Song Of Mana");
+                addWeaponForPlayer(i, "GUNS1");
+                addWeaponForPlayer(i, "GUNS2");
+                break;
+            case CharacterType::Marrabbio:
+                p.setSprite("assets/Graphics/Characters/character_marrabbio.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_marrabbio.png", "assets/Data/CharacterAtlas/character_marrabbio_atlas.json", "Marrabbio", 4));
+                addWeaponForPlayer(i, "THOUSAND");
+                break;
+            case CharacterType::Avatar:
+                p.setSprite("assets/Graphics/Characters/character_avatar.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_avatar.png", "assets/Data/CharacterAtlas/character_avatar_atlas.json", "v", 4));
+                addWeaponForPlayer(i, "MISSPELL");
+                break;
+            case CharacterType::RedDeath:
+                p.setSprite("assets/Graphics/Characters/character_reddeath.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_reddeath.png", "assets/Data/CharacterAtlas/character_reddeath_atlas.json", "newXLReaper", 5));
+                addWeaponForPlayer(i, "SCYTHE");
+                break;
+            case CharacterType::Robbert:
+                p.setSprite("assets/Graphics/Characters/character_robbert.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_robbert.png", "assets/Data/CharacterAtlas/character_robbert_atlas.json", "Robert", 5));
+                addWeaponForPlayer(i, "BATTILIA");
+                break;
+            case CharacterType::ZiAppunta:
+                p.setSprite("assets/Graphics/Characters/character_ziappunta.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_ziappunta.png", "assets/Data/CharacterAtlas/character_ziappunta_atlas.json", "player_ziappunta", 4));
+                addWeaponForPlayer(i, "EX_AMMO1");
+                break;
+            case CharacterType::SheMoon:
+                p.setSprite("assets/Graphics/Characters/character_shemoon.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_shemoon.png", "assets/Data/CharacterAtlas/character_shemoon_atlas.json", "Sheemonita", 5));
+                addWeaponForPlayer(i, "ICELANCE");
+                break;
+            case CharacterType::Santa:
+                p.setSprite("assets/Graphics/Characters/character_santa.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_santa.png", "assets/Data/CharacterAtlas/character_santa_atlas.json", "Santa", 4));
+                addWeaponForPlayer(i, "SANTAJAVELIN");
+                break;
+            case CharacterType::Gazebo:
+                p.setSprite("assets/Graphics/Characters/character_gazebo.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_gazebo.png", "assets/Data/CharacterAtlas/character_gazebo_atlas.json", "Gazebo", 4));
+                addWeaponForPlayer(i, "EX_GAEA1");
+                break;
+            case CharacterType::ChulaReh:
+                p.setSprite("assets/Graphics/Characters/character_chulareh.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_chulareh.png", "assets/Data/CharacterAtlas/character_chulareh_atlas.json", "chulareh", 4));
+                addWeaponForPlayer(i, "EX_MAGISTONE1");
+                break;
+            case CharacterType::SpaceDude:
+                p.setSprite("assets/Graphics/Characters/character_spacedude.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_spacedude.png", "assets/Data/CharacterAtlas/character_spacedude_atlas.json", "xSpaceDude", 4));
+                addWeaponForPlayer(i, "PHASER");
+                break;
+            case CharacterType::BatsBatsBats:
+                p.setSprite("assets/Graphics/Characters/character_batsbatsbats.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_batsbatsbats.png", "assets/Data/CharacterAtlas/character_batsbatsbats_atlas.json", "bbbats", 4));
+                addWeaponForPlayer(i, "BATTILIA2");
+                break;
+            case CharacterType::Rose:
+                p.setSprite("assets/Graphics/Characters/character_rose.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_rose.png", "assets/Data/CharacterAtlas/character_rose_atlas.json", "xRose", 4));
+                addWeaponForPlayer(i, "VENTO2");
+                break;
+            case CharacterType::Torino:
+                p.setSprite("assets/Graphics/Characters/character_torino.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_torino.png", "assets/Data/CharacterAtlas/character_torino_atlas.json", "Torino", 4));
+                addWeaponForPlayer(i, "VOID");
+                break;
+            case CharacterType::ScorejOni:
+                p.setSprite("assets/Graphics/Characters/character_scorej.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_scorej.png", "assets/Data/CharacterAtlas/character_scorej_atlas.json", "Scorej", 4));
+                addWeaponForPlayer(i, "VOID");
+                addWeaponForPlayer(i, "LIGHTNING");
+                break;
+            case CharacterType::Gyoruntin:
+                p.setSprite("assets/Graphics/Characters/character_gyoruntin.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_gyoruntin.png", "assets/Data/CharacterAtlas/character_gyoruntin_atlas.json", "Gyoruntin", 5));
+                addWeaponForPlayer(i, "ROCHER");
+                break;
+            case CharacterType::Secretino:
+                p.setSprite("assets/Graphics/Characters/character_secretino.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_secretino.png", "assets/Data/CharacterAtlas/character_secretino_atlas.json", "secretino", 4));
+                addWeaponForPlayer(i, "EX_MAGISTONE2");
+                break;
+            case CharacterType::SpaceDette:
+                p.setSprite("assets/Graphics/Characters/character_spacedette.png", 
+                                   getIndividualCharFrames("assets/Graphics/Characters/character_spacedette.png", "assets/Data/CharacterAtlas/character_spacedette_atlas.json", "SDette", 4));
+                addWeaponForPlayer(i, "PHASER2");
+                break;
+        }
     }
 }
 
@@ -476,10 +488,24 @@ void PlayingState::update(float dt) {
         m_manager->changeState(std::make_unique<MainMenuState>(m_manager));
         return; 
     }
+
+    // Camera Center (midpoint of active players)
+    sf::Vector2f cam(0.f, 0.f);
+    int activeCount = 0;
+    for (auto& p : m_players) {
+        if (p.isActive()) {
+            cam += p.getPosition();
+            activeCount++;
+        }
+    }
+    if (activeCount > 0) {
+        cam /= static_cast<float>(activeCount);
+    } else {
+        cam = sf::Vector2f(640.f, 360.f);
+    }
+
     // Update infinite background tiles: snap any tile that drifts too far from camera
     {
-        sf::Vector2f cam = m_player.getPosition();
-        // For each tile, if it's more than 1.5 tile-widths away in any axis, wrap it
         for (int row = 0; row < 3; ++row) {
             for (int col = 0; col < 3; ++col) {
                 sf::Vector2f tpos = m_bgTiles[row][col].getPosition();
@@ -494,7 +520,6 @@ void PlayingState::update(float dt) {
     }
 
     if (m_stageType == StageType::MadForest) {
-        sf::Vector2f cam = m_player.getPosition();
         int centerGridX = std::floor(cam.x / m_tileSize);
         int centerGridY = std::floor(cam.y / m_tileSize);
 
@@ -525,7 +550,6 @@ void PlayingState::update(float dt) {
             }
         }
     }
-
 
     if (!m_cheatApplied && sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt) && sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
         m_cheatApplied = true;
@@ -572,41 +596,59 @@ void PlayingState::update(float dt) {
         std::cout << "CHEAT: All active weapons and passive items added and maxed!\n";
     }
 
-    // Cheat Code: Alt+T = Spawn Treasure Chest 150px to the right of player for testing evolutions
+    // Cheat Code: Alt+T = Spawn Treasure Chest 150px to the right of primary player for testing evolutions
     static bool tPressedLastFrame = false;
     bool tPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt) && sf::Keyboard::isKeyPressed(sf::Keyboard::T);
     if (tPressed && !tPressedLastFrame) {
         TreasureChest chest;
-        chest.init(m_player.getPosition() + sf::Vector2f(150.f, 0.f));
+        chest.init(getPlayer(0).getPosition() + sf::Vector2f(150.f, 0.f));
         m_chests.push_back(chest);
         std::cout << "CHEAT: Spawned a treasure chest 150px to the right of player!\n";
     }
     tPressedLastFrame = tPressed;
 
-    m_player.update(dt);
+    // Update players & Stage Bounds
+    for (auto& p : m_players) {
+        if (!p.isActive()) continue;
+        p.update(dt);
 
-    if (m_stageType == StageType::InlaidLibrary) {
-        sf::Vector2f pos = m_player.getPosition();
-        // The library floor is in y range [576, 1472] in world space.
-        // We clamp the player to stay within the floor with a 64px margin: [640.f, 1408.f]
-        float minY = 640.f;
-        float maxY = 1408.f;
-        if (pos.y < minY) {
-            m_player.setPosition(pos.x, minY);
-        } else if (pos.y > maxY) {
-            m_player.setPosition(pos.x, maxY);
+        if (m_stageType == StageType::InlaidLibrary) {
+            sf::Vector2f pos = p.getPosition();
+            float minY = 640.f;
+            float maxY = 1408.f;
+            if (pos.y < minY) {
+                p.setPosition(pos.x, minY);
+            } else if (pos.y > maxY) {
+                p.setPosition(pos.x, maxY);
+            }
         }
     }
 
-    // Resolve Circle-AABB sliding collisions with furniture and map obstacles
-    sf::Vector2f playerPos = m_player.getPosition();
-    float playerRadius = 16.f; // Player physical collision circle
-    for (const auto& obs : m_obstacles) {
-        if (obs->isActive() && obs->hasCollision() && Collision::checkCircleAABB(playerPos, playerRadius, obs->getBounds())) {
-            Collision::resolveCircleAABB(playerPos, playerRadius, m_player.getVelocity(), obs->getBounds());
+    // Soft tethering if 2 players active
+    if (m_players.size() >= 2 && m_players[0].isActive() && m_players[1].isActive()) {
+        float maxDist = 800.f;
+        sf::Vector2f delta = m_players[1].getPosition() - m_players[0].getPosition();
+        float dist = std::sqrt(delta.x * delta.x + delta.y * delta.y);
+        if (dist > maxDist) {
+            sf::Vector2f norm = delta / dist;
+            sf::Vector2f center = (m_players[0].getPosition() + m_players[1].getPosition()) * 0.5f;
+            m_players[0].setPosition(center - norm * (maxDist * 0.5f));
+            m_players[1].setPosition(center + norm * (maxDist * 0.5f));
         }
     }
-    m_player.setPosition(playerPos);
+
+    // Resolve Circle-AABB sliding collisions with furniture and map obstacles for all players
+    float playerRadius = 16.f;
+    for (auto& p : m_players) {
+        if (!p.isActive()) continue;
+        sf::Vector2f pPos = p.getPosition();
+        for (const auto& obs : m_obstacles) {
+            if (obs->isActive() && obs->hasCollision() && Collision::checkCircleAABB(pPos, playerRadius, obs->getBounds())) {
+                Collision::resolveCircleAABB(pPos, playerRadius, p.getVelocity(), obs->getBounds());
+            }
+        }
+        p.setPosition(pPos);
+    }
 
     // Apply Recovery Upgrade (HP regen)
     float recovery = ProfileManager::GetInstance().getRecoveryRate();
@@ -614,22 +656,24 @@ void PlayingState::update(float dt) {
         StatsManager::GetInstance().heal(recovery * dt);
     }
 
-    // Update weapons (firing projectiles)
-    for (auto& weapon : m_weapons) {
-        weapon->update(dt, m_player.getPosition(), m_player.getFacingDir(), m_activeEnemies, m_activeProjectiles);
+    // Update weapons (firing projectiles relative to owner player)
+    for (size_t i = 0; i < m_weapons.size(); ++i) {
+        size_t ownerIdx = (i < m_weaponOwnerIndices.size()) ? m_weaponOwnerIndices[i] : 0;
+        Player& owner = getPlayer(ownerIdx);
+        m_weapons[i]->update(dt, owner.getPosition(), owner.getFacingDir(), m_activeEnemies, m_activeProjectiles);
     }
 
     // Update projectiles
     sf::Vector2f viewSize = m_manager->getWindow().getDefaultView().getSize();
     sf::FloatRect cameraBounds(
-        m_player.getPosition().x - viewSize.x / 2.0f,
-        m_player.getPosition().y - viewSize.y / 2.0f,
+        cam.x - viewSize.x / 2.0f,
+        cam.y - viewSize.y / 2.0f,
         viewSize.x,
         viewSize.y
     );
     
     for (auto& proj : m_activeProjectiles) {
-        proj.update(dt, m_player.getPosition(), cameraBounds);
+        proj.update(dt, cam, cameraBounds);
     }
 
     for (auto& proj : m_bossProjectiles) {
@@ -645,7 +689,6 @@ void PlayingState::update(float dt) {
     char timeBuffer[16];
     std::snprintf(timeBuffer, sizeof(timeBuffer), "%02d:%02d", minutes, seconds);
     m_timerText.setString(timeBuffer);
-
 
     char levelBuffer[16];
     std::snprintf(levelBuffer, sizeof(levelBuffer), "LV %d", StatsManager::GetInstance().getLevel());
@@ -666,9 +709,9 @@ void PlayingState::update(float dt) {
                 boss = m_enemyPool.acquire();
             }
             if (boss) {
-                float spawnX = m_player.getPosition().x;
+                float spawnX = cam.x;
                 sf::Vector2u winSize = m_manager->getWindow().getSize();
-                float spawnY = m_player.getPosition().y - (winSize.y / 2.0f + 200.f); // Spawn safely above screen
+                float spawnY = cam.y - (winSize.y / 2.0f + 200.f); // Spawn safely above screen
                 
                 int playerLevel = StatsManager::GetInstance().getLevel();
                 if (stats.hpPerLevel > 0.f) {
@@ -677,7 +720,7 @@ void PlayingState::update(float dt) {
                 }
                 
                 boss->init(sf::Vector2f(spawnX, spawnY), stats, &m_enemiesTex);
-                boss->setTarget(&m_player);
+                boss->setTarget(getNearestPlayer(sf::Vector2f(spawnX, spawnY)));
                 m_activeEnemies.push_back(boss);
                 m_bossPtr = boss;
                 m_bossIsDead = false;
@@ -694,10 +737,17 @@ void PlayingState::update(float dt) {
         std::cout << "Boss defeated! A treasure chest appeared!\n";
     }
 
-    // Update & check chest pickup
+    // Update & check chest pickup across all players
     for (auto& chest : m_chests) {
         chest.update(dt);
-        if (chest.isActive() && chest.getBounds().intersects(m_player.getBounds())) {
+        bool pickedUp = false;
+        for (auto& p : m_players) {
+            if (p.isActive() && chest.isActive() && chest.getBounds().intersects(p.getBounds())) {
+                pickedUp = true;
+                break;
+            }
+        }
+        if (pickedUp) {
             chest.deactivate();
             m_manager->pushState(std::make_unique<TreasureChestState>(m_manager, this));
         }
@@ -718,17 +768,15 @@ void PlayingState::update(float dt) {
         if (currentCount < currentWave->minEnemies) {
             shouldSpawn = true;
             toSpawn = currentWave->minEnemies - currentCount;
-            // Cap at 20 per frame to avoid lag spikes
             if (toSpawn > 20) toSpawn = 20; 
         } else if (m_enemySpawnTimer >= currentWave->spawnInterval) {
             shouldSpawn = true;
-            toSpawn = 1; // Or spawn a batch
+            toSpawn = 1;
             m_enemySpawnTimer = 0.f;
         }
 
         if (shouldSpawn) {
             for (int i = 0; i < toSpawn; ++i) {
-                // Randomly select an enemy type from the wave's possible enemies
                 std::string type = currentWave->enemies[rand() % currentWave->enemies.size()];
                 EnemyStats stats = EnemyDatabase::getStats(type);
 
@@ -745,8 +793,8 @@ void PlayingState::update(float dt) {
                     float halfW = winSize.x / 2.0f;
                     float halfH = winSize.y / 2.0f;
                     float spawnRadius = std::sqrt(halfW * halfW + halfH * halfH) + 100.f;
-                    float spawnX = m_player.getPosition().x + std::cos(angle) * spawnRadius;
-                    float spawnY = m_player.getPosition().y + std::sin(angle) * spawnRadius;
+                    float spawnX = cam.x + std::cos(angle) * spawnRadius;
+                    float spawnY = cam.y + std::sin(angle) * spawnRadius;
 
                     int playerLevel = StatsManager::GetInstance().getLevel();
                     if (stats.hpPerLevel > 0.f) {
@@ -755,7 +803,7 @@ void PlayingState::update(float dt) {
                     }
 
                     enemy->init(sf::Vector2f(spawnX, spawnY), stats, &m_enemiesTex);
-                    enemy->setTarget(&m_player);
+                    enemy->setTarget(getNearestPlayer(sf::Vector2f(spawnX, spawnY)));
                     m_activeEnemies.push_back(enemy);
                 }
             }
@@ -779,25 +827,21 @@ void PlayingState::update(float dt) {
             // Spawn a random Collectible when an enemy dies
             int roll = std::rand() % 100;
             if (roll < 70) {
-                // 70% Gem
                 if (enemy->getStats().expDrop > 0.0f) {
                     auto gem = std::make_unique<ExpGem>();
                     gem->init(enemy->getPosition(), enemy->getStats().expDrop);
                     m_activeCollectibles.push_back(std::move(gem));
                 }
             } else if (roll < 80) {
-                // 1 Coin
                 auto coin = std::make_unique<Coin>();
                 int goldValue = 1;
                 coin->init(enemy->getPosition(), goldValue);
                 m_activeCollectibles.push_back(std::move(coin));
             } else if (roll < 85) {
-                // 5% Floor Chicken
                 auto chicken = std::make_unique<FloorChicken>();
-                chicken->init(enemy->getPosition(), 30.f); // Heals 30 HP
+                chicken->init(enemy->getPosition(), 30.f);
                 m_activeCollectibles.push_back(std::move(chicken));
             }
-            // 15% nothing
 
             if (auto* shooter = dynamic_cast<ShooterEnemy*>(enemy)) {
                 m_shooterPool.release(shooter);
@@ -808,11 +852,13 @@ void PlayingState::update(float dt) {
             continue;
         } 
         
+        Player* targetPlayer = getNearestPlayer(enemy->getPosition());
+        if (targetPlayer) enemy->setTarget(targetPlayer);
+
         enemy->update(dt);
 
         if (m_stageType == StageType::InlaidLibrary) {
             sf::Vector2f epos = enemy->getPosition();
-            // Clamp enemy Y to floor corridor [576, 1472] with a 24px margin: [600.f, 1448.f]
             float minEY = 600.f;
             float maxEY = 1448.f;
             if (epos.y < minEY) {
@@ -822,12 +868,11 @@ void PlayingState::update(float dt) {
             }
         }
         
-        if (enemy->getStats().enemyClass == EnemyClass::BOSS) {
-            enemy->updateShooting(dt, m_player.getPosition(), m_bossProjectiles, &m_vfxTex);
+        if (enemy->getStats().enemyClass == EnemyClass::BOSS && targetPlayer) {
+            enemy->updateShooting(dt, targetPlayer->getPosition(), m_bossProjectiles, &m_vfxTex);
         }
         
-        // Check distance to player. If very close, ignore enemy-enemy collision so they can swarm the player tightly.
-        sf::Vector2f toPlayer = enemy->getPosition() - m_player.getPosition();
+        sf::Vector2f toPlayer = enemy->getPosition() - (targetPlayer ? targetPlayer->getPosition() : cam);
         float distToPlayerSq = toPlayer.x * toPlayer.x + toPlayer.y * toPlayer.y;
 
         if (auto* shooter = dynamic_cast<ShooterEnemy*>(enemy)) {
@@ -841,7 +886,7 @@ void PlayingState::update(float dt) {
                         Projectile proj;
                         proj.init(enemy->getPosition(), dir, enemy->getStats().projectileDamage, enemy->getStats().projectileSpeed, 1200.f, 5.f, false);
                         proj.setEnemyProj(true);
-                        proj.setFillColor(sf::Color(220, 80, 220)); // Purple magic bullet
+                        proj.setFillColor(sf::Color(220, 80, 220));
                         m_activeProjectiles.push_back(proj);
                     }
                 }
@@ -858,38 +903,41 @@ void PlayingState::update(float dt) {
                 if (distSq > 0.0001f && distSq < (combinedRadius * combinedRadius)) {
                     float dist = std::sqrt(distSq);
                     float overlap = combinedRadius - dist;
-                    // Push them apart
                     sf::Vector2f pushDir = diff / dist;
                     enemy->setPosition(enemy->getPosition() + pushDir * (overlap * 0.5f));
                 }
             }
         }
         
-        // Simple O(N*M) collision check for now (Grid will be wired later)
         sf::FloatRect enemyBounds = enemy->getBounds();
         
         if (!enemy->isDying()) {
-            // Check collision with Player (Damage)
-            if (enemyBounds.intersects(m_player.getBounds())) {
-                float armorRed = ProfileManager::GetInstance().getArmorReduction();
-                float dmg = std::max(1.f, 10.f - armorRed);
-                StatsManager::GetInstance().takeDamage(dmg * dt); // 10 damage per second while touching, reduced by armor
-            }
+            // Check collision with all active players
+            for (auto& p : m_players) {
+                if (!p.isActive()) continue;
+                if (enemyBounds.intersects(p.getBounds())) {
+                    float armorRed = ProfileManager::GetInstance().getArmorReduction();
+                    float dmg = std::max(1.f, 10.f - armorRed);
+                    StatsManager::GetInstance().takeDamage(dmg * dt);
+                }
 
-            // Enemy-Player Physical Collision (Separation)
-            float playerRadius = 15.f;
-            float enemyRadius = enemy->getRadius();
-            float combinedRadiusPlayer = playerRadius + enemyRadius;
-            if (distToPlayerSq > 0.0001f && distToPlayerSq < (combinedRadiusPlayer * combinedRadiusPlayer)) {
-                float dist = std::sqrt(distToPlayerSq);
-                float overlap = combinedRadiusPlayer - dist;
-                sf::Vector2f pushDir = toPlayer / dist; // From player to enemy
-                enemy->setPosition(enemy->getPosition() + pushDir * overlap);
+                // Enemy-Player Physical Collision (Separation)
+                sf::Vector2f toP = enemy->getPosition() - p.getPosition();
+                float distToPSq = toP.x * toP.x + toP.y * toP.y;
+                float playerRadius = 15.f;
+                float enemyRadius = enemy->getRadius();
+                float combinedRadiusPlayer = playerRadius + enemyRadius;
+                if (distToPSq > 0.0001f && distToPSq < (combinedRadiusPlayer * combinedRadiusPlayer)) {
+                    float dist = std::sqrt(distToPSq);
+                    float overlap = combinedRadiusPlayer - dist;
+                    sf::Vector2f pushDir = toP / dist;
+                    enemy->setPosition(enemy->getPosition() + pushDir * overlap);
+                }
             }
 
             for (auto& proj : m_activeProjectiles) {
                 if (proj.canHit() && !proj.isEnemyProj() && proj.getBounds().intersects(enemyBounds)) {
-                    if (proj.hasHitEnemy(enemy)) continue; // Already hit this enemy
+                    if (proj.hasHitEnemy(enemy)) continue;
                     proj.addHitEnemy(enemy);
 
                     bool killed = enemy->takeDamage(proj.getDamage());
@@ -900,7 +948,6 @@ void PlayingState::update(float dt) {
 
                     Physics::ApplyKnockback(enemy, proj.getDirection(), proj.getKnockback(), 1.0f);
                     
-                    // Bloody Tear lifesteal
                     if (proj.getKnockback() == 150.f) {
                         StatsManager::GetInstance().heal(8.f);
                     }
@@ -916,16 +963,13 @@ void PlayingState::update(float dt) {
                             float dot = dir.x * normal.x + dir.y * normal.y;
                             sf::Vector2f reflect = dir - 2.f * dot * normal;
                             
-                            // Normalize reflect just in case
                             float rLen = std::sqrt(reflect.x*reflect.x + reflect.y*reflect.y);
                             if (rLen > 0) reflect /= rLen;
                             
-                            // Just reflect velocity and direction without resetting the entire projectile
                             float currentSpeed = std::sqrt(proj.m_velocity.x * proj.m_velocity.x + proj.m_velocity.y * proj.m_velocity.y);
                             proj.m_direction = reflect;
                             proj.m_velocity = reflect * currentSpeed;
                             
-                            // Re-apply rotation if needed
                             if (proj.m_hasSprite && currentSpeed > 0) {
                                 proj.m_initRotation = std::atan2(reflect.y, reflect.x) * 180.f / 3.14159265f;
                                 proj.m_animSprite.setRotation(proj.m_initRotation);
@@ -959,14 +1003,17 @@ void PlayingState::update(float dt) {
         ++it;
     }
 
-    // Check enemy projectile collisions with player
+    // Check enemy projectile collisions with all players
     for (auto& proj : m_activeProjectiles) {
         if (proj.isActive() && proj.isEnemyProj()) {
-            if (proj.getBounds().intersects(m_player.getBounds())) {
-                float armorRed = ProfileManager::GetInstance().getArmorReduction();
-                float dmg = std::max(1.f, proj.getDamage() - armorRed);
-                StatsManager::GetInstance().takeDamage(dmg);
-                proj.deactivate();
+            for (auto& p : m_players) {
+                if (p.isActive() && proj.getBounds().intersects(p.getBounds())) {
+                    float armorRed = ProfileManager::GetInstance().getArmorReduction();
+                    float dmg = std::max(1.f, proj.getDamage() - armorRed);
+                    StatsManager::GetInstance().takeDamage(dmg);
+                    proj.deactivate();
+                    break;
+                }
             }
         }
     }
@@ -975,11 +1022,15 @@ void PlayingState::update(float dt) {
         m_activeProjectiles.push_back(p);
     }
     
-    // Pickups collision logic (Gems, Coins, Chests, Ground items) collection
+    // Pickups collection for all players
     for (auto& item : m_activeCollectibles) {
-        item->update(dt, &m_player);
-        if (item->isActive() && item->getBounds().intersects(m_player.getBounds())) {
-            item->onPickup(this);
+        Player* nearPlayer = getNearestPlayer(item->getPosition());
+        item->update(dt, nearPlayer ? nearPlayer : &m_players[0]);
+        for (auto& p : m_players) {
+            if (p.isActive() && item->isActive() && item->getBounds().intersects(p.getBounds())) {
+                item->onPickup(this);
+                break;
+            }
         }
     }
 
@@ -988,13 +1039,18 @@ void PlayingState::update(float dt) {
         [](const std::unique_ptr<Collectible>& c) { return !c->isActive(); }), m_activeCollectibles.end());
 
 
-    // Collision check: Boss Projectiles vs Player
+    // Collision check: Boss Projectiles vs Players
     for (auto& proj : m_bossProjectiles) {
-        if (proj.isActive() && proj.getBounds().intersects(m_player.getBounds())) {
-            float armorRed = ProfileManager::GetInstance().getArmorReduction();
-            float dmg = std::max(1.f, proj.getDamage() - armorRed);
-            StatsManager::GetInstance().takeDamage(dmg);
-            proj.deactivate();
+        if (proj.isActive()) {
+            for (auto& p : m_players) {
+                if (p.isActive() && proj.getBounds().intersects(p.getBounds())) {
+                    float armorRed = ProfileManager::GetInstance().getArmorReduction();
+                    float dmg = std::max(1.f, proj.getDamage() - armorRed);
+                    StatsManager::GetInstance().takeDamage(dmg);
+                    proj.deactivate();
+                    break;
+                }
+            }
         }
     }
 
@@ -1019,12 +1075,10 @@ void PlayingState::update(float dt) {
     if (StatsManager::GetInstance().getHealth() <= 0.f) {
         if (m_revivalsLeft > 0) {
             m_revivalsLeft--;
-            // Heal to 50% max health
             StatsManager::GetInstance().heal(StatsManager::GetInstance().getMaxHealth() * 0.5f);
             
-            // Revival blast: deactivate all active enemies in a 450px radius
             for (auto* enemy : m_activeEnemies) {
-                sf::Vector2f diff = enemy->getPosition() - m_player.getPosition();
+                sf::Vector2f diff = enemy->getPosition() - cam;
                 float distSq = diff.x * diff.x + diff.y * diff.y;
                 if (distSq < 450.f * 450.f) {
                     enemy->setActive(false);
@@ -1032,19 +1086,17 @@ void PlayingState::update(float dt) {
             }
             std::cout << "Resurrected! Revivals left: " << m_revivalsLeft << "\n";
         } else {
-            // Game Over
             ProfileManager::GetInstance().save("save.txt");
 
             RunSummaryData summary;
-            summary.mapName = "Mad Forest"; // hardcoded for now, or use m_stageType
-            summary.characterName = "Survivor"; // hardcoded for now
+            summary.mapName = "Mad Forest";
+            summary.characterName = "Survivors";
             summary.survivalTime = m_survivalTime;
             summary.goldEarned = m_runGold;
             summary.levelReached = StatsManager::GetInstance().getLevel();
             summary.enemiesDefeated = m_kills;
-            summary.charIconRect = sf::IntRect(0, 0, 16, 16); // placeholder
+            summary.charIconRect = sf::IntRect(0, 0, 16, 16);
 
-            // Populate weapons
             for (const auto& weapon : m_weapons) {
                 WeaponSummary ws;
                 ws.name = weapon->getName();
@@ -1056,8 +1108,6 @@ void PlayingState::update(float dt) {
                 summary.weapons.push_back(ws);
             }
 
-            // In the future, populate passives here
-
             m_manager->pushState(std::make_unique<GameOverState>(m_manager, summary));
             return;
         }
@@ -1067,9 +1117,20 @@ void PlayingState::update(float dt) {
 void PlayingState::draw(sf::RenderWindow& window) {
     window.clear(sf::Color(20, 50, 20));
 
-    // Create and apply World View centered on player
+    sf::Vector2f cam(0.f, 0.f);
+    int activeCount = 0;
+    for (auto& p : m_players) {
+        if (p.isActive()) {
+            cam += p.getPosition();
+            activeCount++;
+        }
+    }
+    if (activeCount > 0) cam /= static_cast<float>(activeCount);
+    else cam = sf::Vector2f(640.f, 360.f);
+
+    // Create and apply World View centered on active player midpoint
     sf::View worldView = window.getDefaultView();
-    worldView.setCenter(m_player.getPosition());
+    worldView.setCenter(cam);
     window.setView(worldView);
 
     // Draw infinite-tiling background before everything else
@@ -1077,9 +1138,9 @@ void PlayingState::draw(sf::RenderWindow& window) {
         for (int col = 0; col < 3; ++col)
             window.draw(m_bgTiles[row][col]);
 
-    // Draw obstacles behind player (above in Y world coordinates) for 2.5D depth
+    // Draw obstacles behind players (above in Y world coordinates) for 2.5D depth
     for (const auto& obs : m_obstacles) {
-        if (obs->isActive() && obs->getPosition().y <= m_player.getPosition().y + 10.f) {
+        if (obs->isActive() && obs->getPosition().y <= cam.y + 10.f) {
             obs->draw(window);
         }
     }
@@ -1088,7 +1149,6 @@ void PlayingState::draw(sf::RenderWindow& window) {
         item->draw(window);
     }
 
-    
     for (auto* enemy : m_activeEnemies) {
         enemy->draw(window);
     }
@@ -1106,34 +1166,40 @@ void PlayingState::draw(sf::RenderWindow& window) {
         chest.draw(window);
     }
 
-    m_player.draw(window);
+    for (auto& p : m_players) {
+        p.draw(window);
+    }
 
-    // Draw obstacles in front of player (below in Y world coordinates) for 2.5D occlusion
+    // Draw obstacles in front of players (below in Y world coordinates) for 2.5D occlusion
     for (const auto& obs : m_obstacles) {
-        if (obs->isActive() && obs->getPosition().y > m_player.getPosition().y + 10.f) {
+        if (obs->isActive() && obs->getPosition().y > cam.y + 10.f) {
             obs->draw(window);
         }
     }
 
-    // Health Bar Background (under character)
+    // Health Bar Background (under characters)
     StatsManager& stats = StatsManager::GetInstance();
     float hpBarWidth = 40.f;
     float hpBarHeight = 6.f;
-    sf::Vector2f playerPos = m_player.getPosition();
-    
-    sf::RectangleShape hpBg(sf::Vector2f(hpBarWidth, hpBarHeight));
-    hpBg.setPosition(playerPos.x - hpBarWidth / 2.f, playerPos.y + 25.f);
-    hpBg.setFillColor(sf::Color(50, 0, 0));
-    hpBg.setOutlineThickness(1.f);
-    hpBg.setOutlineColor(sf::Color::Black);
-    window.draw(hpBg);
 
-    // Health Bar Fill
-    float hpPercent = std::max(0.f, stats.getHealth() / stats.getMaxHealth());
-    sf::RectangleShape hpFill(sf::Vector2f(hpBarWidth * hpPercent, hpBarHeight));
-    hpFill.setPosition(playerPos.x - hpBarWidth / 2.f, playerPos.y + 25.f);
-    hpFill.setFillColor(sf::Color::Red);
-    window.draw(hpFill);
+    for (auto& p : m_players) {
+        if (!p.isActive()) continue;
+        sf::Vector2f playerPos = p.getPosition();
+        
+        sf::RectangleShape hpBg(sf::Vector2f(hpBarWidth, hpBarHeight));
+        hpBg.setPosition(playerPos.x - hpBarWidth / 2.f, playerPos.y + 25.f);
+        hpBg.setFillColor(sf::Color(50, 0, 0));
+        hpBg.setOutlineThickness(1.f);
+        hpBg.setOutlineColor(sf::Color::Black);
+        window.draw(hpBg);
+
+        // Health Bar Fill
+        float hpPercent = std::max(0.f, stats.getHealth() / stats.getMaxHealth());
+        sf::RectangleShape hpFill(sf::Vector2f(hpBarWidth * hpPercent, hpBarHeight));
+        hpFill.setPosition(playerPos.x - hpBarWidth / 2.f, playerPos.y + 25.f);
+        hpFill.setFillColor(p.getPlayerId() == 2 ? sf::Color(255, 120, 120) : sf::Color::Red);
+        window.draw(hpFill);
+    }
 
     // Reset to Default View for HUD
     window.setView(window.getDefaultView());
@@ -1149,8 +1215,6 @@ void PlayingState::draw(sf::RenderWindow& window) {
 
     // Gold Text (Top Right)
     window.draw(m_goldText);
-    
-
 
     // EXP Bar Background (Bottom of screen)
     float expBarWidth = windowSize.x - 40.f;
@@ -1170,22 +1234,20 @@ void PlayingState::draw(sf::RenderWindow& window) {
         float x = startX + i * (boxWidth + padding);
         float y = startY; 
         
-        // Draw weapon box (grey bg, gold border)
         sf::RectangleShape bg(sf::Vector2f(boxWidth, boxHeight));
         bg.setPosition(x, y);
-        bg.setFillColor(sf::Color(160, 160, 160, 220)); // Greyish with some transparency
+        bg.setFillColor(sf::Color(160, 160, 160, 220));
         bg.setOutlineThickness(2.f);
         bg.setOutlineColor(sf::Color(228, 199, 109));
         window.draw(bg);
         
-        // Draw icon (at top of box)
         sf::Sprite iconSprite;
         iconSprite.setTexture(m_itemsTex);
         std::string name = m_weapons[i]->getName();
         sf::IntRect texRect = IconManager::GetInstance().getIconRect(name);
         
         if (name == "Bloody Tear") {
-            iconSprite.setColor(sf::Color(255, 100, 100)); // Red tinted
+            iconSprite.setColor(sf::Color(255, 100, 100));
         }
 
         iconSprite.setTextureRect(texRect);
@@ -1197,7 +1259,6 @@ void PlayingState::draw(sf::RenderWindow& window) {
         iconSprite.setPosition(x + (boxWidth - iconW) / 2.f, y + 2.f);
         window.draw(iconSprite);
         
-        // Draw level grid
         int level = m_weapons[i]->getLevel();
         int maxLevel = 8;
         float gridStartX = x + 5.f; 
@@ -1212,7 +1273,7 @@ void PlayingState::draw(sf::RenderWindow& window) {
             cell.setPosition(gridStartX + col * (cellSize + spacing), gridStartY + row * (cellSize + spacing));
             
             if (j < level) {
-                cell.setFillColor(sf::Color(255, 230, 80)); // Gold/Yellow
+                cell.setFillColor(sf::Color(255, 230, 80));
             } else {
                 cell.setFillColor(sf::Color::Black);
             }
@@ -1231,7 +1292,6 @@ void PlayingState::draw(sf::RenderWindow& window) {
         float y = passiveStartY;
         ++ownedIdx;
 
-        // Draw box (greenish bg, green border) — same size as weapon boxes
         sf::RectangleShape bg(sf::Vector2f(boxWidth, boxHeight));
         bg.setPosition(x, y);
         bg.setFillColor(sf::Color(50, 100, 50, 220));
@@ -1239,7 +1299,6 @@ void PlayingState::draw(sf::RenderWindow& window) {
         bg.setOutlineColor(sf::Color(100, 200, 100));
         window.draw(bg);
 
-        // Draw icon (at top of box)
         sf::Sprite iconSprite;
         iconSprite.setTexture(m_itemsTex);
         iconSprite.setTextureRect(m_passiveItems[i].iconRect);
@@ -1249,7 +1308,6 @@ void PlayingState::draw(sf::RenderWindow& window) {
         iconSprite.setPosition(x + (boxWidth - iconW) / 2.f, y + 2.f);
         window.draw(iconSprite);
 
-        // Draw level grid (same as weapons)
         int level   = m_passiveItems[i].level;
         int maxLevel = m_passiveItems[i].maxLevel;
         float gridStartX = x + 5.f;
@@ -1264,7 +1322,7 @@ void PlayingState::draw(sf::RenderWindow& window) {
             cell.setPosition(gridStartX + col * (cellSize + spacing), gridStartY + row * (cellSize + spacing));
 
             if (j < level) {
-                cell.setFillColor(sf::Color(100, 230, 100)); // Green for passive
+                cell.setFillColor(sf::Color(100, 230, 100));
             } else {
                 cell.setFillColor(sf::Color::Black);
             }
@@ -1290,10 +1348,32 @@ void PlayingState::draw(sf::RenderWindow& window) {
 void PlayingState::exit() {
 }
 
+Player* PlayingState::getNearestPlayer(const sf::Vector2f& pos) {
+    if (m_players.empty()) return nullptr;
+    Player* nearest = nullptr;
+    float minDistSq = std::numeric_limits<float>::max();
+    for (auto& p : m_players) {
+        if (!p.isActive()) continue;
+        float dx = p.getPosition().x - pos.x;
+        float dy = p.getPosition().y - pos.y;
+        float distSq = dx * dx + dy * dy;
+        if (distSq < minDistSq) {
+            minDistSq = distSq;
+            nearest = &p;
+        }
+    }
+    return nearest ? nearest : &m_players[0];
+}
+
 void PlayingState::addWeapon(const std::string& weaponName) {
+    addWeaponForPlayer(0, weaponName);
+}
+
+void PlayingState::addWeaponForPlayer(size_t playerIdx, const std::string& weaponName) {
     auto newWeapon = WeaponFactory::createWeapon(weaponName);
     if (newWeapon) {
         m_weapons.push_back(std::move(newWeapon));
+        m_weaponOwnerIndices.push_back(playerIdx);
     }
 }
 

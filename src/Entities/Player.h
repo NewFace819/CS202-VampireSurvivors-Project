@@ -16,7 +16,11 @@ public:
     void setSprite(const std::string& texturePath,
                    const std::vector<sf::IntRect>& walkFrames);
 
+    void setPlayerId(int id) { m_playerId = id; }
+    int getPlayerId() const { return m_playerId; }
+
 private:
+    int m_playerId = 1;
     sf::Texture m_texture;
     AnimatedSprite m_animSprite;
     sf::Vector2f m_facingDir;
@@ -26,4 +30,7 @@ private:
 
     // Fallback rectangle for when no sprite is set
     sf::RectangleShape m_fallbackShape;
+    sf::Font m_badgeFont;
+    bool m_hasFont = false;
 };
+

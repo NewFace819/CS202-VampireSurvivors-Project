@@ -8,6 +8,10 @@ Player::Player() {
     m_facingDir = sf::Vector2f(1.f, 0.f);
     m_isActive = true;
 
+    if (m_badgeFont.loadFromFile("assets/fonts/Courier_HintedSmooth.ttf")) {
+        m_hasFont = true;
+    }
+
     // Fallback blue rectangle if no sprite loaded
     m_fallbackShape.setSize(sf::Vector2f(20.f, 40.f));
     m_fallbackShape.setFillColor(sf::Color::Blue);
@@ -33,10 +37,20 @@ void Player::setSprite(const std::string& texturePath,
 
 void Player::update(float dt) {
     sf::Vector2f dir(0.f, 0.f);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) dir.y -= 1.f;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) dir.y += 1.f;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) dir.x -= 1.f;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) dir.x += 1.f;
+
+    if (m_playerId == 2) {
+        // Player 2 controls: Arrow keys
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))    dir.y -= 1.f;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))  dir.y += 1.f;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))  dir.x -= 1.f;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) dir.x += 1.f;
+    } else {
+        // Player 1 controls: WASD keys
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) dir.y -= 1.f;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) dir.y += 1.f;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) dir.x -= 1.f;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) dir.x += 1.f;
+    }
 
     // Normalize diagonal movement
     if (dir.x != 0.f && dir.y != 0.f) {
@@ -86,11 +100,28 @@ void Player::draw(sf::RenderWindow& window) {
     }
     
     // Debug draw collision circle
+    sf::Color ringColor = (m_playerId == 2) ? sf::Color(255, 100, 100, 120) : sf::Color(100, 100, 255, 120);
     sf::CircleShape debugCircle(16.f);
     debugCircle.setOrigin(16.f, 16.f);
     debugCircle.setPosition(m_position);
-    debugCircle.setFillColor(sf::Color(0, 0, 255, 100)); // semi-transparent blue
+    debugCircle.setFillColor(ringColor);
     window.draw(debugCircle);
+
+    // Player Indicator Badge (P1 / P2) above player's head
+    if (m_hasFont) {
+        sf::Text badgeText;
+        badgeText.setFont(m_badgeFont);
+        badgeText.setString(m_playerId == 2 ? "P2" : "P1");
+        badgeText.setCharacterSize(14);
+        badgeText.setStyle(sf::Text::Bold);
+        badgeText.setFillColor(m_playerId == 2 ? sf::Color(255, 80, 80) : sf::Color(80, 180, 255));
+        badgeText.setOutlineColor(sf::Color::Black);
+        badgeText.setOutlineThickness(1.5f);
+        sf::FloatRect bounds = badgeText.getLocalBounds();
+        badgeText.setOrigin(bounds.left + bounds.width / 2.f, bounds.top + bounds.height / 2.f);
+        badgeText.setPosition(m_position.x, m_position.y - 28.f);
+        window.draw(badgeText);
+    }
 }
 
 sf::FloatRect Player::getBounds() const {

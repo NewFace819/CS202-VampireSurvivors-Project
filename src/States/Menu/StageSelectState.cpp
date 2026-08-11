@@ -3,7 +3,10 @@
 #include <iostream>
 
 StageSelectState::StageSelectState(GameManager* manager, CharacterType charType)
-    : m_manager(manager), m_charType(charType), m_timeInState(0.f) {
+    : StageSelectState(manager, std::vector<CharacterType>{charType}) {}
+
+StageSelectState::StageSelectState(GameManager* manager, const std::vector<CharacterType>& charTypes)
+    : m_manager(manager), m_charTypes(charTypes), m_timeInState(0.f) {
 
     if (!m_font.loadFromFile("assets/fonts/Courier_HintedSmooth.ttf")) {
         std::cerr << "StageSelectState: Could not load font!\n";
@@ -115,7 +118,7 @@ void StageSelectState::update(float dt) {
 
             if (m_timeInState > 0.2f && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
                 // Change state to PlayingState with selected character and stage!
-                m_manager->changeState(std::make_unique<PlayingState>(m_manager, m_charType, sp.type));
+                m_manager->changeState(std::make_unique<PlayingState>(m_manager, m_charTypes, sp.type));
                 return;
             }
         } else {

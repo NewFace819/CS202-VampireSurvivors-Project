@@ -35,10 +35,16 @@ enum class StageType {
 class PlayingState : public GameState {
 public:
     PlayingState(GameManager* manager, CharacterType charType, StageType stageType);
+    PlayingState(GameManager* manager, const std::vector<CharacterType>& charTypes, StageType stageType);
     void enter() override;
     void update(float dt) override;
     void draw(sf::RenderWindow& window) override;
     void exit() override;
+
+    Player& getPlayer(size_t index = 0) { return m_players.empty() ? m_dummyPlayer : m_players[index < m_players.size() ? index : 0]; }
+    std::vector<Player>& getPlayers() { return m_players; }
+    const std::vector<Player>& getPlayers() const { return m_players; }
+    Player* getNearestPlayer(const sf::Vector2f& pos);
 
     // Add gold to current run and profile persistence
     void addGoldToRun(int amount) {
@@ -48,6 +54,7 @@ public:
 
     // Called by LevelUpState to grant a new weapon by name
     void addWeapon(const std::string& weaponName);
+    void addWeaponForPlayer(size_t playerIdx, const std::string& weaponName);
 
 
     // Query which weapon type strings are currently owned
@@ -87,7 +94,9 @@ private:
     GameManager* m_manager;
     SpatialHashGrid m_grid;
     
-    Player m_player;
+    std::vector<Player> m_players;
+    Player m_dummyPlayer;
+    std::vector<size_t> m_weaponOwnerIndices; // Maps weapon index -> player index
     ObjectPool<EnemyBase> m_enemyPool;
     ObjectPool<ShooterEnemy> m_shooterPool;
     std::vector<EnemyBase*> m_activeEnemies;

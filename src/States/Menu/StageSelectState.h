@@ -9,6 +9,7 @@ class GameManager;
 class StageSelectState : public GameState {
 public:
     StageSelectState(GameManager* manager, CharacterType charType);
+    StageSelectState(GameManager* manager, const std::vector<CharacterType>& charTypes);
     ~StageSelectState() override = default;
 
     void enter() override;
@@ -18,7 +19,7 @@ public:
 
 private:
     GameManager* m_manager;
-    CharacterType m_charType;
+    std::vector<CharacterType> m_charTypes;
     
     sf::Font m_font;
     sf::Text m_titleText;
