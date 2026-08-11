@@ -43,9 +43,18 @@ public:
     }
 
     void onPickup(PlayingState* playing) override {
-        // Grant EXP
+        // Grant EXP to global manager as fallback
         StatsManager::GetInstance().addExp(m_expValue);
         m_isActive = false; // deactivate
+    }
+
+    void onPickupPlayer(PlayingState* playing, Player* collector) override {
+        if (collector) {
+            collector->addExp(m_expValue);
+        } else {
+            StatsManager::GetInstance().addExp(m_expValue);
+        }
+        m_isActive = false;
     }
 
     float getExpValue() const { return m_expValue; }

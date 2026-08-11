@@ -1028,7 +1028,7 @@ void PlayingState::update(float dt) {
         item->update(dt, nearPlayer ? nearPlayer : &m_players[0]);
         for (auto& p : m_players) {
             if (p.isActive() && item->isActive() && item->getBounds().intersects(p.getBounds())) {
-                item->onPickup(this);
+                item->onPickupPlayer(this, &p);
                 break;
             }
         }
@@ -1064,11 +1064,24 @@ void PlayingState::update(float dt) {
     // Update gold HUD text
     m_goldText.setString("GOLD: " + std::to_string(m_runGold));
 
-    // Detect player level-up and show the upgrade screen
+    // Detect per-player level-up and queue upgrade screen
+    for (size_t i = 0; i < m_players.size(); ++i) {
+        if (m_players[i].isActive() && m_players[i].checkLevelUp()) {
+            m_levelUpQueue.push_back(i);
+        }
+    }
+
+    // Also check global StatsManager level up fallback for chests or extra exp sources
     int currentLevel = StatsManager::GetInstance().getLevel();
     if (currentLevel > m_lastLevel) {
         m_lastLevel++;
-        m_manager->pushState(std::make_unique<LevelUpState>(m_manager, this));
+        m_levelUpQueue.push_back(0);
+    }
+
+    if (!m_levelUpQueue.empty()) {
+        size_t nextPlayerIdx = m_levelUpQueue.front();
+        m_levelUpQueue.erase(m_levelUpQueue.begin());
+        m_manager->pushState(std::make_unique<LevelUpState>(m_manager, this, nextPlayerIdx));
     }
 
     // Check Player Death / Revival
@@ -1216,12 +1229,36 @@ void PlayingState::draw(sf::RenderWindow& window) {
     // Gold Text (Top Right)
     window.draw(m_goldText);
 
-    // EXP Bar Background (Bottom of screen)
+    // EXP Bar Background (Bottom of screen) - per player
     float expBarWidth = windowSize.x - 40.f;
-    sf::RectangleShape expBg(sf::Vector2f(expBarWidth, 10.f));
-    expBg.setPosition(20.f, windowSize.y - 20.f);
-    expBg.setFillColor(sf::Color(0, 0, 50));
-    window.draw(expBg);
+    size_t numPlayers = m_players.size();
+    float barHeight = (numPlayers > 1) ? 7.f : 10.f;
+
+    for (size_t i = 0; i < numPlayers; ++i) {
+        float yPos = windowSize.y - static_cast<float>(numPlayers - i) * (barHeight + 4.f) - 4.f;
+        sf::RectangleShape expBg(sf::Vector2f(expBarWidth, barHeight));
+        expBg.setPosition(20.f, yPos);
+        expBg.setFillColor(sf::Color(20, 20, 45));
+        expBg.setOutlineThickness(1.f);
+        expBg.setOutlineColor(sf::Color::Black);
+        window.draw(expBg);
+
+        float expPct = std::min(1.f, std::max(0.f, m_players[i].getExp() / m_players[i].getExpToNextLevel()));
+        sf::RectangleShape expFill(sf::Vector2f(expBarWidth * expPct, barHeight));
+        expFill.setPosition(20.f, yPos);
+        expFill.setFillColor(i == 1 ? sf::Color(220, 100, 255) : sf::Color(0, 180, 255));
+        window.draw(expFill);
+
+        // Level indicator text
+        sf::Text lvlText;
+        lvlText.setFont(m_font);
+        lvlText.setString("P" + std::to_string(i + 1) + " LV " + std::to_string(m_players[i].getLevel()));
+        lvlText.setCharacterSize(11);
+        lvlText.setStyle(sf::Text::Bold);
+        lvlText.setFillColor(sf::Color::White);
+        lvlText.setPosition(25.f, yPos - 3.f);
+        window.draw(lvlText);
+    }
 
     // Draw HUD - Weapons
     float startX = 20.f; 
@@ -1377,19 +1414,34 @@ void PlayingState::addWeaponForPlayer(size_t playerIdx, const std::string& weapo
     }
 }
 
-std::set<std::string> PlayingState::getOwnedWeaponNames() const {
+std::set<std::string> PlayingState::getOwnedWeaponNames(size_t playerIdx) const {
     std::set<std::string> names;
-    for (const auto& w : m_weapons) {
-        names.insert(w->getName());
+    for (size_t i = 0; i < m_weapons.size(); ++i) {
+        size_t owner = (i < m_weaponOwnerIndices.size()) ? m_weaponOwnerIndices[i] : 0;
+        if (owner == playerIdx) {
+            names.insert(m_weapons[i]->getName());
+        }
     }
     return names;
 }
 
-std::vector<WeaponBase*> PlayingState::getUpgradeableWeapons() {
+std::vector<WeaponBase*> PlayingState::getUpgradeableWeapons(size_t playerIdx) {
     std::vector<WeaponBase*> result;
-    for (auto& w : m_weapons) {
-        if (!w->isMaxLevel()) {
-            result.push_back(w.get());
+    for (size_t i = 0; i < m_weapons.size(); ++i) {
+        size_t owner = (i < m_weaponOwnerIndices.size()) ? m_weaponOwnerIndices[i] : 0;
+        if (owner == playerIdx && !m_weapons[i]->isMaxLevel()) {
+            result.push_back(m_weapons[i].get());
+        }
+    }
+    return result;
+}
+
+std::vector<WeaponBase*> PlayingState::getWeaponsForPlayer(size_t playerIdx) const {
+    std::vector<WeaponBase*> result;
+    for (size_t i = 0; i < m_weapons.size(); ++i) {
+        size_t owner = (i < m_weaponOwnerIndices.size()) ? m_weaponOwnerIndices[i] : 0;
+        if (owner == playerIdx) {
+            result.push_back(m_weapons[i].get());
         }
     }
     return result;
@@ -1397,21 +1449,44 @@ std::vector<WeaponBase*> PlayingState::getUpgradeableWeapons() {
 
 // --- Passive Item Methods ---
 
-void PlayingState::addOrUpgradePassive(const std::string& name) {
-    for (auto& p : m_passiveItems) {
+std::vector<PassiveItem>& PlayingState::getPassiveItems(size_t playerIdx) {
+    if (m_playerPassiveItems.empty()) {
+        m_playerPassiveItems.push_back(createDefaultPassiveItems());
+    }
+    if (playerIdx >= m_playerPassiveItems.size()) {
+        return m_playerPassiveItems[0];
+    }
+    return m_playerPassiveItems[playerIdx];
+}
+
+const std::vector<PassiveItem>& PlayingState::getPassiveItems(size_t playerIdx) const {
+    if (m_playerPassiveItems.empty()) {
+        static std::vector<PassiveItem> dummy = createDefaultPassiveItems();
+        return dummy;
+    }
+    if (playerIdx >= m_playerPassiveItems.size()) {
+        return m_playerPassiveItems[0];
+    }
+    return m_playerPassiveItems[playerIdx];
+}
+
+void PlayingState::addOrUpgradePassive(const std::string& name, size_t playerIdx) {
+    auto& passives = getPassiveItems(playerIdx);
+    for (auto& p : passives) {
         if (p.name == name) {
             if (p.level < p.maxLevel) {
                 p.level++;
-                std::cout << "Passive " << name << " now level " << p.level << "\n";
+                std::cout << "Player " << (playerIdx + 1) << " Passive " << name << " now level " << p.level << "\n";
             }
             return;
         }
     }
 }
 
-std::set<std::string> PlayingState::getOwnedPassiveNames() const {
+std::set<std::string> PlayingState::getOwnedPassiveNames(size_t playerIdx) const {
     std::set<std::string> names;
-    for (const auto& p : m_passiveItems) {
+    const auto& passives = getPassiveItems(playerIdx);
+    for (const auto& p : passives) {
         if (p.isOwned()) names.insert(p.name);
     }
     return names;

@@ -55,8 +55,8 @@ static sf::IntRect getItemIconRect(const std::string& name, PlayingState* playin
     return sf::IntRect(0, 0, 16, 16); // Default fallback
 }
 
-LevelUpState::LevelUpState(GameManager* manager, PlayingState* playing)
-    : m_manager(manager), m_playing(playing) {
+LevelUpState::LevelUpState(GameManager* manager, PlayingState* playing, size_t playerIdx)
+    : m_manager(manager), m_playing(playing), m_playerIdx(playerIdx) {
     
     IconManager::GetInstance().init();
 
@@ -72,9 +72,15 @@ LevelUpState::LevelUpState(GameManager* manager, PlayingState* playing)
     m_overlay.setFillColor(sf::Color(0, 0, 0, 170));
 
     m_titleText.setFont(m_font);
-    m_titleText.setString("Level Up!");
+    if (m_playing && m_playing->getPlayers().size() > 1) {
+        std::string pName = "PLAYER " + std::to_string(m_playerIdx + 1) + " LEVEL UP!";
+        m_titleText.setString(pName);
+        m_titleText.setFillColor(m_playerIdx == 1 ? sf::Color(255, 130, 255) : sf::Color(100, 200, 255));
+    } else {
+        m_titleText.setString("Level Up!");
+        m_titleText.setFillColor(sf::Color::White);
+    }
     m_titleText.setCharacterSize(44);
-    m_titleText.setFillColor(sf::Color::White);
     m_titleText.setStyle(sf::Text::Bold);
     
     m_footerText.setFont(m_font);
@@ -150,11 +156,17 @@ std::vector<LevelUpOption> LevelUpState::sampleItemsWithVSRules(std::vector<Leve
 void LevelUpState::buildOptions() {
     m_options.clear();
     m_isBanishMode = false;
-    m_titleText.setString("Level Up!");
-    m_titleText.setFillColor(sf::Color::White);
+    if (m_playing && m_playing->getPlayers().size() > 1) {
+        std::string pName = "PLAYER " + std::to_string(m_playerIdx + 1) + " LEVEL UP!";
+        m_titleText.setString(pName);
+        m_titleText.setFillColor(m_playerIdx == 1 ? sf::Color(255, 130, 255) : sf::Color(100, 200, 255));
+    } else {
+        m_titleText.setString("Level Up!");
+        m_titleText.setFillColor(sf::Color::White);
+    }
 
-    auto owned       = m_playing->getOwnedWeaponNames();
-    auto upgradeable = m_playing->getUpgradeableWeapons();
+    auto owned       = m_playing->getOwnedWeaponNames(m_playerIdx);
+    auto upgradeable = m_playing->getUpgradeableWeapons(m_playerIdx);
     const auto& banned = m_playing->getBannedWeapons();
 
     std::vector<LevelUpOption> pool;
@@ -199,7 +211,7 @@ void LevelUpState::buildOptions() {
     }
 
     // 3) Passive items
-    auto& passives = m_playing->getPassiveItems();
+    auto& passives = m_playing->getPassiveItems(m_playerIdx);
     for (auto& p : passives) {
         if (!p.isMaxLevel() && banned.find(p.name) == banned.end()) {
             LevelUpOption opt;
@@ -385,8 +397,8 @@ void LevelUpState::buildLeftPanel() {
     const int cols = 6;
     const float invW = cols * slotSize + (cols - 1) * slotSpace + 20.f;
     
-    auto& activeWeapons = m_playing->getWeapons();
-    auto& activePassives = m_playing->getPassiveItems();
+    auto activeWeapons = m_playing->getWeaponsForPlayer(m_playerIdx);
+    auto& activePassives = m_playing->getPassiveItems(m_playerIdx);
 
     // Weapon row
     for (int i = 0; i < cols; ++i) {
@@ -712,10 +724,10 @@ void LevelUpState::applyOption(const LevelUpOption& opt) {
     } else if (opt.weaponName == "Floor Chicken") {
         StatsManager::GetInstance().heal(30.f);
     } else if (opt.isPassive) {
-        m_playing->addOrUpgradePassive(opt.weaponName);
+        m_playing->addOrUpgradePassive(opt.weaponName, m_playerIdx);
     } else if (opt.existingWeapon) {
         opt.existingWeapon->levelUp();
     } else {
-        m_playing->addWeapon(opt.weaponName);
+        m_playing->addWeaponForPlayer(m_playerIdx, opt.weaponName);
     }
 }

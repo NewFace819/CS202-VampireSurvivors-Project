@@ -66,4 +66,5 @@ private:
     int m_gold;
     std::map<std::string, int> m_upgrades; // name -> current level
     std::vector<PowerUpInfo> m_powerUps;
+    std::string m_saveFilePath = "save.txt";
 };

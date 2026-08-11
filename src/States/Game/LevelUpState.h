@@ -27,7 +27,7 @@ struct LevelUpOption {
 
 class LevelUpState : public GameState {
 public:
-    LevelUpState(GameManager* manager, PlayingState* playing);
+    LevelUpState(GameManager* manager, PlayingState* playing, size_t playerIdx = 0);
     void enter() override;
     void update(float dt) override;
     void draw(sf::RenderWindow& window) override;
@@ -45,6 +45,7 @@ private:
 
     GameManager*  m_manager;
     PlayingState* m_playing;
+    size_t        m_playerIdx = 0;
 
     std::vector<LevelUpOption> m_options; // Up to 4 chosen options!
 

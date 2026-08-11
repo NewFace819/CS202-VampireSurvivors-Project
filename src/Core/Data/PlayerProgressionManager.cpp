@@ -9,6 +9,8 @@ using json = nlohmann::json;
 
 bool PlayerProgressionManager::Save(const std::string& filepath) const
 {
+    std::string targetPath = (filepath == "save_data.json" && !m_saveFilePath.empty()) ? m_saveFilePath : filepath;
+
     json j;
     j["gold"] = GetGold();
     
@@ -26,25 +28,38 @@ bool PlayerProgressionManager::Save(const std::string& filepath) const
     }
     j["purchasedPowerUps"] = powerupsObj;
     
-    std::ofstream file(filepath);
+    std::ofstream file(targetPath);
     if (!file.is_open())
     {
-        std::cerr << "PlayerProgressionManager: Failed to open save file for writing: " << filepath << std::endl;
+        std::cerr << "PlayerProgressionManager: Failed to open save file for writing: " << targetPath << std::endl;
         return false;
     }
     
     file << j.dump(4);
+    std::cout << "PlayerProgressionManager: Saved progression data to " << targetPath << std::endl;
     return true;
 }
 
 bool PlayerProgressionManager::Load(const std::string& filepath)
 {
-    std::ifstream file(filepath);
+    std::string actualPath = filepath;
+    std::ifstream file(actualPath);
+    if (!file.is_open())
+    {
+        actualPath = "../" + filepath;
+        file.open(actualPath);
+    }
+    if (!file.is_open())
+    {
+        actualPath = "../../" + filepath;
+        file.open(actualPath);
+    }
     if (!file.is_open())
     {
         // File doesn't exist, which is fine for first time players
         return false;
     }
+    m_saveFilePath = actualPath;
     
     json j;
     try
@@ -53,9 +68,10 @@ bool PlayerProgressionManager::Load(const std::string& filepath)
     }
     catch (const json::parse_error& e)
     {
-        std::cerr << "PlayerProgressionManager: Parse error in save file: " << e.what() << std::endl;
+        std::cerr << "PlayerProgressionManager: Parse error in save file (" << actualPath << "): " << e.what() << std::endl;
         return false;
     }
+    std::cout << "PlayerProgressionManager: Successfully loaded progression data from " << actualPath << std::endl;
     
     int jsonGold = j.value("gold", 0);
     if (ProfileManager::GetInstance().getGold() == 0 && jsonGold > 0)

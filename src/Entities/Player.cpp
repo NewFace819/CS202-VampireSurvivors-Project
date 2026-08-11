@@ -129,3 +129,17 @@ sf::FloatRect Player::getBounds() const {
         return m_animSprite.getGlobalBounds();
     return m_fallbackShape.getGlobalBounds();
 }
+
+void Player::addExp(float amount) {
+    m_exp += amount * ProfileManager::GetInstance().getGrowthMultiplier();
+}
+
+bool Player::checkLevelUp() {
+    if (m_exp >= m_expToNext) {
+        m_exp -= m_expToNext;
+        m_level++;
+        m_expToNext = 5.f + (m_level - 1) * 10.f;
+        return true;
+    }
+    return false;
+}

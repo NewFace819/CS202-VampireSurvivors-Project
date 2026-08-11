@@ -73,6 +73,7 @@ public:
     }
 
     virtual void onPickup(PlayingState* playing) = 0;
+    virtual void onPickupPlayer(PlayingState* playing, Player* collector) { onPickup(playing); }
 
 protected:
     void updatePosition() {

@@ -34,11 +34,21 @@ ProfileManager::ProfileManager() : m_gold(0) {
 }
 
 bool ProfileManager::load(const std::string& filepath) {
-    std::ifstream file(filepath);
+    std::string actualPath = filepath;
+    std::ifstream file(actualPath);
+    if (!file.is_open()) {
+        actualPath = "../" + filepath;
+        file.open(actualPath);
+    }
+    if (!file.is_open()) {
+        actualPath = "../../" + filepath;
+        file.open(actualPath);
+    }
     if (!file.is_open()) {
         std::cerr << "ProfileManager: No save file found. Starting fresh.\n";
         return false;
     }
+    m_saveFilePath = actualPath;
 
     std::string line;
     while (std::getline(file, line)) {
@@ -71,15 +81,16 @@ bool ProfileManager::load(const std::string& filepath) {
             }
         }
     }
-    std::cout << "ProfileManager: Successfully loaded profile with " << m_gold << " gold.\n";
+    std::cout << "ProfileManager: Successfully loaded profile with " << m_gold << " gold from " << m_saveFilePath << ".\n";
     file.close();
     return true;
 }
 
 bool ProfileManager::save(const std::string& filepath) {
-    std::ofstream file(filepath);
+    std::string path = (filepath == "save.txt" && !m_saveFilePath.empty()) ? m_saveFilePath : filepath;
+    std::ofstream file(path);
     if (!file.is_open()) {
-        std::cerr << "ProfileManager: Failed to open save file for writing!\n";
+        std::cerr << "ProfileManager: Failed to open save file for writing: " << path << "\n";
         return false;
     }
 
@@ -89,7 +100,7 @@ bool ProfileManager::save(const std::string& filepath) {
         file << pair.first << " " << pair.second << "\n";
     }
 
-    std::cout << "ProfileManager: Saved profile with " << m_gold << " gold.\n";
+    std::cout << "ProfileManager: Saved profile with " << m_gold << " gold to " << path << ".\n";
     file.close();
     return true;
 }

@@ -19,8 +19,17 @@ public:
     void setPlayerId(int id) { m_playerId = id; }
     int getPlayerId() const { return m_playerId; }
 
+    int getLevel() const { return m_level; }
+    float getExp() const { return m_exp; }
+    float getExpToNextLevel() const { return m_expToNext; }
+    void addExp(float amount);
+    bool checkLevelUp();
+
 private:
     int m_playerId = 1;
+    int m_level = 1;
+    float m_exp = 0.f;
+    float m_expToNext = 5.f;
     sf::Texture m_texture;
     AnimatedSprite m_animSprite;
     sf::Vector2f m_facingDir;

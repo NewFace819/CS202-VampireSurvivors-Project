@@ -58,7 +58,7 @@ public:
 
 
     // Query which weapon type strings are currently owned
-    std::set<std::string> getOwnedWeaponNames() const;
+    std::set<std::string> getOwnedWeaponNames(size_t playerIdx = 0) const;
     const std::set<std::string>& getBannedWeapons() const { return m_bannedWeapons; }
     void banishItem(const std::string& name) { m_bannedWeapons.insert(name); }
 
@@ -71,14 +71,15 @@ public:
     void useBanishCharge() { if (m_banishCharges > 0) m_banishCharges--; }
 
     // Raw pointers into m_weapons for LevelUpState to call levelUp() on
-    std::vector<WeaponBase*> getUpgradeableWeapons();
+    std::vector<WeaponBase*> getUpgradeableWeapons(size_t playerIdx = 0);
+    std::vector<WeaponBase*> getWeaponsForPlayer(size_t playerIdx = 0) const;
     const std::vector<std::unique_ptr<WeaponBase>>& getWeapons() const { return m_weapons; }
 
     // --- Passive Item Interface (for LevelUpState) ---
-    std::vector<PassiveItem>& getPassiveItems() { return m_passiveItems; }
-    const std::vector<PassiveItem>& getPassiveItems() const { return m_passiveItems; }
-    void addOrUpgradePassive(const std::string& name);
-    std::set<std::string> getOwnedPassiveNames() const;
+    std::vector<PassiveItem>& getPassiveItems(size_t playerIdx = 0);
+    const std::vector<PassiveItem>& getPassiveItems(size_t playerIdx = 0) const;
+    void addOrUpgradePassive(const std::string& name, size_t playerIdx = 0);
+    std::set<std::string> getOwnedPassiveNames(size_t playerIdx = 0) const;
 
     // --- Per-run passive multipliers ---
     float getPassiveDamageMultiplier() const;
@@ -97,6 +98,7 @@ private:
     std::vector<Player> m_players;
     Player m_dummyPlayer;
     std::vector<size_t> m_weaponOwnerIndices; // Maps weapon index -> player index
+    std::vector<size_t> m_levelUpQueue;
     ObjectPool<EnemyBase> m_enemyPool;
     ObjectPool<ShooterEnemy> m_shooterPool;
     std::vector<EnemyBase*> m_activeEnemies;
@@ -105,6 +107,7 @@ private:
     std::vector<Projectile> m_activeProjectiles;
     std::vector<Projectile> m_bossProjectiles;
     std::vector<std::unique_ptr<Collectible>> m_activeCollectibles;
+    std::vector<std::vector<PassiveItem>> m_playerPassiveItems;
     std::vector<PassiveItem> m_passiveItems;
     std::vector<TreasureChest> m_chests;
     std::vector<std::unique_ptr<Obstacle>> m_obstacles;

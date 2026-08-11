@@ -10,6 +10,7 @@ class PlayerProgressionManager
 private:
     std::unordered_set<std::string> m_unlockedCharacters;
     std::unordered_map<std::string, int> m_purchasedPowerUps;
+    mutable std::string m_saveFilePath = "save_data.json";
 
 public:
     PlayerProgressionManager() = default;
