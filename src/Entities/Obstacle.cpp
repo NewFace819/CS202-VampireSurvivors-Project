@@ -24,14 +24,14 @@ void Obstacle::draw(sf::RenderWindow& window) {
         window.draw(m_sprite);
     }
     
-    // Debug draw collision - ALWAYS draw if active and has collision
-    if (m_isActive && m_footprintRatio > 0.f) {
+    // Debug draw collision - disabled for release
+    /*if (m_isActive && m_footprintRatio > 0.f) {
         sf::FloatRect bounds = getBounds();
         sf::RectangleShape debugRect(sf::Vector2f(bounds.width, bounds.height));
         debugRect.setPosition(bounds.left, bounds.top);
         debugRect.setFillColor(sf::Color(255, 0, 0, 100)); // semi-transparent red
         window.draw(debugRect);
-    }
+    }*/
 }
 
 sf::FloatRect Obstacle::getBounds() const {

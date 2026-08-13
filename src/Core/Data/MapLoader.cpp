@@ -79,8 +79,13 @@ MapData MapLoader::LoadMap(const std::string& filepath, sf::Texture& outAtlasTex
                             
                             float collisionRatio = 0.0f;
                             float widthRatio = 1.0f;
+                            
+                            bool noCollision = tile.value("noCollision", false);
+                            
                             if (name == "Obstacle" || name == "Walls" || name == "PlayerWall") {
-                                collisionRatio = 0.8f; // Make bottom 80% solid
+                                if (!noCollision) {
+                                    collisionRatio = 0.8f; // Make bottom 80% solid
+                                }
                                 widthRatio = 0.4f;     // Trees are usually thinner than a full tile
                             }
 

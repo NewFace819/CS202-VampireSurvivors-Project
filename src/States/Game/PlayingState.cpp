@@ -614,8 +614,8 @@ void PlayingState::update(float dt) {
 
         if (m_stageType == StageType::InlaidLibrary) {
             sf::Vector2f pos = p.getPosition();
-            float minY = 640.f;
-            float maxY = 1408.f;
+            float minY = 24.f * 60.f; // 1440
+            float maxY = 40.f * 60.f; // 2400
             if (pos.y < minY) {
                 p.setPosition(pos.x, minY);
             } else if (pos.y > maxY) {
@@ -859,8 +859,8 @@ void PlayingState::update(float dt) {
 
         if (m_stageType == StageType::InlaidLibrary) {
             sf::Vector2f epos = enemy->getPosition();
-            float minEY = 600.f;
-            float maxEY = 1448.f;
+            float minEY = 24.f * 60.f;
+            float maxEY = 40.f * 60.f;
             if (epos.y < minEY) {
                 enemy->setPosition(epos.x, minEY);
             } else if (epos.y > maxEY) {
@@ -1128,7 +1128,11 @@ void PlayingState::update(float dt) {
 }
 
 void PlayingState::draw(sf::RenderWindow& window) {
-    window.clear(sf::Color(20, 50, 20));
+    if (m_stageType == StageType::InlaidLibrary) {
+        window.clear(sf::Color::Black);
+    } else {
+        window.clear(sf::Color(20, 50, 20));
+    }
 
     sf::Vector2f cam(0.f, 0.f);
     int activeCount = 0;
