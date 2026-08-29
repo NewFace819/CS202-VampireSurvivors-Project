@@ -1,0 +1,67 @@
+{
+  "name": "Green Acres",
+  "waves": [
+    {
+      "startTime": 0.0,
+      "spawnInterval": 1.0,
+      "enemies": [
+        "ZOMBIE",
+        "SKELETON"
+      ],
+      "enemyMinimum": 15
+    },
+    {
+      "startTime": 60.0,
+      "spawnInterval": 0.8,
+      "enemies": [
+        "MUDMAN",
+        "SKELETON"
+      ],
+      "boss": "GIANT_BOSS",
+      "enemyMinimum": 30
+    },
+    {
+      "startTime": 120.0,
+      "spawnInterval": 0.6,
+      "enemies": [
+        "MUDMAN",
+        "Undead Witch",
+        "SKELETON_4"
+      ],
+      "enemyMinimum": 50
+    },
+    {
+      "startTime": 180.0,
+      "spawnInterval": 0.4,
+      "enemies": [
+        "SKELETON_4",
+        "SKELETON_5",
+        "Undead Witch"
+      ],
+      "boss": "Pipestrello 4 (glowing bat)",
+      "enemyMinimum": 70
+    },
+    {
+      "startTime": 240.0,
+      "spawnInterval": 0.3,
+      "enemies": [
+        "SKELETON_5",
+        "SKELETON_6",
+        "MUDMAN",
+        "Undead Witch"
+      ],
+      "enemyMinimum": 90
+    },
+    {
+      "startTime": 300.0,
+      "spawnInterval": 0.2,
+      "enemies": [
+        "SKELETON_6",
+        "ZOMBIE",
+        "Undead Witch"
+      ],
+      "boss": "Pipestrello 4 (glowing bat)",
+      "enemyMinimum": 100
+    }
+  ]
+}

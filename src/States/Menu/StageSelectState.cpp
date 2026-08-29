@@ -40,22 +40,29 @@ StageSelectState::StageSelectState(GameManager* manager, const std::vector<Chara
             StageType::MadForest,
             "Mad Forest",
             "A dark forest teeming with bats,\nzombies, and skeletons.\n\nDifficulty: Normal",
-            sf::Color(25, 45, 25), // Dark Forest Green
-            sf::Color(100, 200, 100) // Vibrant Green border
+            sf::Color(25, 45, 25),
+            sf::Color(100, 200, 100)
         },
         {
             StageType::InlaidLibrary,
             "Inlaid Library",
             "A long library corridor with\naggressive undead witches\nfiring magic projectiles.\n\nDifficulty: Hard",
-            sf::Color(25, 25, 45), // Dark Indigo Library
-            sf::Color(100, 100, 220) // Vibrant Blue border
+            sf::Color(25, 25, 45),
+            sf::Color(100, 100, 220)
+        },
+        {
+            StageType::PlantMap,
+            "Green Acres",
+            "Overgrown ruins crawling with\nmudmen and undead.\nDense foliage hides danger.\n\nDifficulty: Hard",
+            sf::Color(20, 40, 20),
+            sf::Color(80, 200, 80)
         }
     };
 
-    float panelW = 400.f;
+    float panelW = 300.f;
     float panelH = 300.f;
-    float gap = 60.f;
-    float totalW = 2 * panelW + gap;
+    float gap = 40.f;
+    float totalW = configs.size() * panelW + (configs.size() - 1) * gap;
     float startX = (windowSize.x - totalW) / 2.f;
     float startY = (windowSize.y - panelH) / 2.f + 50.f;
 
@@ -110,11 +117,12 @@ void StageSelectState::update(float dt) {
         if (sp.panel.getGlobalBounds().contains(mousePosF)) {
             // Brighten background on hover
             sp.panel.setOutlineThickness(6.f);
-            if (sp.type == StageType::MadForest) {
+            if (sp.type == StageType::MadForest)
                 sp.panel.setFillColor(sf::Color(35, 65, 35));
-            } else {
+            else if (sp.type == StageType::InlaidLibrary)
                 sp.panel.setFillColor(sf::Color(35, 35, 65));
-            }
+            else
+                sp.panel.setFillColor(sf::Color(30, 60, 30));
 
             if (m_timeInState > 0.2f && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
                 // Change state to PlayingState with selected character and stage!
@@ -123,11 +131,12 @@ void StageSelectState::update(float dt) {
             }
         } else {
             sp.panel.setOutlineThickness(4.f);
-            if (sp.type == StageType::MadForest) {
+            if (sp.type == StageType::MadForest)
                 sp.panel.setFillColor(sf::Color(25, 45, 25));
-            } else {
+            else if (sp.type == StageType::InlaidLibrary)
                 sp.panel.setFillColor(sf::Color(25, 25, 45));
-            }
+            else
+                sp.panel.setFillColor(sf::Color(20, 40, 20));
         }
     }
 }

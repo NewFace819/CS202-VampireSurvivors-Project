@@ -74,6 +74,22 @@ PlayingState::PlayingState(GameManager* manager, const std::vector<CharacterType
         if (!m_bgTex.loadFromFile(bgPath)) {
             std::cerr << "PlayingState: Could not load background texture: " << bgPath << "\n";
         }
+    } else if (m_stageType == StageType::PlantMap) {
+        waveJsonPath = "assets/data/plant_map.json";
+        MapData mapData = MapLoader::LoadMap("assets/data/maps/plant_map.json", m_libraryPropsTex);
+        if (mapData.success) {
+            m_bgTex.loadFromImage(mapData.backgroundTexture->getTexture().copyToImage());
+            m_bgTex.setSmooth(false);
+            for (auto& obs : mapData.obstacles) {
+                m_baseObstacles.push_back(std::move(obs));
+            }
+        } else {
+            // Fallback: plain green background
+            bgPath = "assets/images/maps/PlantTexturePacked.png";
+            if (!m_bgTex.loadFromFile(bgPath)) {
+                std::cerr << "PlayingState: Could not load PlantTexturePacked.png!\n";
+            }
+        }
     }
 
     m_bgTex.setRepeated(false);
@@ -1373,17 +1389,7 @@ void PlayingState::draw(sf::RenderWindow& window) {
         }
     }
 
-    // EXP Bar Fill
-    float expPercent = std::max(0.f, stats.getExp() / stats.getExpToNextLevel());
-    sf::RectangleShape expFill(sf::Vector2f(expBarWidth * expPercent, 10.f));
-    expFill.setPosition(20.f, windowSize.y - 20.f);
-    expFill.setFillColor(sf::Color::Blue);
-    window.draw(expFill);
 
-    sf::FloatRect levelBounds = m_levelText.getLocalBounds();
-    m_levelText.setOrigin(levelBounds.left + levelBounds.width / 2.0f, levelBounds.top + levelBounds.height / 2.0f);
-    m_levelText.setPosition(windowSize.x / 2.0f, windowSize.y - 15.f);
-    window.draw(m_levelText);
 }
 
 void PlayingState::exit() {

@@ -29,7 +29,8 @@ enum class CharacterType {
 
 enum class StageType {
     MadForest,
-    InlaidLibrary
+    InlaidLibrary,
+    PlantMap
 };
 
 class PlayingState : public GameState {

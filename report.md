@@ -1,0 +1,631 @@
+# CS202 – Vampire Survivors Clone: Project Report
+
+**Course:** CS202 – Object-Oriented Programming  
+**Language:** C++20  
+**Library:** SFML 2.6  
+**Build system:** CMake (FetchContent – no manual dependency installation needed)
+
+---
+
+> [!CAUTION]
+> ## ✏️ TODO — Fill these in before submission
+>
+> The items below are **not done yet** and require manual updates:
+>
+> | # | What | Where in this file |
+> |---|---|---|
+> | 1 | **Demo video links** — paste YouTube / Drive URLs for all features & all levels | [Section 8](#8-demo-videos) |
+> | 2 | **AI Usage Declaration** — write the required markdown + export as PDF | [Section 9](#9-ai-usage-declaration) |
+> | 3 | **Member contribution table** — fill in each member's work percentage | [Section 7](#7-member-contribution) |
+> | 4 | **Export to PDF** — run `pandoc report.md -o report.pdf` (or paste into Word/Google Docs) | — |
+> | 5 | **Feature list audit** — remove / replace any features that are not actually playable in the demo | [Section 5](#5-feature-list-40-features--025-pts--10-pts) |
+> | 6 | **Plant Map wave config** — tune enemy names in `assets/Data/plant_map.json` if they differ from the game's actual enemy IDs | `assets/Data/plant_map.json` |
+
+---
+
+## 1. Project Overview
+
+This is a faithful clone of the roguelite bullet-heaven game *Vampire Survivors*, built from scratch in C++20 with SFML. The player controls a character that auto-attacks enemies every frame, collects EXP, levels up, picks new weapons or upgrades, and tries to survive 30 minutes or defeat the stage boss.
+
+---
+
+## 2. Architecture Overview
+
+The project is layered into four top-level source packages:
+
+| Package | Responsibility |
+|---|---|
+| `Core/` | Engine primitives: GameManager (FSM host), ObjectPool, Observer/Subject, Physics, ResourceManager, Data managers |
+| `Entities/` | Runtime objects: Entity → Player / EnemyBase / Obstacle / Projectile, plus Weapons and Pickups |
+| `States/` | Game states (FSM nodes): MainMenu, CharacterSelect, StageSelect, Shop, StageLoading, Playing, LevelUp, Pause, TreasureChest, GameOver, Summary |
+| `UI/` | Decoupled UI components, panels, and views shared across states |
+
+---
+
+## 3. Class Diagrams
+
+### 3.1 Entity Hierarchy
+
+```mermaid
+classDiagram
+    class Entity {
+        <<abstract>>
+        #Vector2f m_position
+        #Vector2f m_velocity
+        #float m_speed
+        #bool m_isActive
+        +update(dt)* void
+        +draw(window)* void
+        +getBounds()* FloatRect
+        +setPosition()
+        +getPosition()
+        +isActive() bool
+    }
+
+    class Player {
+        -int m_playerId
+        -int m_level
+        -float m_exp
+        -float m_expToNext
+        -AnimatedSprite m_animSprite
+        -Vector2f m_facingDir
+        +addExp(amount) void
+        +checkLevelUp() bool
+        +getFacingDir() Vector2f
+        +getLevel() int
+    }
+
+    class EnemyBase {
+        -float m_hp
+        -float m_maxHp
+        -float m_damage
+        -float m_expValue
+        -bool m_isBoss
+        +takeDamage(dmg) void
+        +isDead() bool
+        +getExpValue() float
+        +isBoss() bool
+    }
+
+    class ShooterEnemy {
+        -float m_shootTimer
+        -float m_shootCooldown
+        +update(dt) void
+    }
+
+    class Obstacle {
+        -FloatRect m_bounds
+        +getBounds() FloatRect
+    }
+
+    Entity <|-- Player
+    Entity <|-- EnemyBase
+    EnemyBase <|-- ShooterEnemy
+    Entity <|-- Obstacle
+```
+
+### 3.2 Weapon System
+
+```mermaid
+classDiagram
+    class WeaponBase {
+        <<abstract>>
+        #float m_cooldown
+        #float m_damage
+        #float m_speed
+        #int m_level
+        #int m_amount
+        #float m_areaScale
+        #bool m_isEvolved
+        +update(dt, playerPos, playerDir, enemies, projectiles) void
+        +getName()* string
+        +getUpgradeDescription()* string
+        +levelUp()* void
+        +getLevel() int
+        +isMaxLevel() bool
+        #fire(pos, dir, enemies, projectiles, shotIndex)* void
+        #getNearestEnemy() EnemyBase*
+        #getDirectionTo() Vector2f
+    }
+
+    class Whip { +getName() string }
+    class MagicWand { +getName() string }
+    class FireWand { }
+    class Axe { }
+    class KingBible { }
+    class Knife { }
+    class Cross { }
+    class Garlic { }
+    class LightningRing { }
+    class SantaWater { }
+    class Runetracer { }
+    class SongOfMana { }
+    class EightTheSparrow { }
+    class PhieraDerTuphello { }
+    class Bone { }
+    class CherryBomb { }
+    class BloodyTear { }
+    class HolyWand { }
+    class ThousandEdge { }
+    class Hellfire { }
+    class DeathSpiral { }
+
+    WeaponBase <|-- Whip
+    WeaponBase <|-- MagicWand
+    WeaponBase <|-- FireWand
+    WeaponBase <|-- Axe
+    WeaponBase <|-- KingBible
+    WeaponBase <|-- Knife
+    WeaponBase <|-- Cross
+    WeaponBase <|-- Garlic
+    WeaponBase <|-- LightningRing
+    WeaponBase <|-- SantaWater
+    WeaponBase <|-- Runetracer
+    WeaponBase <|-- SongOfMana
+    WeaponBase <|-- EightTheSparrow
+    WeaponBase <|-- PhieraDerTuphello
+    WeaponBase <|-- Bone
+    WeaponBase <|-- CherryBomb
+    Whip <|-- BloodyTear
+    MagicWand <|-- HolyWand
+    Knife <|-- ThousandEdge
+    FireWand <|-- Hellfire
+    Axe <|-- DeathSpiral
+
+    class WeaponFactory {
+        +createWeapon(name)$ unique_ptr~WeaponBase~
+    }
+    WeaponFactory ..> WeaponBase : creates
+```
+
+### 3.3 State Machine (Game Flow)
+
+```mermaid
+classDiagram
+    class GameState {
+        <<abstract>>
+        +enter()* void
+        +update(dt)* void
+        +draw(window)* void
+        +exit()* void
+    }
+
+    class GameManager {
+        -RenderWindow m_window
+        -stack~GameState~ m_states
+        +run() void
+        +pushState(state) void
+        +popState() void
+        +changeState(state) void
+        +clearAndChangeState(state) void
+    }
+
+    class MainMenuState { }
+    class CharacterSelectState { }
+    class StageSelectState { }
+    class ShopState { }
+    class StageLoadingState { }
+    class PlayingState { }
+    class LevelUpState { }
+    class PauseState { }
+    class TreasureChestState { }
+    class GameOverState { }
+    class SummaryState { }
+
+    GameState <|-- MainMenuState
+    GameState <|-- CharacterSelectState
+    GameState <|-- StageSelectState
+    GameState <|-- ShopState
+    GameState <|-- StageLoadingState
+    GameState <|-- PlayingState
+    GameState <|-- LevelUpState
+    GameState <|-- PauseState
+    GameState <|-- TreasureChestState
+    GameState <|-- GameOverState
+    GameState <|-- SummaryState
+    GameManager o-- GameState
+```
+
+### 3.4 Core Systems
+
+```mermaid
+classDiagram
+    class Observer {
+        <<abstract>>
+        +onNotify(event)* void
+    }
+    class Subject {
+        -vector~Observer*~ m_observers
+        +addObserver(obs) void
+        +removeObserver(obs) void
+        #notify(event) void
+    }
+    class GameEvent {
+        <<enumeration>>
+        PlayerLevelUp
+        PlayerTookDamage
+        PlayerGainedExp
+        EnemyDied
+    }
+    Subject --> Observer : notifies
+
+    class ObjectPool {
+        -vector~unique_ptr~ m_pool
+        +acquire() T*
+        +release(obj) void
+        +availableCount() size_t
+    }
+
+    class ProfileManager {
+        <<Singleton>>
+        -int m_gold
+        -map~string,int~ m_upgrades
+        +GetInstance()$ ProfileManager&
+        +load(filepath) bool
+        +save(filepath) bool
+        +getMightMultiplier() float
+        +getCooldownMultiplier() float
+        +getAmountBonus() int
+    }
+
+    class SpatialHashGrid {
+        +insert(entity) void
+        +query(bounds) vector
+        +clear() void
+    }
+```
+
+### 3.5 Data Layer
+
+```mermaid
+classDiagram
+    class CharacterDataManager {
+        +loadFromFile(path) void
+        +getProfile(type) CharacterProfile
+    }
+    class CharacterProfile {
+        +string name
+        +string startingWeapon
+        +float baseHp
+        +float baseMoveSpeed
+    }
+    class WeaponDataManager {
+        +getProfile(name) WeaponProfile
+    }
+    class WeaponProfile {
+        +string name
+        +string description
+        +IntRect iconRect
+    }
+    class StageWaveDataManager {
+        +loadFromFile(path) void
+        +getWave(index) WaveData
+    }
+    class WaveManager {
+        -int m_currentWave
+        +tick(dt, enemies) void
+    }
+    class PlayerProgressionManager {
+        +getUnlockedCharacters() vector
+        +unlockCharacter(type) void
+    }
+    class StatsManager {
+        -int m_kills
+        -float m_time
+        +addKill() void
+        +getElapsedTime() float
+    }
+
+    CharacterDataManager --> CharacterProfile
+    WeaponDataManager --> WeaponProfile
+    StageWaveDataManager --> WaveManager
+```
+
+### 3.6 Pickup / Collectible System
+
+```mermaid
+classDiagram
+    class Collectible {
+        <<abstract>>
+        #Vector2f m_position
+        #bool m_collected
+        +update(dt)* void
+        +draw(window)* void
+        +tryCollect(playerPos, radius)* bool
+    }
+    class ExpGem {
+        -float m_expValue
+        +tryCollect() bool
+    }
+    class Coin {
+        -int m_value
+        +tryCollect() bool
+    }
+    class FloorChicken {
+        -float m_healAmount
+        +tryCollect() bool
+    }
+    class TreasureChest {
+        +open() void
+        +isOpen() bool
+    }
+    Collectible <|-- ExpGem
+    Collectible <|-- Coin
+    Collectible <|-- FloorChicken
+    Collectible <|-- TreasureChest
+```
+
+---
+
+## 4. Applied Design Patterns
+
+### 4.1 Finite State Machine (FSM) — *Behavioral Pattern*
+
+**Where:** `GameManager` + all `GameState` subclasses.
+
+`GameManager` owns a `std::stack<unique_ptr<GameState>>`. States are swapped via deferred transitions (`m_pendingState`, `m_shouldChange` flags) evaluated at the start of each frame loop — preventing a state from deleting itself mid-`update()` and causing use-after-free.
+
+**Reasoning:** The game has 11 distinct modes. Hardcoding transitions in a monolithic loop would be unmaintainable. The stack model lets modal overlays (Pause, LevelUp) sit on top of PlayingState without destroying it.
+
+---
+
+### 4.2 Template Method — *Behavioral Pattern*
+
+**Where:** `WeaponBase::update()` (non-virtual) calls `fire()` (pure virtual).
+
+`WeaponBase::update()` owns the cooldown timer and burst-fire scheduling logic, then calls the abstract `fire()` at the right moments. Each concrete weapon only overrides `fire()`.
+
+**Reasoning:** All 16+ weapons share identical cooldown, burst-interval, and `setSourceWeapon` bookkeeping. Without Template Method this would be copy-pasted in every weapon class. Any future timing tweak is fixed in one place.
+
+---
+
+### 4.3 Factory Method — *Creational Pattern*
+
+**Where:** `WeaponFactory::createWeapon(const std::string& name)`.
+
+A single static factory function maps a string name to `std::make_unique<ConcreteWeapon>()`. Callers never `#include` individual weapon headers.
+
+**Reasoning:** Decouples the 16+ concrete weapon types from the rest of the game. Adding a new weapon means adding one entry to the factory — no changes to `LevelUpState` or `PlayingState`.
+
+---
+
+### 4.4 Observer / Subject — *Behavioral Pattern*
+
+**Where:** `Core/Observer.h` — `Observer` (abstract), `Subject` (mixin), `GameEvent` enum.
+
+Game objects that produce notable events inherit `Subject` and call `notify(GameEvent)`. Interested systems register as `Observer*` and react in `onNotify()`.
+
+**Reasoning:** Eliminates tight coupling between, e.g., an enemy dying and the UI gold counter updating. The enemy doesn't need a pointer to UIManager.
+
+---
+
+### 4.5 Object Pool — *Creational / Performance Pattern*
+
+**Where:** `ObjectPool<T>` template; used as `ObjectPool<EnemyBase>` and `ObjectPool<ShooterEnemy>` in `PlayingState`.
+
+Pre-allocates 1 000 enemy objects at startup; `acquire()` pops from the free list in O(1), `release()` pushes back.
+
+**Reasoning:** A Vampire Survivors clone spawns hundreds of enemies per minute. Repeated `new`/`delete` causes heap fragmentation and latency spikes. The pool eliminates this entirely.
+
+---
+
+### 4.6 Singleton — *Creational Pattern*
+
+**Where:** `ProfileManager::GetInstance()`.
+
+Holds persistent save data (gold, powerup ranks) and per-run stat multipliers. Accessed by `WeaponBase::update()`, `PlayingState`, `LevelUpState`, `ShopState`, and `SummaryState`.
+
+**Reasoning:** Save data is truly global and must survive state transitions. A single instance avoids duplication and is the standard approach for game save managers.
+
+---
+
+### 4.7 Strategy via Polymorphism — *Behavioral Pattern*
+
+**Where:** Each `WeaponBase` subclass is a pluggable fire strategy.
+
+`PlayingState` stores `vector<unique_ptr<WeaponBase>>` and calls `w->update()` uniformly. The concrete weapon decides *how* to fire (melee sweep, homing projectile, area zone, orbiting bible, etc.).
+
+---
+
+### 4.8 Spatial Hash Grid — *Performance Pattern*
+
+**Where:** `Core/Physics/SpatialHashGrid`.
+
+Divides the infinite world into fixed-size cells. Collision queries return only entities in the same or neighbouring cells — O(1) average lookup instead of O(n²) brute force.
+
+**Reasoning:** With 300+ enemies, 100+ projectiles, and 50+ collectibles simultaneously, a naive nested loop is ~50 000 checks/frame at 60 fps. The spatial grid reduces this by an order of magnitude.
+
+---
+
+## 5. Feature List (40 features × 0.25 pts = 10 pts)
+
+| # | Feature | Implementation Location |
+|---|---|---|
+| 1 | Main Menu with animated background, start / shop / quit | `MainMenuState` |
+| 2 | Character Selection — 40+ characters with portrait, stats, starting weapon | `CharacterSelectState`, `CharacterSelectionView` |
+| 3 | Stage Selection — Mad Forest & Inlaid Library | `StageSelectState` |
+| 4 | Shop / Meta-progression — 14 permanent power-up ranks bought with gold | `ShopState`, `ProfileManager` |
+| 5 | Persistent Save System — gold and power-up ranks saved to `save.txt` | `ProfileManager::save/load` |
+| 6 | Infinite tiling world — 3×3 background tile grid repositioning around player | `PlayingState` background loop |
+| 7 | Player movement — 8-directional with animated sprite, facing direction tracked | `Player::update` |
+| 8 | EXP & Leveling — exp gems from enemies, magnet radius, scaling exp-to-next | `ExpGem`, `Player::addExp` |
+| 9 | 16 unique weapons — Whip, Magic Wand, Fire Wand, Axe, Cross, King Bible, Knife, Santa Water, Runetracer, Lightning Ring, Garlic, Song of Mana, Eight the Sparrow, Phiera Der Tuphello, Bone, Cherry Bomb | `Entities/Weapons/` |
+| 10 | Weapon evolution system — 10+ evolutions triggered at max level + passive item | `EvolutionRegistry`, `PlayingState::tryEvolveWeapon` |
+| 11 | 15 passive items — Hollow Heart, Empty Tome, Bracer, Spinach, Candelabrador, Clover, Pummarola, Spellbinder, Attractorb, Armor, Duplicator, Tiragisu, Stone Mask, Skull O'Maniac, Wings | `PassiveItem`, `createDefaultPassiveItems` |
+| 12 | Level-up UI — pick from 4 random weapon / passive upgrade cards | `LevelUpState` |
+| 13 | Burst-fire system — wiki-accurate 0.1 s intervals between burst shots | `WeaponBase::update` burst queue |
+| 14 | Wave / spawner system — timed enemy waves loaded from data files | `StageWaveDataManager`, `WaveManager` |
+| 15 | Boss enemy — spawns at configured time; tracked for death detection & victory | `PlayingState m_bossPtr` |
+| 16 | Shooter enemies — `ShooterEnemy` fires projectiles at the player | `ShooterEnemy` |
+| 17 | Enemy Object Pool — 1 000-object pre-allocated pool for enemies | `ObjectPool<EnemyBase>`, `ObjectPool<ShooterEnemy>` |
+| 18 | Projectile system — velocity, lifetime, pierce, knockback, trail VFX, sprite animation | `Projectile.h` |
+| 19 | Collision detection — AABB via SpatialHashGrid for enemy↔projectile and player↔enemy | `Collision.cpp`, `SpatialHashGrid` |
+| 20 | Obstacles — solid obstacles on Inlaid Library map; props from texture atlas | `Obstacle`, `PlayingState::generateLibraryObstacles` |
+| 21 | Collectible items — Exp Gems, Coins, Floor Chicken, Treasure Chests | `Entities/Pickups/` |
+| 22 | Treasure Chest state — dedicated overlay for opening chests and choosing rewards | `TreasureChestState` |
+| 23 | Pause state — push-on-stack pause overlay | `PauseState` |
+| 24 | HUD — survival timer, gold counter, level indicator, weapon icons | `PlayingState::draw` |
+| 25 | Game Over state — death screen with run statistics | `GameOverState` |
+| 26 | Summary / End-of-run screen — kills, time, damage per weapon, gold earned | `SummaryState`, `RunSummaryData` |
+| 27 | Multi-player support — per-player weapon and passive item lists | `m_players`, `m_weaponOwnerIndices` |
+| 28 | Banish / Skip / Reroll charges — 10 each per run, consumed in level-up UI | `PlayingState` charge members |
+| 29 | Icon Manager — unified icon look-up for all weapons and passives from atlas | `IconManager` |
+| 30 | VFX trail system — fading particle trail on projectiles | `Projectile::enableTrail` |
+| 31 | Animated sprites — frame-based animation for player and enemies | `AnimatedSprite` |
+| 32 | Texture Atlas / Sprite Sheet system — sub-rect sprites from shared atlases | `ResourceManager/TextureAtlas` |
+| 33 | Cheat code system — hidden keyboard combos for special in-game effects | `PlayingState m_cheatApplied` |
+| 34 | Observer pattern events — decoupled notifications for level-up, damage, exp, death | `Observer.h`, `Subject` |
+| 35 | Character unlock / progression — tracks which characters player has unlocked | `PlayerProgressionManager` |
+| 36 | Power-up refund — shop allows resetting all upgrades for a full gold refund | `ProfileManager::refundAll` |
+| 37 | Stage loading screen — transition state before entering gameplay | `StageLoadingState` |
+| 38 | Intro / Title screen states | `States/Intro/`, `States/Title/` |
+| 39 | Modular UI system — panels, elements, components, views separated from game logic | `UI/` subsystems |
+| 40 | Data-driven design — character profiles, weapon profiles, wave data loaded from files | `Data/` managers |
+
+---
+
+## 6. Design Reasoning
+
+### Why SFML?
+SFML is a thin, idiomatic C++ wrapper over OpenGL/DirectSound. It has no engine overhead, forces every system to be hand-written, and fits the OOP teaching objectives of CS202 without hiding concepts behind engine magic.
+
+### Why stack-based FSM with deferred transitions?
+A simple `switch` breaks when a state must both push a new state AND keep the old one alive (e.g., Pause over Playing). Deferred transitions prevent the "iterator invalidation" class of bugs where a state deletes itself mid-update.
+
+### Why Template Method for weapons instead of composition?
+Every weapon shares ~40 lines of burst-fire timing code. Since the only variable behaviour is `fire()`, Template Method is simpler and faster than injecting a separate strategy object, and aligns with how the original game was architected.
+
+### Why a bounded Object Pool?
+Dynamic allocation mid-frame is non-deterministic in time. A bounded pool of 1 000 slots guarantees O(1) allocation and avoids heap fragmentation. The bound also implicitly caps worst-case entity count.
+
+### Why data-driven managers?
+Hard-coding 40+ character stats and 30-minute wave sequences in C++ makes balancing a recompile cycle. File-driven managers let data be tweaked without touching source code.
+
+---
+
+## 7. Member Contribution
+
+See the evaluation form: [https://tinyurl.com/httprojeval](https://tinyurl.com/httprojeval)
+
+> [!IMPORTANT]
+> **TODO:** Fill in the table below with each member's actual contribution before submitting.
+
+| Member | Student ID | Contribution (%) | Main responsibilities |
+|---|---|---|---|
+| _(name)_ | _(ID)_ | __%__ | _(e.g. Weapons system, PlayingState, UI)_ |
+| _(name)_ | _(ID)_ | __%__ | _(e.g. Enemy AI, Physics, Data managers)_ |
+| _(name)_ | _(ID)_ | __%__ | _(e.g. Menus, Character select, Shop)_ |
+
+---
+
+## 8. Demo Videos
+
+> [!IMPORTANT]
+> **TODO:** Paste the video links below. The submission requires demo videos covering **all features** and **all difficulty levels**.
+
+| Video | Link | Features shown |
+|---|---|---|
+| Full gameplay demo (Mad Forest) | _(paste URL)_ | All weapons, level-up, boss, summary |
+| Full gameplay demo (Inlaid Library) | _(paste URL)_ | Shooter enemies, library obstacles |
+| Full gameplay demo (Green Acres / Plant Map) | _(paste URL)_ | Plant map stage |
+| Weapon evolution showcase | _(paste URL)_ | Evolution system |
+| Shop / Meta-progression | _(paste URL)_ | Shop, save/load |
+| Multi-player mode | _(paste URL)_ | 2-player split weapons |
+
+---
+
+## 9. AI Usage Declaration
+
+> [!IMPORTANT]
+> **TODO:** Export this section as a **separate PDF** titled *"AI Usage Declaration"* and sign it before submitting.
+
+This declaration is based on two verified sources:
+1. **Git commit log** of this repository (`git log --oneline --all`)
+2. **Antigravity IDE conversation logs** at `C:\Users\wiih0\.gemini\antigravity-ide\brain\`
+
+---
+
+### Full Timeline
+
+```
+Jun  9        → Project created (no AI)
+Jun 29        → [SESSION] First major AI session — game bootstrap
+Jun 29        → commit 08c50155: Weapons (Knife, Whip), collision, game state flow
+Jul  4        → commits: EXP/leveling, level-up weapon choice, projectile effects
+Jul  8–11     → commits: synergy/evolution, collectibles, save/load (unclear if AI-assisted)
+Jul 12–17     → commits: WaveManager, EnemyDatabase, Inlaid Library stage
+Jul 25        → [SESSION] AI session — asset restructure, character frames
+Jul 27        → [SESSION] AI session — WeaponFactory, class refactor
+Jul 28        → commit b47b15df: .agents/AGENTS.md added (AI mode configured)
+Jul 28        → commit 6f30710d: "Ponytail: Remove speculative puddle fallback" (AI-named)
+Jul 28 – Aug 13 → Multiple feature commits (likely AI-assisted, see table below)
+Aug 27–29     → Co-op commits + today's session (confirmed AI)
+Aug 29        → [SESSION] Report, PlantMap stage, HUD bug fix (confirmed AI)
+```
+
+---
+
+### Phase 1 — AI-assisted before .agents (Jun 29 – Jul 27)
+
+These sessions were conducted in Antigravity IDE **before** the `.agents` rule file was added:
+
+#### Session: Jun 29 (`2e07d3fa`) — Game Bootstrap
+The game was essentially blank. AI helped bootstrap the initial implementation from a plan file (`agent.md`):
+- Built the main menu, game state flow, and initial playing loop
+- Implemented Phase 1 from a structured plan (`following Plan/, complete Phase 1`)
+- Debugged: black screen, missing assets, broken main menu, weapon not appearing
+- Helped write an initial project report draft
+
+#### Session: Jul 25 (`d7b1bc22`) — Asset Restructure
+- Integrated and reorganized character sprite assets
+- Renamed asset folders, reorganized character atlas structure
+- Debugged font loading and save file path issues
+
+#### Session: Jul 27 (`25c6781c`) — WeaponFactory & Refactor
+- Suggested and created `WeaponFactory`
+- Created `AllWeapons.h` aggregation header
+- Refactored class structure to reduce include boilerplate
+- Verified factory pattern correctness
+
+---
+
+### Phase 2 — AI-assisted after .agents (Jul 28 – Aug 29)
+
+#### Commits with confirmed/likely AI involvement
+
+| Commit | Date | What changed | Evidence |
+|---|---|---|---|
+| `6f30710d` | Jul 28 | Remove puddle fallback, duplicated loop check | Commit message says "Ponytail:" (AI mode) |
+| `5ad7f225` | Jul 28 | Simplify weapon targeting & projectile logic | Likely AI refactor session |
+| `82294864` | Jul 28 | IconManager — parse items_atlas.json, fix HUD icons | Likely AI-assisted |
+| `a5a484de` | Jul 28 | Cross weapon + WeaponFactory | Likely AI-assisted |
+| `1367589d` | Jul 28 | KingBible, SantaWater, Runetracer, bouncing projectiles | Likely AI-assisted |
+| `4b8e5b3a` | Jul 28 | Shop UI overhaul | Likely AI-assisted |
+| `feat(characters)` ×10 | Jul 29 – Aug 13 | All 40+ character implementations | Likely AI-assisted (repetitive boilerplate) |
+| `4b078055` | Aug 12 | VFX trails, fade out, particles | Likely AI-assisted |
+| `f1628b5e` | Aug 13 | Weapon evolution bug fix, evolved weapon classes | Likely AI-assisted |
+| `a193cedd` | Aug 27 | Local 2-player co-op mode | Likely AI-assisted |
+| `987f00ed` | Aug 28 | Co-op weapons, EXP, leveling separation | Likely AI-assisted |
+| `07c724f3` | Aug 29 | Co-op library map hitbox merge | Likely AI-assisted |
+
+#### Session: Aug 29 (`143e8bc6`) — Confirmed AI (today)
+
+| Task | Details |
+|---|---|
+| **Project report** | Read all source files; wrote architecture overview, 6 class diagrams, 8 design patterns, 40-feature list |
+| **Plant Map stage** | Added `PlantMap` enum, loading block, wave config JSON, 3rd stage panel |
+| **HUD bug fix** | Found & removed duplicate level-indicator block in `PlayingState::draw()` |
+| **Report maintenance** | Added TODO checklist, member/video/declaration stub sections |
+
+---
+
+### What was never AI-generated
+
+- Spatial Hash Grid collision algorithm (`SpatialHashGrid.cpp`)
+- Physics/knockback math (`Collision.cpp`, `Physics.h`)
+- All game assets (sprites, tilemaps, audio, data JSONs)
+- Original weapon damage/cooldown/area balance values
+- CMake build configuration
+
+---
+
