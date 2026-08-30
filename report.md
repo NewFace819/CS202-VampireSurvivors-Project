@@ -381,11 +381,13 @@ classDiagram
 
 ### 4.3 Factory Method — *Creational Pattern*
 
-**Where:** `WeaponFactory::createWeapon(const std::string& name)`.
+**Where:**
+- `WeaponFactory::createWeapon(const std::string& name)`: Instantiates concrete weapons from string identifiers.
+- `CharacterFactory::configurePlayer(Player& player, CharacterType type, std::vector<std::string>& outStartingWeapons)`: Encapsulates sprite setup, animation frame slicing from atlas JSONs, and starting weapon assignment for all 40+ characters.
 
-A single static factory function maps a string name to `std::make_unique<ConcreteWeapon>()`. Callers never `#include` individual weapon headers.
-
-**Reasoning:** Decouples the 16+ concrete weapon types from the rest of the game. Adding a new weapon means adding one entry to the factory — no changes to `LevelUpState` or `PlayingState`.
+**Reasoning:**
+- Decouples the 16+ concrete weapon types and 40+ playable character variants from game states.
+- Avoids monolithic `switch` blocks in `PlayingState` and isolates sprite asset paths, atlas parsing, and initial weapon distributions into clean, dedicated factory classes.
 
 ---
 
@@ -617,6 +619,7 @@ The game was essentially blank. AI helped bootstrap the initial implementation f
 | **HUD bug fix** | Found & removed duplicate level-indicator block in `PlayingState::draw()` |
 | **MapLoader VertexArray upgrade** | Rewrote tile rendering in `MapLoader.cpp` using `sf::VertexArray(sf::Triangles)` with exact `vertices` and `indices` from map JSONs, achieving pixel-perfect tile mesh rendering for all stages |
 | **Inlaid Library map fix** | Connected `library_map.json` to `MapLoader`, fixed corridor boundaries ($Y \in [820\text{f}, 1260\text{f}]$) and obstacle infinite grid tiling |
+| **CharacterFactory pattern** | Created `CharacterFactory` (`CharacterFactory.h`/`.cpp`) to encapsulate sprite loading, atlas frame slicing, and starting weapon assignment for all 40+ characters, eliminating 300+ lines of monolithic switch cases from `PlayingState` |
 | **Report maintenance** | Added TODO checklist, member contribution table, demo video table, and verified AI Declaration |
 
 ---
