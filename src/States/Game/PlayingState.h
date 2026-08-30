@@ -119,7 +119,9 @@ private:
     // View & Level
     sf::View worldView; 
     sf::Texture m_libraryPropsTex;
+    sf::Texture m_plantPropsTex;
     void generateLibraryObstacles();
+
 
 
     float m_enemySpawnTimer = 0.f;

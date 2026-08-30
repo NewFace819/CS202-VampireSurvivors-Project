@@ -65,18 +65,7 @@ PlayingState::PlayingState(GameManager* manager, const std::vector<CharacterType
         }
     } else if (m_stageType == StageType::InlaidLibrary) {
         waveJsonPath = "assets/data/inlaid_library.json";
-        bgPath = "assets/images/maps/LibraryTexturePacked.png";
-        if (!m_libraryPropsTex.loadFromFile("assets/images/maps/LibraryTexturePacked.png")) {
-            std::cerr << "PlayingState: Could not load LibraryTexturePacked.png!\n";
-        }
-        generateLibraryObstacles();
-        
-        if (!m_bgTex.loadFromFile(bgPath)) {
-            std::cerr << "PlayingState: Could not load background texture: " << bgPath << "\n";
-        }
-    } else if (m_stageType == StageType::PlantMap) {
-        waveJsonPath = "assets/data/plant_map.json";
-        MapData mapData = MapLoader::LoadMap("assets/data/maps/plant_map.json", m_libraryPropsTex);
+        MapData mapData = MapLoader::LoadMap("assets/Data/maps/library_map.json", m_libraryPropsTex);
         if (mapData.success) {
             m_bgTex.loadFromImage(mapData.backgroundTexture->getTexture().copyToImage());
             m_bgTex.setSmooth(false);
@@ -84,13 +73,31 @@ PlayingState::PlayingState(GameManager* manager, const std::vector<CharacterType
                 m_baseObstacles.push_back(std::move(obs));
             }
         } else {
-            // Fallback: plain green background
-            bgPath = "assets/images/maps/PlantTexturePacked.png";
+            bgPath = "assets/images/maps/LibraryTexturePacked.png";
+            if (!m_libraryPropsTex.loadFromFile(bgPath)) {
+                std::cerr << "PlayingState: Could not load LibraryTexturePacked.png!\n";
+            }
+            generateLibraryObstacles();
             if (!m_bgTex.loadFromFile(bgPath)) {
+                std::cerr << "PlayingState: Could not load background texture: " << bgPath << "\n";
+            }
+        }
+    } else if (m_stageType == StageType::PlantMap) {
+        waveJsonPath = "assets/data/plant_map.json";
+        MapData mapData = MapLoader::LoadMap("assets/Data/maps/plant_map.json", m_plantPropsTex);
+        if (mapData.success) {
+            m_bgTex.loadFromImage(mapData.backgroundTexture->getTexture().copyToImage());
+            m_bgTex.setSmooth(false);
+            for (auto& obs : mapData.obstacles) {
+                m_baseObstacles.push_back(std::move(obs));
+            }
+        } else {
+            if (!m_bgTex.loadFromFile("assets/images/maps/PlantTexturePacked.png")) {
                 std::cerr << "PlayingState: Could not load PlantTexturePacked.png!\n";
             }
         }
     }
+
 
     m_bgTex.setRepeated(false);
     m_tileSize = 2048.f;
@@ -535,7 +542,7 @@ void PlayingState::update(float dt) {
         }
     }
 
-    if (m_stageType == StageType::MadForest) {
+    if (m_stageType == StageType::MadForest || m_stageType == StageType::PlantMap || m_stageType == StageType::InlaidLibrary) {
         int centerGridX = std::floor(cam.x / m_tileSize);
         int centerGridY = std::floor(cam.y / m_tileSize);
 
@@ -630,14 +637,15 @@ void PlayingState::update(float dt) {
 
         if (m_stageType == StageType::InlaidLibrary) {
             sf::Vector2f pos = p.getPosition();
-            float minY = 24.f * 60.f; // 1440
-            float maxY = 40.f * 60.f; // 2400
+            float minY = 820.f;
+            float maxY = 1260.f;
             if (pos.y < minY) {
                 p.setPosition(pos.x, minY);
             } else if (pos.y > maxY) {
                 p.setPosition(pos.x, maxY);
             }
         }
+
     }
 
     // Soft tethering if 2 players active
@@ -875,14 +883,15 @@ void PlayingState::update(float dt) {
 
         if (m_stageType == StageType::InlaidLibrary) {
             sf::Vector2f epos = enemy->getPosition();
-            float minEY = 24.f * 60.f;
-            float maxEY = 40.f * 60.f;
+            float minEY = 780.f;
+            float maxEY = 1300.f;
             if (epos.y < minEY) {
                 enemy->setPosition(epos.x, minEY);
             } else if (epos.y > maxEY) {
                 enemy->setPosition(epos.x, maxEY);
             }
         }
+
         
         if (enemy->getStats().enemyClass == EnemyClass::BOSS && targetPlayer) {
             enemy->updateShooting(dt, targetPlayer->getPosition(), m_bossProjectiles, &m_vfxTex);

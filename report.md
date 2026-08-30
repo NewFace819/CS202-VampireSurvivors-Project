@@ -19,7 +19,7 @@
 > | 3 | **Member contribution table** — fill in each member's work percentage | [Section 7](#7-member-contribution) |
 > | 4 | **Export to PDF** — run `pandoc report.md -o report.pdf` (or paste into Word/Google Docs) | — |
 > | 5 | **Feature list audit** — remove / replace any features that are not actually playable in the demo | [Section 5](#5-feature-list-40-features--025-pts--10-pts) |
-> | 6 | **Plant Map wave config** — tune enemy names in `assets/Data/plant_map.json` if they differ from the game's actual enemy IDs | `assets/Data/plant_map.json` |
+
 
 ---
 
@@ -443,7 +443,7 @@ Divides the infinite world into fixed-size cells. Collision queries return only 
 |---|---|---|
 | 1 | Main Menu with animated background, start / shop / quit | `MainMenuState` |
 | 2 | Character Selection — 40+ characters with portrait, stats, starting weapon | `CharacterSelectState`, `CharacterSelectionView` |
-| 3 | Stage Selection — Mad Forest & Inlaid Library | `StageSelectState` |
+| 3 | Stage Selection — 3 playable stages: Mad Forest, Inlaid Library, and Green Acres (Plant Map) with stage-specific wave configurations | `StageSelectState`, `StageWaveDataManager` |
 | 4 | Shop / Meta-progression — 14 permanent power-up ranks bought with gold | `ShopState`, `ProfileManager` |
 | 5 | Persistent Save System — gold and power-up ranks saved to `save.txt` | `ProfileManager::save/load` |
 | 6 | Infinite tiling world — 3×3 background tile grid repositioning around player | `PlayingState` background loop |
@@ -460,7 +460,7 @@ Divides the infinite world into fixed-size cells. Collision queries return only 
 | 17 | Enemy Object Pool — 1 000-object pre-allocated pool for enemies | `ObjectPool<EnemyBase>`, `ObjectPool<ShooterEnemy>` |
 | 18 | Projectile system — velocity, lifetime, pierce, knockback, trail VFX, sprite animation | `Projectile.h` |
 | 19 | Collision detection — AABB via SpatialHashGrid for enemy↔projectile and player↔enemy | `Collision.cpp`, `SpatialHashGrid` |
-| 20 | Obstacles — solid obstacles on Inlaid Library map; props from texture atlas | `Obstacle`, `PlayingState::generateLibraryObstacles` |
+| 20 | Data-Driven Map & Obstacle System — `MapLoader` parses multi-layer tilemaps via `sf::VertexArray(sf::Triangles)` with exact polygon mesh vertices, UV coordinates, and physical collision bounds for Mad Forest, Inlaid Library, and Plant Map | `MapLoader`, `Obstacle`, `PlayingState` |
 | 21 | Collectible items — Exp Gems, Coins, Floor Chicken, Treasure Chests | `Entities/Pickups/` |
 | 22 | Treasure Chest state — dedicated overlay for opening chests and choosing rewards | `TreasureChestState` |
 | 23 | Pause state — push-on-stack pause overlay | `PauseState` |
@@ -559,8 +559,8 @@ Jul 27        → [SESSION] AI session — WeaponFactory, class refactor
 Jul 28        → commit b47b15df: .agents/AGENTS.md added (AI mode configured)
 Jul 28        → commit 6f30710d: "Ponytail: Remove speculative puddle fallback" (AI-named)
 Jul 28 – Aug 13 → Multiple feature commits (likely AI-assisted, see table below)
-Aug 27–29     → Co-op commits + today's session (confirmed AI)
-Aug 29        → [SESSION] Report, PlantMap stage, HUD bug fix (confirmed AI)
+Aug 27–29     → Co-op commits + initial report session (confirmed AI)
+Aug 29–30     → [SESSION] Report, PlantMap stage, HUD bug fix, MapLoader VertexArray polygon render & Inlaid Library map fix (confirmed AI)
 ```
 
 ---
@@ -589,7 +589,7 @@ The game was essentially blank. AI helped bootstrap the initial implementation f
 
 ---
 
-### Phase 2 — AI-assisted after .agents (Jul 28 – Aug 29)
+### Phase 2 — AI-assisted after .agents (Jul 28 – Aug 30)
 
 #### Commits with confirmed/likely AI involvement
 
@@ -608,14 +608,16 @@ The game was essentially blank. AI helped bootstrap the initial implementation f
 | `987f00ed` | Aug 28 | Co-op weapons, EXP, leveling separation | Likely AI-assisted |
 | `07c724f3` | Aug 29 | Co-op library map hitbox merge | Likely AI-assisted |
 
-#### Session: Aug 29 (`143e8bc6`) — Confirmed AI (today)
+#### Session: Aug 29–30 (`143e8bc6`) — Confirmed AI (recent session)
 
 | Task | Details |
 |---|---|
 | **Project report** | Read all source files; wrote architecture overview, 6 class diagrams, 8 design patterns, 40-feature list |
-| **Plant Map stage** | Added `PlantMap` enum, loading block, wave config JSON, 3rd stage panel |
+| **Plant Map stage** | Added `PlantMap` enum, loading block, wave config JSON, 3rd stage select panel |
 | **HUD bug fix** | Found & removed duplicate level-indicator block in `PlayingState::draw()` |
-| **Report maintenance** | Added TODO checklist, member/video/declaration stub sections |
+| **MapLoader VertexArray upgrade** | Rewrote tile rendering in `MapLoader.cpp` using `sf::VertexArray(sf::Triangles)` with exact `vertices` and `indices` from map JSONs, achieving pixel-perfect tile mesh rendering for all stages |
+| **Inlaid Library map fix** | Connected `library_map.json` to `MapLoader`, fixed corridor boundaries ($Y \in [820\text{f}, 1260\text{f}]$) and obstacle infinite grid tiling |
+| **Report maintenance** | Added TODO checklist, member contribution table, demo video table, and verified AI Declaration |
 
 ---
 
