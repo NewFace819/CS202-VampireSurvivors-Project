@@ -24,8 +24,8 @@ static sf::IntRect getItemIconRect(const std::string& name, PlayingState* playin
     return IconManager::GetInstance().getIconRect(name);
 }
 
-TreasureChestState::TreasureChestState(GameManager* manager, PlayingState* playing)
-    : m_manager(manager), m_playing(playing), m_timer(0.f), m_goldReward(0),
+TreasureChestState::TreasureChestState(GameManager* manager, PlayingState* playing, size_t playerIdx)
+    : m_manager(manager), m_playing(playing), m_playerIdx(playerIdx), m_timer(0.f), m_goldReward(0),
       m_isEvolution(false), m_isLevelUp(false) {
 
     if (!m_font.loadFromFile("assets/fonts/Courier_HintedSmooth.ttf")) {
@@ -112,8 +112,8 @@ TreasureChestState::TreasureChestState(GameManager* manager, PlayingState* playi
 }
 
 void TreasureChestState::determineReward() {
-    auto& weapons = m_playing->getWeapons();
-    auto& passives = m_playing->getPassiveItems();
+    std::vector<WeaponBase*> weapons = m_playing->getWeaponsForPlayer(m_playerIdx);
+    auto& passives = m_playing->getPassiveItems(m_playerIdx);
     auto& banned = m_playing->getBannedWeapons();
 
     // 1. Try evolution
@@ -124,17 +124,8 @@ void TreasureChestState::determineReward() {
         m_isLevelUp = false;
         m_rewardName = recipe.evolvedWeapon;
 
-        // Remove base weapon first to prevent erasure of replacement weapon if names coincide
-        m_playing->banishItem(recipe.baseWeapon);
-        auto& mutableWeapons = const_cast<std::vector<std::unique_ptr<WeaponBase>>&>(m_playing->getWeapons());
-        mutableWeapons.erase(
-            std::remove_if(mutableWeapons.begin(), mutableWeapons.end(),
-                [&](const std::unique_ptr<WeaponBase>& w) { return w->getName() == recipe.baseWeapon; }),
-            mutableWeapons.end()
-        );
-
-        // Add new evolved weapon after base weapon removal
-        m_playing->addWeapon(recipe.evolvedWeapon);
+        // Swap base weapon for its evolved form, keeping weapon-to-player ownership intact.
+        m_playing->evolveWeaponForPlayer(m_playerIdx, recipe.baseWeapon, recipe.evolvedWeapon);
 
         m_rewardIconRect = getItemIconRect(m_rewardName, m_playing);
         m_rewardDescText.setString("EVOLUTION ACQUIRED!");
@@ -143,7 +134,7 @@ void TreasureChestState::determineReward() {
     }
 
     // 2. Fallback: random inventory upgrade
-    std::vector<WeaponBase*> upgWeapons = m_playing->getUpgradeableWeapons();
+    std::vector<WeaponBase*> upgWeapons = m_playing->getUpgradeableWeapons(m_playerIdx);
     std::vector<PassiveItem*> upgPassives;
     for (auto& p : passives) {
         if (p.isOwned() && !p.isMaxLevel() && banned.find(p.name) == banned.end()) {

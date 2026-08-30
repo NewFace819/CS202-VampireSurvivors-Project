@@ -45,8 +45,9 @@ inline const std::vector<EvolutionRecipe>& getEvolutionRecipes() {
 
 // Check if any evolution is possible given the current weapons and passive items.
 // Returns a random eligible evolution index, or -1 if none.
+// Takes raw pointers so callers can pass a single player's weapon subset in co-op.
 inline int findAvailableEvolution(
-    const std::vector<std::unique_ptr<WeaponBase>>& weapons,
+    const std::vector<WeaponBase*>& weapons,
     const std::vector<PassiveItem>& passives)
 {
     const auto& recipes = getEvolutionRecipes();
@@ -56,8 +57,8 @@ inline int findAvailableEvolution(
         const auto& recipe = recipes[r];
         // Check if the base weapon is at max level
         bool hasMaxWeapon = false;
-        for (const auto& w : weapons) {
-            if (w->getName() == recipe.baseWeapon && w->isMaxLevel()) {
+        for (const auto* w : weapons) {
+            if (w && w->getName() == recipe.baseWeapon && w->isMaxLevel()) {
                 hasMaxWeapon = true;
                 break;
             }
@@ -84,5 +85,16 @@ inline int findAvailableEvolution(
     // Pick one eligible index randomly
     int randomIndex = std::rand() % eligible.size();
     return eligible[randomIndex];
+}
+
+// Convenience overload for the full (all-players) weapon list.
+inline int findAvailableEvolution(
+    const std::vector<std::unique_ptr<WeaponBase>>& weapons,
+    const std::vector<PassiveItem>& passives)
+{
+    std::vector<WeaponBase*> raw;
+    raw.reserve(weapons.size());
+    for (const auto& w : weapons) raw.push_back(w.get());
+    return findAvailableEvolution(raw, passives);
 }
 

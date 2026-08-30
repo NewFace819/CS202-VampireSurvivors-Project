@@ -447,15 +447,18 @@ void PlayingState::update(float dt) {
     for (auto& chest : m_chests) {
         chest.update(dt);
         bool pickedUp = false;
-        for (auto& p : m_players) {
+        size_t collectorIdx = 0;
+        for (size_t pi = 0; pi < m_players.size(); ++pi) {
+            Player& p = m_players[pi];
             if (p.isActive() && chest.isActive() && chest.getBounds().intersects(p.getBounds())) {
                 pickedUp = true;
+                collectorIdx = pi;
                 break;
             }
         }
         if (pickedUp) {
             chest.deactivate();
-            m_manager->pushState(std::make_unique<TreasureChestState>(m_manager, this));
+            m_manager->pushState(std::make_unique<TreasureChestState>(m_manager, this, collectorIdx));
         }
     }
     m_chests.erase(std::remove_if(m_chests.begin(), m_chests.end(),
@@ -1115,6 +1118,32 @@ void PlayingState::addWeaponForPlayer(size_t playerIdx, const std::string& weapo
     }
 }
 
+void PlayingState::removeWeaponForPlayer(size_t playerIdx, const std::string& weaponName) {
+    // Erase from both parallel arrays together, back to front so earlier indices stay valid.
+    for (size_t i = m_weapons.size(); i-- > 0; ) {
+        size_t owner = (i < m_weaponOwnerIndices.size()) ? m_weaponOwnerIndices[i] : 0;
+        if (owner != playerIdx || m_weapons[i]->getName() != weaponName) continue;
+
+        // Drop projectiles still pointing at the weapon we are about to destroy.
+        for (auto& proj : m_activeProjectiles) {
+            if (proj.getSourceWeapon() == m_weapons[i].get()) {
+                proj.setSourceWeapon(nullptr);
+            }
+        }
+        m_weapons.erase(m_weapons.begin() + i);
+        if (i < m_weaponOwnerIndices.size()) {
+            m_weaponOwnerIndices.erase(m_weaponOwnerIndices.begin() + i);
+        }
+    }
+}
+
+void PlayingState::evolveWeaponForPlayer(size_t playerIdx, const std::string& baseName, const std::string& evolvedName) {
+    // Remove the base weapon first so a shared name cannot erase the replacement.
+    removeWeaponForPlayer(playerIdx, baseName);
+    m_bannedWeapons.insert(baseName);
+    addWeaponForPlayer(playerIdx, evolvedName);
+}
+
 std::set<std::string> PlayingState::getOwnedWeaponNames(size_t playerIdx) const {
     std::set<std::string> names;
     for (size_t i = 0; i < m_weapons.size(); ++i) {
@@ -1245,30 +1274,20 @@ float PlayingState::getPassiveMaxHealthMultiplier() const {
 
 // --- Evolution ---
 
-void PlayingState::tryEvolveWeapon() {
-    int recipeIdx = findAvailableEvolution(m_weapons, m_passiveItems);
+void PlayingState::tryEvolveWeapon(size_t playerIdx) {
+    int recipeIdx = findAvailableEvolution(getWeaponsForPlayer(playerIdx), getPassiveItems(playerIdx));
     if (recipeIdx < 0) {
-        // No evolution available — give a free level-up instead
+        // No evolution available - give a free level-up instead
         std::cout << "No evolution available. Granting free level-up.\n";
-        m_manager->pushState(std::make_unique<LevelUpState>(m_manager, this));
+        m_manager->pushState(std::make_unique<LevelUpState>(m_manager, this, playerIdx));
         return;
     }
 
     const auto& recipe = getEvolutionRecipes()[recipeIdx];
-    std::cout << "EVOLUTION! " << recipe.baseWeapon << " -> " << recipe.evolvedWeapon << "\n";
+    std::cout << "EVOLUTION! " << recipe.baseWeapon << " -> " << recipe.evolvedWeapon
+              << " (player " << (playerIdx + 1) << ")\n";
 
-    // Remove the base weapon and ban it
-    m_weapons.erase(std::remove_if(m_weapons.begin(), m_weapons.end(),
-        [&](const std::unique_ptr<WeaponBase>& w) { return w->getName() == recipe.baseWeapon; }),
-        m_weapons.end());
-    m_bannedWeapons.insert(recipe.baseWeapon);
-
-    // Add the evolved weapon
-    auto newWeapon = WeaponFactory::createWeapon(recipe.evolvedWeapon);
-    if (newWeapon) {
-        m_weapons.push_back(std::move(newWeapon));
-    }
-
+    evolveWeaponForPlayer(playerIdx, recipe.baseWeapon, recipe.evolvedWeapon);
 }
 
 void PlayingState::generateLibraryObstacles() {

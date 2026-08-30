@@ -56,6 +56,11 @@ public:
     // Called by LevelUpState to grant a new weapon by name
     void addWeapon(const std::string& weaponName);
     void addWeaponForPlayer(size_t playerIdx, const std::string& weaponName);
+    // Removes a weapon while keeping m_weaponOwnerIndices in lockstep with m_weapons.
+    // Never erase from m_weapons directly -- the parallel arrays would desync.
+    void removeWeaponForPlayer(size_t playerIdx, const std::string& weaponName);
+    // Replaces a player's base weapon with its evolved form, preserving ownership.
+    void evolveWeaponForPlayer(size_t playerIdx, const std::string& baseName, const std::string& evolvedName);
 
 
     // Query which weapon type strings are currently owned
@@ -90,7 +95,7 @@ public:
     float getPassiveMaxHealthMultiplier() const;
 
     // --- Evolution ---
-    void tryEvolveWeapon();
+    void tryEvolveWeapon(size_t playerIdx = 0);
 
 private:
     GameManager* m_manager;

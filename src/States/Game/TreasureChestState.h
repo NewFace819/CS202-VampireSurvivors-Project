@@ -9,7 +9,7 @@ class PlayingState;
 
 class TreasureChestState : public GameState {
 public:
-    TreasureChestState(GameManager* manager, PlayingState* playing);
+    TreasureChestState(GameManager* manager, PlayingState* playing, size_t playerIdx = 0);
     void enter() override;
     void update(float dt) override;
     void draw(sf::RenderWindow& window) override;
@@ -22,6 +22,7 @@ private:
 
     GameManager*  m_manager;
     PlayingState* m_playing;
+    size_t        m_playerIdx;  // player who opened the chest; rewards go to them
 
     sf::Font      m_font;
     sf::Texture   m_itemsTex;
