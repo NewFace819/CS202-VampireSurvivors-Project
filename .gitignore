@@ -385,3 +385,18 @@ vfx_viewer_all/*
 .vscode/*
  
  
+
+# --- Weekly report build outputs (generated from the .md source) ---
+# Generic patterns so new weeks do not need to be added by hand.
+Group54_*/
+Group54_*.html
+Group54_*.md
+Group54_*.pdf
+Group54_*.zip
+
+# --- Local run/build helper scripts ---
+*.ps1
+
+# --- Runtime save files (player progress, not source) ---
+save.txt
+save_data.json
