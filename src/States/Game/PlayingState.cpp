@@ -357,7 +357,12 @@ void PlayingState::update(float dt) {
     for (size_t i = 0; i < m_weapons.size(); ++i) {
         size_t ownerIdx = (i < m_weaponOwnerIndices.size()) ? m_weaponOwnerIndices[i] : 0;
         Player& owner = getPlayer(ownerIdx);
+        size_t prevProjCount = m_activeProjectiles.size();
         m_weapons[i]->update(dt, owner.getPosition(), owner.getFacingDir(), m_activeEnemies, m_activeProjectiles);
+        // Tag freshly spawned projectiles (including this frame's burst shots) with their owner
+        for (size_t j = prevProjCount; j < m_activeProjectiles.size(); ++j) {
+            m_activeProjectiles[j].setOwnerPlayer(ownerIdx);
+        }
     }
 
     // Update projectiles
@@ -370,7 +375,11 @@ void PlayingState::update(float dt) {
     );
     
     for (auto& proj : m_activeProjectiles) {
-        proj.update(dt, cam, cameraBounds);
+        // Anchor player-following projectiles (aura / orbiting) to their owning player.
+        // `cam` is the midpoint of all active players, so using it here dragged every
+        // anchored weapon to the centre of the screen in co-op.
+        Player& projOwner = getPlayer(proj.getOwnerPlayer());
+        proj.update(dt, projOwner.getPosition(), cameraBounds);
     }
 
     for (auto& proj : m_bossProjectiles) {

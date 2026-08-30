@@ -241,6 +241,11 @@ public:
     void setSourceWeapon(WeaponBase* weapon) { m_sourceWeapon = weapon; }
     WeaponBase* getSourceWeapon() const { return m_sourceWeapon; }
 
+    // Which player this projectile belongs to (index into PlayingState's m_players).
+    // Player-anchored projectiles (aura / orbiting) follow this player, not the camera.
+    void setOwnerPlayer(size_t idx) { m_ownerPlayer = idx; }
+    size_t getOwnerPlayer() const { return m_ownerPlayer; }
+
     bool hasHitEnemy(EnemyBase* enemy) const {
         return m_hitEnemies.find(enemy) != m_hitEnemies.end();
     }
@@ -524,6 +529,7 @@ public:
     };
 
     WeaponBase* m_sourceWeapon = nullptr;
+    size_t m_ownerPlayer = 0;
     sf::Vector2f m_position;
     sf::Vector2f m_direction;
     sf::Vector2f m_velocity;
