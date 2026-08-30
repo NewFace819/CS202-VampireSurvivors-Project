@@ -246,6 +246,34 @@ public:
     void setOwnerPlayer(size_t idx) { m_ownerPlayer = idx; }
     size_t getOwnerPlayer() const { return m_ownerPlayer; }
 
+    // Applies the owner's in-run passive item bonuses. Shop power-ups are already
+    // folded in at init(); this layers the per-player passives on top.
+    void applyOwnerModifiers(float damageMult, float speedMult, float areaMult) {
+        m_damage *= damageMult;
+
+        if (speedMult != 1.f) {
+            m_speed *= speedMult;
+            m_velocity *= speedMult;
+        }
+
+        if (areaMult != 1.f) {
+            if (m_hasSprite) {
+                sf::Vector2f sc = m_animSprite.getScale();
+                m_animSprite.setScale(sc.x * areaMult, sc.y * areaMult);
+            }
+            if (m_useRect) {
+                sf::Vector2f sz = m_rectShape.getSize() * areaMult;
+                m_rectShape.setSize(sz);
+                m_rectShape.setOrigin(sz.x / 2.f, sz.y / 2.f);
+            } else {
+                float r = m_shape.getRadius() * areaMult;
+                m_shape.setRadius(r);
+                m_shape.setOrigin(r, r);
+            }
+            m_orbitRadius *= areaMult;
+        }
+    }
+
     bool hasHitEnemy(EnemyBase* enemy) const {
         return m_hitEnemies.find(enemy) != m_hitEnemies.end();
     }

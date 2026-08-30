@@ -25,6 +25,7 @@ public:
 
     void setOrigin(float x, float y) { m_sprite.setOrigin(x, y); }
     void setScale(float x, float y) { m_sprite.setScale(x, y); }
+    sf::Vector2f getScale() const { return m_sprite.getScale(); }
     void setRotation(float angle) { m_sprite.setRotation(angle); }
     void setPosition(const sf::Vector2f& pos) { m_sprite.setPosition(pos); }
     void setColor(const sf::Color& color) { m_sprite.setColor(color); }

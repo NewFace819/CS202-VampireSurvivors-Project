@@ -137,14 +137,16 @@ PlayingState::PlayingState(GameManager* manager, const std::vector<CharacterType
     m_revivalsLeft = ProfileManager::GetInstance().getRevivalBonus();
     m_runGold = 0;
 
-    // Initialize passive items pool
-    m_passiveItems = createDefaultPassiveItems();
-    for (auto& p : m_passiveItems) {
-        p.iconRect = IconManager::GetInstance().getIconRect(p.name);
-    }
-    
     size_t count = charTypes.empty() ? 1 : charTypes.size();
     m_players.resize(count);
+
+    // Initialize one passive item pool per player
+    m_playerPassiveItems.assign(count, createDefaultPassiveItems());
+    for (auto& list : m_playerPassiveItems) {
+        for (auto& p : list) {
+            p.iconRect = IconManager::GetInstance().getIconRect(p.name);
+        }
+    }
 
     for (size_t i = 0; i < count; ++i) {
         CharacterType cType = charTypes.empty() ? CharacterType::Antonio : charTypes[i];
@@ -280,8 +282,10 @@ void PlayingState::update(float dt) {
         }
 
         // Max all passive items directly without hardcoded string filtering
-        for (auto& p : m_passiveItems) {
-            p.level = p.maxLevel;
+        for (auto& list : m_playerPassiveItems) {
+            for (auto& p : list) {
+                p.level = p.maxLevel;
+            }
         }
         
         std::cout << "CHEAT: All active weapons and passive items added and maxed!\n";
@@ -352,11 +356,20 @@ void PlayingState::update(float dt) {
     for (size_t i = 0; i < m_weapons.size(); ++i) {
         size_t ownerIdx = (i < m_weaponOwnerIndices.size()) ? m_weaponOwnerIndices[i] : 0;
         Player& owner = getPlayer(ownerIdx);
+
+        // Owner's in-run passive item bonuses (shop power-ups are applied separately).
+        float passiveDmg   = getPassiveDamageMultiplier(ownerIdx);
+        float passiveSpeed = getPassiveProjSpeedMultiplier(ownerIdx);
+        float passiveArea  = getPassiveAreaMultiplier(ownerIdx);
+        m_weapons[i]->setOwnerCooldownMult(getPassiveCooldownMultiplier(ownerIdx));
+
         size_t prevProjCount = m_activeProjectiles.size();
         m_weapons[i]->update(dt, owner.getPosition(), owner.getFacingDir(), m_activeEnemies, m_activeProjectiles);
-        // Tag freshly spawned projectiles (including this frame's burst shots) with their owner
+        // Tag freshly spawned projectiles (including this frame's burst shots) with their
+        // owner, and apply that player's passive bonuses.
         for (size_t j = prevProjCount; j < m_activeProjectiles.size(); ++j) {
             m_activeProjectiles[j].setOwnerPlayer(ownerIdx);
+            m_activeProjectiles[j].applyOwnerModifiers(passiveDmg, passiveSpeed, passiveArea);
         }
     }
 
@@ -1025,10 +1038,12 @@ void PlayingState::draw(sf::RenderWindow& window) {
     }
 
     // Draw HUD - Passive Items (below weapons)
+    // Shows player 1's passives; the weapon row above is likewise a single merged row.
+    const std::vector<PassiveItem>& hudPassives = getPassiveItems(0);
     float passiveStartY = startY + boxHeight + 10.f;
     size_t ownedIdx = 0;
-    for (size_t i = 0; i < m_passiveItems.size(); ++i) {
-        if (!m_passiveItems[i].isOwned()) continue;
+    for (size_t i = 0; i < hudPassives.size(); ++i) {
+        if (!hudPassives[i].isOwned()) continue;
         float x = startX + ownedIdx * (boxWidth + padding);
         float y = passiveStartY;
         ++ownedIdx;
@@ -1042,15 +1057,15 @@ void PlayingState::draw(sf::RenderWindow& window) {
 
         sf::Sprite iconSprite;
         iconSprite.setTexture(m_itemsTex);
-        iconSprite.setTextureRect(m_passiveItems[i].iconRect);
+        iconSprite.setTextureRect(hudPassives[i].iconRect);
         float iconScale = 2.f;
         iconSprite.setScale(iconScale, iconScale);
-        float iconW = m_passiveItems[i].iconRect.width * iconScale;
+        float iconW = hudPassives[i].iconRect.width * iconScale;
         iconSprite.setPosition(x + (boxWidth - iconW) / 2.f, y + 2.f);
         window.draw(iconSprite);
 
-        int level   = m_passiveItems[i].level;
-        int maxLevel = m_passiveItems[i].maxLevel;
+        int level   = hudPassives[i].level;
+        int maxLevel = hudPassives[i].maxLevel;
         float gridStartX = x + 5.f;
         float gridStartY = y + 36.f;
         float cellSize = 8.f;
@@ -1220,9 +1235,9 @@ std::set<std::string> PlayingState::getOwnedPassiveNames(size_t playerIdx) const
     return names;
 }
 
-float PlayingState::getPassiveDamageMultiplier() const {
+float PlayingState::getPassiveDamageMultiplier(size_t playerIdx) const {
     float mult = 1.f;
-    for (const auto& p : m_passiveItems) {
+    for (const auto& p : getPassiveItems(playerIdx)) {
         if (p.isOwned() && p.statType == "damage") {
             mult += p.level * p.bonusPerLevel;
         }
@@ -1230,9 +1245,9 @@ float PlayingState::getPassiveDamageMultiplier() const {
     return mult;
 }
 
-float PlayingState::getPassiveCooldownMultiplier() const {
+float PlayingState::getPassiveCooldownMultiplier(size_t playerIdx) const {
     float mult = 1.f;
-    for (const auto& p : m_passiveItems) {
+    for (const auto& p : getPassiveItems(playerIdx)) {
         if (p.isOwned() && p.statType == "cooldown") {
             mult -= p.level * p.bonusPerLevel;
         }
@@ -1240,9 +1255,9 @@ float PlayingState::getPassiveCooldownMultiplier() const {
     return std::max(0.1f, mult);
 }
 
-float PlayingState::getPassiveProjSpeedMultiplier() const {
+float PlayingState::getPassiveProjSpeedMultiplier(size_t playerIdx) const {
     float mult = 1.f;
-    for (const auto& p : m_passiveItems) {
+    for (const auto& p : getPassiveItems(playerIdx)) {
         if (p.isOwned() && p.statType == "projSpeed") {
             mult += p.level * p.bonusPerLevel;
         }
@@ -1250,9 +1265,9 @@ float PlayingState::getPassiveProjSpeedMultiplier() const {
     return mult;
 }
 
-float PlayingState::getPassiveAreaMultiplier() const {
+float PlayingState::getPassiveAreaMultiplier(size_t playerIdx) const {
     float mult = 1.f;
-    for (const auto& p : m_passiveItems) {
+    for (const auto& p : getPassiveItems(playerIdx)) {
         if (p.isOwned() && p.statType == "area") {
             mult += p.level * p.bonusPerLevel;
         }
@@ -1260,9 +1275,9 @@ float PlayingState::getPassiveAreaMultiplier() const {
     return mult;
 }
 
-float PlayingState::getPassiveMaxHealthMultiplier() const {
+float PlayingState::getPassiveMaxHealthMultiplier(size_t playerIdx) const {
     float mult = 1.f;
-    for (const auto& p : m_passiveItems) {
+    for (const auto& p : getPassiveItems(playerIdx)) {
         if (p.isOwned() && p.statType == "maxHealth") {
             mult += p.level * p.bonusPerLevel;
         }

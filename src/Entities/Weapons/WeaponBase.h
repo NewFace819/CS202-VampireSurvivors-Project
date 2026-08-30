@@ -21,7 +21,7 @@ public:
 
     virtual void update(float dt, const sf::Vector2f& playerPos, const sf::Vector2f& playerDir, const std::vector<EnemyBase*>& enemies, std::vector<Projectile>& activeProjectiles) {
         m_timer += dt;
-        float actualCooldown = m_cooldown * ProfileManager::GetInstance().getCooldownMultiplier();
+        float actualCooldown = m_cooldown * ProfileManager::GetInstance().getCooldownMultiplier() * m_ownerCooldownMult;
         if (m_timer >= actualCooldown) {
             m_timer = 0.f; // reset timer
             // Fire the first shot immediately
@@ -67,6 +67,10 @@ public:
     virtual int getMaxLevel() const { return 8; }
     bool isMaxLevel() const { return m_level >= getMaxLevel(); }
     virtual bool isEvolved() const { return m_isEvolved; }
+
+    // Owner's passive-item cooldown bonus, refreshed each frame by PlayingState.
+    // Shop power-ups come from ProfileManager; this layers passives on top.
+    void setOwnerCooldownMult(float mult) { m_ownerCooldownMult = mult; }
 
     void addDamageDealt(float damage) { m_totalDamageDealt += damage; }
     float getTotalDamageDealt() const { return m_totalDamageDealt; }
@@ -151,6 +155,7 @@ protected:
     sf::Vector2f  m_burstPlayerPos;
     sf::Vector2f  m_burstPlayerDir;
     float         m_totalDamageDealt = 0.f;
+    float         m_ownerCooldownMult = 1.f;
 
     sf::Texture m_itemsTex;
     bool m_hasItemsTex = false;

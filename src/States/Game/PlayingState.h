@@ -88,11 +88,11 @@ public:
     std::set<std::string> getOwnedPassiveNames(size_t playerIdx = 0) const;
 
     // --- Per-run passive multipliers ---
-    float getPassiveDamageMultiplier() const;
-    float getPassiveCooldownMultiplier() const;
-    float getPassiveProjSpeedMultiplier() const;
-    float getPassiveAreaMultiplier() const;
-    float getPassiveMaxHealthMultiplier() const;
+    float getPassiveDamageMultiplier(size_t playerIdx = 0) const;
+    float getPassiveCooldownMultiplier(size_t playerIdx = 0) const;
+    float getPassiveProjSpeedMultiplier(size_t playerIdx = 0) const;
+    float getPassiveAreaMultiplier(size_t playerIdx = 0) const;
+    float getPassiveMaxHealthMultiplier(size_t playerIdx = 0) const;
 
     // --- Evolution ---
     void tryEvolveWeapon(size_t playerIdx = 0);
@@ -115,8 +115,8 @@ private:
     std::vector<Projectile> m_activeProjectiles;
     std::vector<Projectile> m_bossProjectiles;
     std::vector<std::unique_ptr<Collectible>> m_activeCollectibles;
+    // One passive-item list per player. Sized to m_players in init().
     std::vector<std::vector<PassiveItem>> m_playerPassiveItems;
-    std::vector<PassiveItem> m_passiveItems;
     std::vector<TreasureChest> m_chests;
     std::vector<std::unique_ptr<Obstacle>> m_obstacles;
     std::vector<std::unique_ptr<Obstacle>> m_baseObstacles; // Base template for repeating maps
