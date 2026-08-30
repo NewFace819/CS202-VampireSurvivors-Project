@@ -784,11 +784,17 @@ void PlayingState::update(float dt) {
             m_revivalsLeft--;
             StatsManager::GetInstance().heal(StatsManager::GetInstance().getMaxHealth() * 0.5f);
             
+            // Clear breathing room around every active player. Using the camera
+            // midpoint here left co-op players surrounded when they were apart.
+            const float clearRadiusSq = 450.f * 450.f;
             for (auto* enemy : m_activeEnemies) {
-                sf::Vector2f diff = enemy->getPosition() - cam;
-                float distSq = diff.x * diff.x + diff.y * diff.y;
-                if (distSq < 450.f * 450.f) {
-                    enemy->setActive(false);
+                for (const auto& p : m_players) {
+                    if (!p.isActive()) continue;
+                    sf::Vector2f diff = enemy->getPosition() - p.getPosition();
+                    if (diff.x * diff.x + diff.y * diff.y < clearRadiusSq) {
+                        enemy->setActive(false);
+                        break;
+                    }
                 }
             }
             std::cout << "Resurrected! Revivals left: " << m_revivalsLeft << "\n";
