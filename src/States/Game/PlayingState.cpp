@@ -143,11 +143,6 @@ PlayingState::PlayingState(GameManager* manager, const std::vector<CharacterType
         p.iconRect = IconManager::GetInstance().getIconRect(p.name);
     }
     
-    m_levelText.setFont(m_font);
-    m_levelText.setCharacterSize(8);
-    m_levelText.setFillColor(sf::Color::White);
-    m_levelText.setStyle(sf::Text::Bold);
-
     size_t count = charTypes.empty() ? 1 : charTypes.size();
     m_players.resize(count);
 
@@ -396,10 +391,6 @@ void PlayingState::update(float dt) {
     std::snprintf(timeBuffer, sizeof(timeBuffer), "%02d:%02d", minutes, seconds);
     m_timerText.setString(timeBuffer);
 
-    char levelBuffer[16];
-    std::snprintf(levelBuffer, sizeof(levelBuffer), "LV %d", StatsManager::GetInstance().getLevel());
-    m_levelText.setString(levelBuffer);
-
     // Check for wave transition to spawn bosses
     int newWaveIndex = m_waveManager.getCurrentWaveIndex(m_survivalTime);
     if (newWaveIndex != m_currentWaveIndex) {
@@ -419,7 +410,7 @@ void PlayingState::update(float dt) {
                 sf::Vector2u winSize = m_manager->getWindow().getSize();
                 float spawnY = cam.y - (winSize.y / 2.0f + 200.f); // Spawn safely above screen
                 
-                int playerLevel = StatsManager::GetInstance().getLevel();
+                int playerLevel = getHighestPlayerLevel();
                 if (stats.hpPerLevel > 0.f) {
                     stats.maxHp += stats.hpPerLevel * playerLevel;
                     stats.hp = stats.maxHp;
@@ -505,7 +496,7 @@ void PlayingState::update(float dt) {
                     float spawnX = cam.x + std::cos(angle) * spawnRadius;
                     float spawnY = cam.y + std::sin(angle) * spawnRadius;
 
-                    int playerLevel = StatsManager::GetInstance().getLevel();
+                    int playerLevel = getHighestPlayerLevel();
                     if (stats.hpPerLevel > 0.f) {
                         stats.maxHp += stats.hpPerLevel * playerLevel;
                         stats.hp = stats.maxHp;
@@ -781,13 +772,6 @@ void PlayingState::update(float dt) {
         }
     }
 
-    // Also check global StatsManager level up fallback for chests or extra exp sources
-    int currentLevel = StatsManager::GetInstance().getLevel();
-    if (currentLevel > m_lastLevel) {
-        m_lastLevel++;
-        m_levelUpQueue.push_back(0);
-    }
-
     if (!m_levelUpQueue.empty()) {
         size_t nextPlayerIdx = m_levelUpQueue.front();
         m_levelUpQueue.erase(m_levelUpQueue.begin());
@@ -816,7 +800,7 @@ void PlayingState::update(float dt) {
             summary.characterName = "Survivors";
             summary.survivalTime = m_survivalTime;
             summary.goldEarned = m_runGold;
-            summary.levelReached = StatsManager::GetInstance().getLevel();
+            summary.levelReached = getHighestPlayerLevel();
             summary.enemiesDefeated = m_kills;
             summary.charIconRect = sf::IntRect(0, 0, 16, 16);
 
@@ -1104,6 +1088,14 @@ Player* PlayingState::getNearestPlayer(const sf::Vector2f& pos) {
         }
     }
     return nearest ? nearest : &m_players[0];
+}
+
+int PlayingState::getHighestPlayerLevel() const {
+    int highest = 1;
+    for (const auto& p : m_players) {
+        if (p.isActive() && p.getLevel() > highest) highest = p.getLevel();
+    }
+    return highest;
 }
 
 void PlayingState::addWeapon(const std::string& weaponName) {

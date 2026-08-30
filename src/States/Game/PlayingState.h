@@ -96,6 +96,8 @@ public:
 
     // --- Evolution ---
     void tryEvolveWeapon(size_t playerIdx = 0);
+    // Highest level among active players; drives enemy scaling and the run summary.
+    int getHighestPlayerLevel() const;
 
 private:
     GameManager* m_manager;
@@ -130,7 +132,6 @@ private:
 
 
     float m_enemySpawnTimer = 0.f;
-    int   m_lastLevel  = 1; // Track StatsManager level to detect level-ups
 
     float m_survivalTime = 0.f;
     bool m_bossSpawned = false;
@@ -154,7 +155,6 @@ private:
     sf::Font m_font;
     sf::Text m_timerText;
     sf::Text m_goldText;
-    sf::Text m_levelText;
     sf::Texture m_itemsTex;
     sf::Texture m_enemiesTex; // enemies.png
     sf::Texture m_vfxTex; // vfx.png
