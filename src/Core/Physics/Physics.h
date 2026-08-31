@@ -7,7 +7,14 @@
 // Physics utilities for handling knockback and basic dynamics
 class Physics {
 public:
-    // Simple knockback - applies an instantaneous velocity change in a given direction
+    // Preferred overload: the caller already holds an EnemyBase*, so no downcast is
+    // needed. Called once per projectile hit, which is a hot path in dense waves.
+    static void ApplyKnockback(EnemyBase* enemy, const sf::Vector2f& impactDirection, float force, float entityMass = 1.0f) {
+        if (!enemy || entityMass <= 0.f) return;
+        enemy->applyKnockback(impactDirection, force);
+    }
+
+    // Generic fallback for callers that only have an Entity*.
     static void ApplyKnockback(Entity* entity, const sf::Vector2f& impactDirection, float force, float entityMass = 1.0f) {
         if (!entity || entityMass <= 0.f) return;
         

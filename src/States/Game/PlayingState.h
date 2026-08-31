@@ -110,6 +110,8 @@ private:
     
     std::vector<Player> m_players;
     Player m_dummyPlayer;
+    // Reused across grid queries so neighbour lookups do not allocate each frame.
+    std::vector<EnemyBase*> m_neighborScratch;
     std::vector<size_t> m_weaponOwnerIndices; // Maps weapon index -> player index
     std::vector<size_t> m_levelUpQueue;
     ObjectPool<EnemyBase> m_enemyPool;

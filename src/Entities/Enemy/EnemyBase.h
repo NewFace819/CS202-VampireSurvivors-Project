@@ -32,6 +32,13 @@ public:
     // Boss shooting mechanics
     void updateShooting(float dt, const sf::Vector2f& playerPos, std::vector<Projectile>& bossProjectiles, sf::Texture* vfxTexture);
 
+    // Ranged behaviour, expressed polymorphically rather than by interrogating the
+    // concrete type. Base enemies never shoot; ShooterEnemy overrides these.
+    virtual bool wantsToShoot() const { return false; }
+    virtual void resetShootFlag() {}
+    // Lets the object pool return an enemy to the right free list without a dynamic_cast.
+    virtual bool isShooter() const { return false; }
+
 protected:
     sf::Shader* getDamageShader();
 

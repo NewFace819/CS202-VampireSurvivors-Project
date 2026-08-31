@@ -9,8 +9,9 @@ public:
     void init(const sf::Vector2f& startPos, const EnemyStats& stats, sf::Texture* texture = nullptr) override;
     void update(float dt) override;
 
-    bool wantsToShoot() const { return m_wantsToShoot; }
-    void resetShootFlag() { m_wantsToShoot = false; }
+    bool wantsToShoot() const override { return m_wantsToShoot; }
+    void resetShootFlag() override { m_wantsToShoot = false; }
+    bool isShooter() const override { return true; }
 
 private:
     float m_shootTimer = 0.f;

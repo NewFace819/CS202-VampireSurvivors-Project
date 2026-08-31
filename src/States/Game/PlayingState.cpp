@@ -29,7 +29,7 @@ PlayingState::PlayingState(GameManager* manager, CharacterType charType, StageTy
     : PlayingState(manager, std::vector<CharacterType>{charType}, stageType) {}
 
 PlayingState::PlayingState(GameManager* manager, const std::vector<CharacterType>& charTypes, StageType stageType) 
-    : m_manager(manager), m_grid(100.0f), m_enemyPool(500), m_shooterPool(150), m_stageType(stageType) { 
+    : m_manager(manager), m_grid(50.0f), m_enemyPool(10000), m_shooterPool(2000), m_stageType(stageType) { 
     StatsManager::GetInstance().reset();
     IconManager::GetInstance().init();
 
@@ -307,6 +307,63 @@ void PlayingState::update(float dt) {
         std::cout << "CHEAT: Spawned a treasure chest 150px to the right of player!\n";
     }
     tPressedLastFrame = tPressed;
+
+    // Cheat Code: Alt+H = spawn a horde around the players, for demo recording.
+    // Tap for one batch; hold to keep spawning until the enemy pool runs dry.
+    static bool hPressedLastFrame = false;
+    static float hordeTimer = 0.f;
+    bool hPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt) && sf::Keyboard::isKeyPressed(sf::Keyboard::H);
+    hordeTimer += dt;
+    bool hordeFire = hPressed && (!hPressedLastFrame || hordeTimer >= 0.08f);
+    if (hordeFire) {
+        hordeTimer = 0.f;
+        const int hordeSize = 200;
+
+        // Use the current wave's roster so the horde matches the stage.
+        std::vector<std::string> types;
+        const WaveData* wave = m_waveManager.getCurrentWave(m_survivalTime);
+        if (wave && !wave->enemies.empty()) {
+            types = wave->enemies;
+        } else {
+            types.push_back("ZOMBIE");
+        }
+
+        int spawned = 0;
+        for (int i = 0; i < hordeSize; ++i) {
+            EnemyStats stats = EnemyDatabase::getStats(types[std::rand() % types.size()]);
+
+            EnemyBase* enemy = (stats.shootCooldown > 0.f) ? m_shooterPool.acquire()
+                                                           : m_enemyPool.acquire();
+            if (!enemy) break;  // pool exhausted
+
+            // Ring around the camera, just outside the view, same as normal spawning.
+            float angle = (std::rand() % 360) * 3.14159f / 180.f;
+            sf::Vector2u winSize = m_manager->getWindow().getSize();
+            float halfW = winSize.x / 2.0f;
+            float halfH = winSize.y / 2.0f;
+            float spawnRadius = std::sqrt(halfW * halfW + halfH * halfH) + 60.f;
+            sf::Vector2f pos(cam.x + std::cos(angle) * spawnRadius,
+                             cam.y + std::sin(angle) * spawnRadius);
+
+            // Match the normal spawn path so horde enemies scale like real ones.
+            if (stats.hpPerLevel > 0.f) {
+                stats.maxHp += stats.hpPerLevel * getHighestPlayerLevel();
+            }
+            float curse = getRunCurseMultiplier();
+            stats.maxHp *= curse;
+            stats.speed *= curse;
+            stats.hp = stats.maxHp;
+
+            enemy->init(pos, stats, &m_enemiesTex);
+            enemy->setTarget(getNearestPlayer(pos));
+            m_activeEnemies.push_back(enemy);
+            ++spawned;
+        }
+        std::cout << "CHEAT: Spawned " << spawned << " enemies. Active: "
+                  << m_activeEnemies.size() << ", pool left: " << m_enemyPool.availableCount()
+                  << (spawned < hordeSize ? "  (POOL EXHAUSTED)" : "") << "\n";
+    }
+    hPressedLastFrame = hPressed;
 
     // Update players & Stage Bounds
     for (size_t pi = 0; pi < m_players.size(); ++pi) {
@@ -586,8 +643,8 @@ void PlayingState::update(float dt) {
                 m_activeCollectibles.push_back(std::move(chicken));
             }
 
-            if (auto* shooter = dynamic_cast<ShooterEnemy*>(enemy)) {
-                m_shooterPool.release(shooter);
+            if (enemy->isShooter()) {
+                m_shooterPool.release(static_cast<ShooterEnemy*>(enemy));
             } else {
                 m_enemyPool.release(enemy);
             }
@@ -619,9 +676,9 @@ void PlayingState::update(float dt) {
         sf::Vector2f toPlayer = enemy->getPosition() - (targetPlayer ? targetPlayer->getPosition() : cam);
         float distToPlayerSq = toPlayer.x * toPlayer.x + toPlayer.y * toPlayer.y;
 
-        if (auto* shooter = dynamic_cast<ShooterEnemy*>(enemy)) {
-            if (shooter->wantsToShoot()) {
-                shooter->resetShootFlag();
+        if (enemy->wantsToShoot()) {
+            {
+                enemy->resetShootFlag();
                 if (distToPlayerSq < 1000.f * 1000.f) {
                     sf::Vector2f dir = -toPlayer;
                     float len = std::sqrt(dir.x * dir.x + dir.y * dir.y);
@@ -638,8 +695,8 @@ void PlayingState::update(float dt) {
         }
         
         // --- Enemy-Enemy Soft Collision (Separation) ---
-        auto neighbors = m_grid.getNeighbors(enemy->getPosition());
-        for (EnemyBase* other : neighbors) {
+        m_grid.getNeighborsInRadius(enemy->getPosition(), enemy->getRadius() * 2.f, m_neighborScratch);
+        for (EnemyBase* other : m_neighborScratch) {
             if (other != enemy && other->isActive()) {
                 sf::Vector2f diff = enemy->getPosition() - other->getPosition();
                 float distSq = diff.x * diff.x + diff.y * diff.y;
@@ -679,73 +736,90 @@ void PlayingState::update(float dt) {
                 }
             }
 
-            for (auto& proj : m_activeProjectiles) {
-                if (proj.canHit() && !proj.isEnemyProj() && proj.getBounds().intersects(enemyBounds)) {
-                    if (proj.hasHitEnemy(enemy)) continue;
-                    proj.addHitEnemy(enemy);
 
-                    bool killed = enemy->takeDamage(proj.getDamage());
-                    
-                    if (proj.getSourceWeapon()) {
-                        proj.getSourceWeapon()->addDamageDealt(proj.getDamage());
-                    }
-
-                    Physics::ApplyKnockback(enemy, proj.getDirection(), proj.getKnockback(), 1.0f);
-                    
-                    if (proj.getKnockback() == 150.f) {
-                        getPlayer(proj.getOwnerPlayer()).heal(8.f);
-                    }
-                    
-                    if (proj.isBouncing()) {
-                        sf::Vector2f diff = proj.getPosition() - enemy->getPosition();
-                        float distSq = diff.x * diff.x + diff.y * diff.y;
-                        if (distSq > 0.0001f) {
-                            float dist = std::sqrt(distSq);
-                            sf::Vector2f normal = diff / dist;
-                            
-                            sf::Vector2f dir = proj.getDirection();
-                            float dot = dir.x * normal.x + dir.y * normal.y;
-                            sf::Vector2f reflect = dir - 2.f * dot * normal;
-                            
-                            float rLen = std::sqrt(reflect.x*reflect.x + reflect.y*reflect.y);
-                            if (rLen > 0) reflect /= rLen;
-                            
-                            float currentSpeed = std::sqrt(proj.m_velocity.x * proj.m_velocity.x + proj.m_velocity.y * proj.m_velocity.y);
-                            proj.m_direction = reflect;
-                            proj.m_velocity = reflect * currentSpeed;
-                            
-                            if (proj.m_hasSprite && currentSpeed > 0) {
-                                proj.m_initRotation = std::atan2(reflect.y, reflect.x) * 180.f / 3.14159265f;
-                                proj.m_animSprite.setRotation(proj.m_initRotation);
-                            }
-                        }
-                    }
-
-                    if (proj.isExploding()) {
-                        float roll = static_cast<float>(std::rand()) / RAND_MAX;
-                        if (roll <= proj.getExplosionChance()) {
-                            Projectile explosion;
-                            float radius = 50.f * ProfileManager::GetInstance().getAreaMultiplier();
-                            explosion.init(proj.getPosition(), sf::Vector2f(0.f, 0.f), proj.getDamage() * 2.f, 0.f, 0.f, 0.2f, true);
-                            explosion.setCircleShape(radius, sf::Color(255, 100, 100, 150));
-                            explosion.setHitInterval(0.5f);
-                            explosion.setSourceWeapon(proj.getSourceWeapon());
-                            newProjectiles.push_back(explosion);
-                        }
-                    }
-                    
-                    if (!proj.isPiercing() && !proj.isBouncing()) {
-                        proj.deactivate();
-                    }
-                    
-                    if (killed) {
-                        m_kills++;
-                    }
-                }
-            }
         }
         ++it;
     }
+
+    // Projectile -> enemy collision, resolved through the spatial hash grid.
+    // This used to be a nested loop inside the enemy pass: every enemy tested against
+    // every projectile, so 3000 enemies x 200 projectiles was 600k checks per frame.
+    // Now each projectile only tests the enemies in its own neighbourhood.
+    for (auto& proj : m_activeProjectiles) {
+        if (!proj.canHit() || proj.isEnemyProj()) continue;
+
+        sf::FloatRect projBounds = proj.getBounds();
+        // Query radius covers the projectile's own extent, so large auras and area
+        // weapons cannot miss enemies sitting at their edges.
+        float projReach = std::max(projBounds.width, projBounds.height) * 0.5f;
+        m_grid.getNeighborsInRadius(proj.getPosition(), projReach, m_neighborScratch);
+
+        for (EnemyBase* enemy : m_neighborScratch) {
+            if (!enemy->isActive() || enemy->isDying()) continue;
+            sf::FloatRect enemyBounds = enemy->getBounds();
+            if (!projBounds.intersects(enemyBounds)) continue;
+                if (proj.hasHitEnemy(enemy)) continue;
+                proj.addHitEnemy(enemy);
+
+                bool killed = enemy->takeDamage(proj.getDamage());
+                
+                if (proj.getSourceWeapon()) {
+                    proj.getSourceWeapon()->addDamageDealt(proj.getDamage());
+                }
+
+                Physics::ApplyKnockback(enemy, proj.getDirection(), proj.getKnockback(), 1.0f);
+                
+                if (proj.getKnockback() == 150.f) {
+                    getPlayer(proj.getOwnerPlayer()).heal(8.f);
+                }
+                
+                if (proj.isBouncing()) {
+                    sf::Vector2f diff = proj.getPosition() - enemy->getPosition();
+                    float distSq = diff.x * diff.x + diff.y * diff.y;
+                    if (distSq > 0.0001f) {
+                        float dist = std::sqrt(distSq);
+                        sf::Vector2f normal = diff / dist;
+                        
+                        sf::Vector2f dir = proj.getDirection();
+                        float dot = dir.x * normal.x + dir.y * normal.y;
+                        sf::Vector2f reflect = dir - 2.f * dot * normal;
+                        
+                        float rLen = std::sqrt(reflect.x*reflect.x + reflect.y*reflect.y);
+                        if (rLen > 0) reflect /= rLen;
+                        
+                        float currentSpeed = std::sqrt(proj.m_velocity.x * proj.m_velocity.x + proj.m_velocity.y * proj.m_velocity.y);
+                        proj.m_direction = reflect;
+                        proj.m_velocity = reflect * currentSpeed;
+                        
+                        if (proj.m_hasSprite && currentSpeed > 0) {
+                            proj.m_initRotation = std::atan2(reflect.y, reflect.x) * 180.f / 3.14159265f;
+                            proj.m_animSprite.setRotation(proj.m_initRotation);
+                        }
+                    }
+                }
+
+                if (proj.isExploding()) {
+                    float roll = static_cast<float>(std::rand()) / RAND_MAX;
+                    if (roll <= proj.getExplosionChance()) {
+                        Projectile explosion;
+                        float radius = 50.f * ProfileManager::GetInstance().getAreaMultiplier();
+                        explosion.init(proj.getPosition(), sf::Vector2f(0.f, 0.f), proj.getDamage() * 2.f, 0.f, 0.f, 0.2f, true);
+                        explosion.setCircleShape(radius, sf::Color(255, 100, 100, 150));
+                        explosion.setHitInterval(0.5f);
+                        explosion.setSourceWeapon(proj.getSourceWeapon());
+                        newProjectiles.push_back(explosion);
+                    }
+                }
+                
+                if (!proj.isPiercing() && !proj.isBouncing()) {
+                    proj.deactivate();
+                }
+                
+                if (killed) {
+                    m_kills++;
+                }
+            }
+        }
 
     // Check enemy projectile collisions with all players
     for (auto& proj : m_activeProjectiles) {
@@ -919,7 +993,14 @@ void PlayingState::draw(sf::RenderWindow& window) {
         item->draw(window);
     }
 
+    // Cull off-screen enemies. Each draw is its own call, so at high enemy counts
+    // the ones outside the view were pure cost. Uses the public bounds interface.
+    sf::Vector2f vSize = worldView.getSize();
+    sf::FloatRect viewRect(cam.x - vSize.x * 0.5f - 64.f,
+                           cam.y - vSize.y * 0.5f - 64.f,
+                           vSize.x + 128.f, vSize.y + 128.f);
     for (auto* enemy : m_activeEnemies) {
+        if (!viewRect.intersects(enemy->getBounds())) continue;
         enemy->draw(window);
     }
     

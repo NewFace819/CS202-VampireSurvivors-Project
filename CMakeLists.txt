@@ -5,6 +5,19 @@ project(VampireSurvivorsClone)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Default to an optimised build. Without this the game runs unoptimised (-O0),
+# which is several times slower and cannot sustain large enemy counts.
+# Override with -DCMAKE_BUILD_TYPE=Debug when you need to step through code.
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS Debug Release RelWithDebInfo MinSizeRel)
+endif()
+
+# SFML 2.6.1 and nlohmann/json 3.11.2 declare cmake_minimum_required below 3.5,
+# which CMake 4.x rejects outright -- a fresh clone fails to configure without
+# this. Applies to the fetched dependencies only, not to our own targets.
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5 CACHE STRING "" FORCE)
+
 # Fetch SFML
 include(FetchContent)
 FetchContent_Declare(
