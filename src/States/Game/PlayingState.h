@@ -112,6 +112,9 @@ private:
     Player m_dummyPlayer;
     // Reused across grid queries so neighbour lookups do not allocate each frame.
     std::vector<EnemyBase*> m_neighborScratch;
+    // Reused by the 2.5D depth sort in draw().
+    std::vector<Obstacle*> m_depthObstacles;
+    std::vector<Player*>   m_depthPlayers;
     std::vector<size_t> m_weaponOwnerIndices; // Maps weapon index -> player index
     std::vector<size_t> m_levelUpQueue;
     ObjectPool<EnemyBase> m_enemyPool;

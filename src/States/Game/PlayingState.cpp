@@ -982,16 +982,43 @@ void PlayingState::draw(sf::RenderWindow& window) {
         for (int col = 0; col < 3; ++col)
             window.draw(m_bgTiles[row][col]);
 
-    // Draw obstacles behind players (above in Y world coordinates) for 2.5D depth
+    // --- 2.5D depth ---
+    // An obstacle should occlude something when the obstacle's base sits lower on
+    // screen (greater Y) than that thing. This previously compared against cam.y,
+    // the camera centre, so walking up or down flipped obstacles between the
+    // behind and in-front passes -- which is why gems vanished and reappeared as
+    // the player moved. The threshold now comes from the objects themselves.
+    m_depthObstacles.clear();
     for (const auto& obs : m_obstacles) {
-        if (obs->isActive() && obs->getPosition().y <= cam.y + 10.f) {
-            obs->draw(window);
+        if (obs->isActive()) m_depthObstacles.push_back(obs.get());
+    }
+    std::sort(m_depthObstacles.begin(), m_depthObstacles.end(),
+              [](const Obstacle* a, const Obstacle* b) {
+                  return a->getPosition().y < b->getPosition().y;
+              });
+
+    size_t obsIdx = 0;
+    auto drawObstaclesUpTo = [&](float y) {
+        while (obsIdx < m_depthObstacles.size() &&
+               m_depthObstacles[obsIdx]->getPosition().y <= y) {
+            m_depthObstacles[obsIdx]->draw(window);
+            ++obsIdx;
         }
+    };
+
+    // Players back to front, so each is occluded only by obstacles truly in front
+    // of it. With a single camera threshold one co-op player was always wrong.
+    m_depthPlayers.clear();
+    for (auto& p : m_players) {
+        if (p.isActive()) m_depthPlayers.push_back(&p);
     }
-    
-    for (auto& item : m_activeCollectibles) {
-        item->draw(window);
-    }
+    std::sort(m_depthPlayers.begin(), m_depthPlayers.end(),
+              [](const Player* a, const Player* b) {
+                  return a->getPosition().y < b->getPosition().y;
+              });
+
+    // Everything behind the backmost player.
+    drawObstaclesUpTo(m_depthPlayers.empty() ? cam.y : m_depthPlayers.front()->getPosition().y);
 
     // Cull off-screen enemies. Each draw is its own call, so at high enemy counts
     // the ones outside the view were pure cost. Uses the public bounds interface.
@@ -1017,15 +1044,22 @@ void PlayingState::draw(sf::RenderWindow& window) {
         chest.draw(window);
     }
 
-    for (auto& p : m_players) {
-        p.draw(window);
+    // Players, interleaved with the obstacles that fall between them.
+    for (Player* p : m_depthPlayers) {
+        drawObstaclesUpTo(p->getPosition().y);
+        p->draw(window);
     }
 
-    // Draw obstacles in front of players (below in Y world coordinates) for 2.5D occlusion
-    for (const auto& obs : m_obstacles) {
-        if (obs->isActive() && obs->getPosition().y > cam.y + 10.f) {
-            obs->draw(window);
-        }
+    // Whatever is left sits in front of everything on the ground plane.
+    while (obsIdx < m_depthObstacles.size()) {
+        m_depthObstacles[obsIdx]->draw(window);
+        ++obsIdx;
+    }
+
+    // Collectibles draw last. Gems and coins are things the player has to find and
+    // walk to, so they must never be buried under a table or counter.
+    for (auto& item : m_activeCollectibles) {
+        item->draw(window);
     }
 
     // Health Bar Background (under characters) - each player shows their own HP
