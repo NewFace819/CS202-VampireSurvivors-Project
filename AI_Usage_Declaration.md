@@ -3,6 +3,7 @@
 **Course:** CS202 — Object-Oriented Programming
 **Project:** Vampire Survivors Clone (C++ / SFML)
 **Group:** 54
+**Members:** Do Gia Huy (25125013), Vo Thanh Hai (25125011)
 **Repository:** https://github.com/NewFace819/CS202-VampireSurvivors-Project
 **Declaration date:** 31 August 2026
 
@@ -31,8 +32,12 @@ We declare the usage below to the best of our knowledge.
 
 | Tool | Period | Used by | Purpose |
 |---|---|---|---|
-| Antigravity IDE (Gemini) | 29 Jun – 30 Aug 2026 | _(member to confirm)_ | Implementation, refactoring, debugging |
-| Claude Code (Claude Opus) | 30 – 31 Aug 2026 | _(member to confirm)_ | Bug fixing, performance work, code review |
+| Antigravity IDE (Gemini) | 29 Jun – 30 Aug 2026 | Do Gia Huy (logs on that machine) | Implementation, refactoring, debugging |
+| Claude Code (Claude Opus) | 30 – 31 Aug 2026 | Vo Thanh Hai | Bug fixing, performance work, code review |
+
+> Both members should confirm this attribution. The Antigravity logs are stored under
+> `C:\Users\wiih0\`, which indicates Do Gia Huy's machine, but sessions may have
+> been run jointly.
 
 ---
 
@@ -178,6 +183,5 @@ We confirm that:
 
 | Member | Student ID | Tools used | Signature | Date |
 |---|---|---|---|---|
-| _(name)_ | _(ID)_ | _(Antigravity / Claude Code / none)_ | | |
-| _(name)_ | _(ID)_ | | | |
-| _(name)_ | _(ID)_ | | | |
+| Do Gia Huy | 25125013 | Antigravity IDE (Gemini) | | |
+| Vo Thanh Hai | 25125011 | Antigravity IDE (Gemini), Claude Code | | |

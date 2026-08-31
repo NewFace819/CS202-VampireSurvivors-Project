@@ -407,3 +407,7 @@ AI_Usage_Declaration.html
 
 # The report/declaration renderer is a deliverable, unlike the other *.py helpers
 !make_pdf.py
+
+# Generated PDFs from make_pdf.py + headless Chrome
+report.pdf
+AI_Usage_Declaration.pdf
