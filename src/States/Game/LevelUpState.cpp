@@ -94,7 +94,9 @@ std::vector<LevelUpOption> LevelUpState::sampleItemsWithVSRules(std::vector<Leve
     if (pool.empty()) return result;
 
     // 1. Calculate how many choices to offer (3 or 4) based on character Luck
-    float totalLuck = std::max(0.1f, ProfileManager::GetInstance().getLuckMultiplier());
+    // Shop Luck rank plus this player's Clover passive.
+    float totalLuck = std::max(0.1f, ProfileManager::GetInstance().getLuckMultiplier()
+                                   + m_playing->getPassiveStatBonus(m_playerIdx, "luck"));
     float chanceFourth = 1.0f - (1.0f / totalLuck);
     float rollFourth = static_cast<float>(std::rand()) / RAND_MAX;
     

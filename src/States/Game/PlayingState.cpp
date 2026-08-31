@@ -317,6 +317,7 @@ void PlayingState::update(float dt) {
         p.setPassiveMoveSpeedMult(1.f + getPassiveStatBonus(pi, "moveSpeed"));
         p.setPassiveMagnetBonus(getPassiveStatBonus(pi, "magnet"));
         p.setPassiveArmor(getPassiveStatBonus(pi, "armor"));
+        p.setPassiveGreed(getPassiveStatBonus(pi, "greed"));
 
         // Hollow Heart: max health scales with the shop bonus and this player's passives.
         p.setMaxHealth(100.f * ProfileManager::GetInstance().getMaxHealthMultiplier()
@@ -443,9 +444,13 @@ void PlayingState::update(float dt) {
                 int playerLevel = getHighestPlayerLevel();
                 if (stats.hpPerLevel > 0.f) {
                     stats.maxHp += stats.hpPerLevel * playerLevel;
-                    stats.hp = stats.maxHp;
                 }
-                
+                // Bosses are cursed too, or Skull O'Maniac would make them relatively weaker.
+                float bossCurse = getRunCurseMultiplier();
+                stats.maxHp *= bossCurse;
+                stats.speed *= bossCurse;
+                stats.hp = stats.maxHp;
+
                 boss->init(sf::Vector2f(spawnX, spawnY), stats, &m_enemiesTex);
                 boss->setTarget(getNearestPlayer(sf::Vector2f(spawnX, spawnY)));
                 m_activeEnemies.push_back(boss);
@@ -495,11 +500,16 @@ void PlayingState::update(float dt) {
         int toSpawn = 0;
         
         // Spawn immediately to meet minimum, or spawn periodically
-        if (currentCount < currentWave->minEnemies) {
+        // Skull O'Maniac raises enemy quantity and spawn rate.
+        float curse = getRunCurseMultiplier();
+        int cursedMin = static_cast<int>(currentWave->minEnemies * curse);
+        float cursedInterval = currentWave->spawnInterval / curse;
+
+        if (currentCount < cursedMin) {
             shouldSpawn = true;
-            toSpawn = currentWave->minEnemies - currentCount;
+            toSpawn = cursedMin - currentCount;
             if (toSpawn > 20) toSpawn = 20; 
-        } else if (m_enemySpawnTimer >= currentWave->spawnInterval) {
+        } else if (m_enemySpawnTimer >= cursedInterval) {
             shouldSpawn = true;
             toSpawn = 1;
             m_enemySpawnTimer = 0.f;
@@ -529,8 +539,11 @@ void PlayingState::update(float dt) {
                     int playerLevel = getHighestPlayerLevel();
                     if (stats.hpPerLevel > 0.f) {
                         stats.maxHp += stats.hpPerLevel * playerLevel;
-                        stats.hp = stats.maxHp;
                     }
+                    // Skull O'Maniac also raises enemy health and speed.
+                    stats.maxHp *= curse;
+                    stats.speed *= curse;
+                    stats.hp = stats.maxHp;
 
                     enemy->init(sf::Vector2f(spawnX, spawnY), stats, &m_enemiesTex);
                     enemy->setTarget(getNearestPlayer(sf::Vector2f(spawnX, spawnY)));
@@ -1273,6 +1286,15 @@ float PlayingState::getPassiveStatBonus(size_t playerIdx, const std::string& sta
         }
     }
     return total;
+}
+
+float PlayingState::getRunCurseMultiplier() const {
+    float highest = 0.f;
+    for (size_t i = 0; i < m_players.size(); ++i) {
+        if (!m_players[i].isActive()) continue;
+        highest = std::max(highest, getPassiveStatBonus(i, "curse"));
+    }
+    return 1.f + highest;
 }
 
 float PlayingState::getPassiveDamageMultiplier(size_t playerIdx) const {

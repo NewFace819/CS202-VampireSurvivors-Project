@@ -95,6 +95,9 @@ public:
     float getPassiveMaxHealthMultiplier(size_t playerIdx = 0) const;
     // Summed level*bonusPerLevel for any statType, e.g. "magnet", "armor", "amount".
     float getPassiveStatBonus(size_t playerIdx, const std::string& statType) const;
+    // Skull O'Maniac. Enemies are shared, so curse is a run-level stat: the
+    // highest among active players, never the sum (two players must not stack it).
+    float getRunCurseMultiplier() const;
 
     // --- Evolution ---
     void tryEvolveWeapon(size_t playerIdx = 0);

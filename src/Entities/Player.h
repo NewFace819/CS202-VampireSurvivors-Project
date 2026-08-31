@@ -26,6 +26,8 @@ public:
     void setPassiveArmor(float a)         { m_passiveArmor = a; }
     float getPassiveMagnetBonus() const   { return m_passiveMagnetBonus; }
     float getPassiveArmor() const         { return m_passiveArmor; }
+    void setPassiveGreed(float g)         { m_passiveGreed = g; }
+    float getPassiveGreed() const         { return m_passiveGreed; }
 
     // --- Per-player health ---
     // Each player owns their health. A player at 0 HP with no revivals left is
@@ -52,6 +54,7 @@ private:
     float m_passiveMoveSpeedMult = 1.f;
     float m_passiveMagnetBonus = 0.f;
     float m_passiveArmor = 0.f;
+    float m_passiveGreed = 0.f;
     float m_health = 100.f;
     float m_maxHealth = 100.f;
     int   m_revivalsLeft = 0;

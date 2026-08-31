@@ -1,6 +1,7 @@
 #pragma once
 #include "Entities/Pickups/Collectible.h"
 #include "States/Game/PlayingState.h"
+#include "Core/Data/ProfileManager.h"
 
 class Coin : public Collectible {
 public:
@@ -37,11 +38,18 @@ public:
     }
 
     void onPickup(PlayingState* playing) override {
-        // Grant Gold directly, apply greed multiplier
-        float greed = 1.0f;
-        // If ProfileManager is accessible here, we would use it, but since we don't have it included, just give base for now or include it
-        playing->addGoldToRun(m_goldValue);
+        // No collector known: shop Greed only.
+        float greed = ProfileManager::GetInstance().getGreedMultiplier();
+        playing->addGoldToRun(static_cast<int>(m_goldValue * greed));
         m_isActive = false; // deactivate
+    }
+
+    void onPickupPlayer(PlayingState* playing, Player* collector) override {
+        // Shop Greed rank plus the collector's Stone Mask passive.
+        float greed = ProfileManager::GetInstance().getGreedMultiplier();
+        if (collector) greed += collector->getPassiveGreed();
+        playing->addGoldToRun(static_cast<int>(m_goldValue * greed));
+        m_isActive = false;
     }
 
 private:
