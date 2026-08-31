@@ -19,6 +19,14 @@ public:
     void setPlayerId(int id) { m_playerId = id; }
     int getPlayerId() const { return m_playerId; }
 
+    // Per-run passive item bonuses, refreshed each frame by PlayingState.
+    // Shop power-ups stay in ProfileManager; these layer on top.
+    void setPassiveMoveSpeedMult(float m) { m_passiveMoveSpeedMult = m; }
+    void setPassiveMagnetBonus(float b)   { m_passiveMagnetBonus = b; }
+    void setPassiveArmor(float a)         { m_passiveArmor = a; }
+    float getPassiveMagnetBonus() const   { return m_passiveMagnetBonus; }
+    float getPassiveArmor() const         { return m_passiveArmor; }
+
     int getLevel() const { return m_level; }
     float getExp() const { return m_exp; }
     float getExpToNextLevel() const { return m_expToNext; }
@@ -27,6 +35,9 @@ public:
 
 private:
     int m_playerId = 1;
+    float m_passiveMoveSpeedMult = 1.f;
+    float m_passiveMagnetBonus = 0.f;
+    float m_passiveArmor = 0.f;
     int m_level = 1;
     float m_exp = 0.f;
     float m_expToNext = 5.f;

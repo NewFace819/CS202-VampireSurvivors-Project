@@ -41,7 +41,8 @@ public:
         float distSq = delta.x * delta.x + delta.y * delta.y;
         
         // Magnet radius (e.g. 100 pixels, boosted by Magnet powerup/upgrades)
-        float magnetRadius = 100.0f * (1.f + ProfileManager::GetInstance().getMagnetBonus());
+        float magnetRadius = 100.0f * (1.f + ProfileManager::GetInstance().getMagnetBonus()
+                                            + player->getPassiveMagnetBonus());
         if (distSq < magnetRadius * magnetRadius) {
             m_isMagnetized = true;
         }

@@ -31,7 +31,7 @@ public:
                 activeProjectiles[i].setSourceWeapon(this);
             }
             // Queue remaining shots for sequential burst (0.1s interval)
-            int actualAmount = m_amount + ProfileManager::GetInstance().getAmountBonus();
+            int actualAmount = m_amount + ProfileManager::GetInstance().getAmountBonus() + m_ownerAmountBonus;
             m_pendingBurst    = actualAmount - 1;
             m_burstShotsFired = 1;
             m_burstTimer      = 0.f;
@@ -71,6 +71,7 @@ public:
     // Owner's passive-item cooldown bonus, refreshed each frame by PlayingState.
     // Shop power-ups come from ProfileManager; this layers passives on top.
     void setOwnerCooldownMult(float mult) { m_ownerCooldownMult = mult; }
+    void setOwnerAmountBonus(int bonus) { m_ownerAmountBonus = bonus; }
 
     void addDamageDealt(float damage) { m_totalDamageDealt += damage; }
     float getTotalDamageDealt() const { return m_totalDamageDealt; }
@@ -156,6 +157,7 @@ protected:
     sf::Vector2f  m_burstPlayerDir;
     float         m_totalDamageDealt = 0.f;
     float         m_ownerCooldownMult = 1.f;
+    int           m_ownerAmountBonus = 0;
 
     sf::Texture m_itemsTex;
     bool m_hasItemsTex = false;

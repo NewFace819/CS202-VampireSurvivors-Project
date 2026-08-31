@@ -248,8 +248,9 @@ public:
 
     // Applies the owner's in-run passive item bonuses. Shop power-ups are already
     // folded in at init(); this layers the per-player passives on top.
-    void applyOwnerModifiers(float damageMult, float speedMult, float areaMult) {
+    void applyOwnerModifiers(float damageMult, float speedMult, float areaMult, float durationMult) {
         m_damage *= damageMult;
+        m_lifetime *= durationMult;
 
         if (speedMult != 1.f) {
             m_speed *= speedMult;

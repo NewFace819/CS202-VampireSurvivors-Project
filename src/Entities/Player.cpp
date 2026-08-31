@@ -81,7 +81,7 @@ void Player::update(float dt) {
         m_animSprite.update(dt);
     }
 
-    m_velocity = dir * m_speed * ProfileManager::GetInstance().getMoveSpeedMultiplier();
+    m_velocity = dir * m_speed * ProfileManager::GetInstance().getMoveSpeedMultiplier() * m_passiveMoveSpeedMult;
     m_position += m_velocity * dt;
 
     if (m_hasSprite)

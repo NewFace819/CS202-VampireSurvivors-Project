@@ -303,8 +303,15 @@ void PlayingState::update(float dt) {
     tPressedLastFrame = tPressed;
 
     // Update players & Stage Bounds
-    for (auto& p : m_players) {
+    for (size_t pi = 0; pi < m_players.size(); ++pi) {
+        Player& p = m_players[pi];
         if (!p.isActive()) continue;
+
+        // Refresh this player's passive item bonuses (Wings, Attractorb, Armor)
+        p.setPassiveMoveSpeedMult(1.f + getPassiveStatBonus(pi, "moveSpeed"));
+        p.setPassiveMagnetBonus(getPassiveStatBonus(pi, "magnet"));
+        p.setPassiveArmor(getPassiveStatBonus(pi, "armor"));
+
         p.update(dt);
 
         if (m_stageType == StageType::InlaidLibrary) {
@@ -361,7 +368,9 @@ void PlayingState::update(float dt) {
         float passiveDmg   = getPassiveDamageMultiplier(ownerIdx);
         float passiveSpeed = getPassiveProjSpeedMultiplier(ownerIdx);
         float passiveArea  = getPassiveAreaMultiplier(ownerIdx);
+        float passiveDur   = 1.f + getPassiveStatBonus(ownerIdx, "duration");
         m_weapons[i]->setOwnerCooldownMult(getPassiveCooldownMultiplier(ownerIdx));
+        m_weapons[i]->setOwnerAmountBonus(static_cast<int>(getPassiveStatBonus(ownerIdx, "amount")));
 
         size_t prevProjCount = m_activeProjectiles.size();
         m_weapons[i]->update(dt, owner.getPosition(), owner.getFacingDir(), m_activeEnemies, m_activeProjectiles);
@@ -369,7 +378,7 @@ void PlayingState::update(float dt) {
         // owner, and apply that player's passive bonuses.
         for (size_t j = prevProjCount; j < m_activeProjectiles.size(); ++j) {
             m_activeProjectiles[j].setOwnerPlayer(ownerIdx);
-            m_activeProjectiles[j].applyOwnerModifiers(passiveDmg, passiveSpeed, passiveArea);
+            m_activeProjectiles[j].applyOwnerModifiers(passiveDmg, passiveSpeed, passiveArea, passiveDur);
         }
     }
 
@@ -630,7 +639,7 @@ void PlayingState::update(float dt) {
             for (auto& p : m_players) {
                 if (!p.isActive()) continue;
                 if (enemyBounds.intersects(p.getBounds())) {
-                    float armorRed = ProfileManager::GetInstance().getArmorReduction();
+                    float armorRed = ProfileManager::GetInstance().getArmorReduction() + p.getPassiveArmor();
                     float dmg = std::max(1.f, 10.f - armorRed);
                     StatsManager::GetInstance().takeDamage(dmg * dt);
                 }
@@ -722,7 +731,7 @@ void PlayingState::update(float dt) {
         if (proj.isActive() && proj.isEnemyProj()) {
             for (auto& p : m_players) {
                 if (p.isActive() && proj.getBounds().intersects(p.getBounds())) {
-                    float armorRed = ProfileManager::GetInstance().getArmorReduction();
+                    float armorRed = ProfileManager::GetInstance().getArmorReduction() + p.getPassiveArmor();
                     float dmg = std::max(1.f, proj.getDamage() - armorRed);
                     StatsManager::GetInstance().takeDamage(dmg);
                     proj.deactivate();
@@ -758,7 +767,7 @@ void PlayingState::update(float dt) {
         if (proj.isActive()) {
             for (auto& p : m_players) {
                 if (p.isActive() && proj.getBounds().intersects(p.getBounds())) {
-                    float armorRed = ProfileManager::GetInstance().getArmorReduction();
+                    float armorRed = ProfileManager::GetInstance().getArmorReduction() + p.getPassiveArmor();
                     float dmg = std::max(1.f, proj.getDamage() - armorRed);
                     StatsManager::GetInstance().takeDamage(dmg);
                     proj.deactivate();
@@ -1233,6 +1242,16 @@ std::set<std::string> PlayingState::getOwnedPassiveNames(size_t playerIdx) const
         if (p.isOwned()) names.insert(p.name);
     }
     return names;
+}
+
+float PlayingState::getPassiveStatBonus(size_t playerIdx, const std::string& statType) const {
+    float total = 0.f;
+    for (const auto& p : getPassiveItems(playerIdx)) {
+        if (p.isOwned() && p.statType == statType) {
+            total += p.level * p.bonusPerLevel;
+        }
+    }
+    return total;
 }
 
 float PlayingState::getPassiveDamageMultiplier(size_t playerIdx) const {

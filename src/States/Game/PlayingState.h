@@ -93,6 +93,8 @@ public:
     float getPassiveProjSpeedMultiplier(size_t playerIdx = 0) const;
     float getPassiveAreaMultiplier(size_t playerIdx = 0) const;
     float getPassiveMaxHealthMultiplier(size_t playerIdx = 0) const;
+    // Summed level*bonusPerLevel for any statType, e.g. "magnet", "armor", "amount".
+    float getPassiveStatBonus(size_t playerIdx, const std::string& statType) const;
 
     // --- Evolution ---
     void tryEvolveWeapon(size_t playerIdx = 0);
