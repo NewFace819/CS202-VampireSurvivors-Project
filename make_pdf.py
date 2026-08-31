@@ -50,7 +50,12 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 2em 0; }
 @media print {
   body { padding: 0; max-width: none; font-size: 11pt; }
   h1, h2, h3 { page-break-after: avoid; }
-  table, pre, .mermaid, blockquote { page-break-inside: avoid; }
+  table, pre, blockquote { page-break-inside: avoid; }
+  /* Keep diagrams whole, but scale any that are taller than a page. Without the
+     height cap, "page-break-inside: avoid" on an oversized diagram makes the
+     printer emit a blank page and drop it entirely. */
+  .mermaid { page-break-inside: avoid; }
+  .mermaid svg { max-height: 8.5in; width: auto; height: auto; }
   a { color: inherit; }
   a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 85%; color: var(--muted); }
 }

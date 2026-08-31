@@ -29,16 +29,125 @@ This is a faithful clone of the roguelite bullet-heaven game *Vampire Survivors*
 
 ---
 
-## 2. Architecture Overview
+## 2. High-Level Architecture
 
-The project is layered into four top-level source packages:
+### 2.1 Package structure
 
-| Package | Responsibility |
-|---|---|
-| `Core/` | Engine primitives: GameManager (FSM host), ObjectPool, Observer/Subject, Physics, ResourceManager, Data managers |
-| `Entities/` | Runtime objects: Entity → Player / EnemyBase / Obstacle / Projectile, plus Weapons and Pickups |
-| `States/` | Game states (FSM nodes): MainMenu, CharacterSelect, StageSelect, Shop, StageLoading, Playing, LevelUp, Pause, TreasureChest, GameOver, Summary |
-| `UI/` | Decoupled UI components, panels, and views shared across states |
+The project is layered into four top-level source packages (159 source files total):
+
+| Package | Files | Responsibility |
+|---|---|---|
+| `Core/` | 42 | Engine primitives: `GameManager` (FSM host), `ObjectPool`, `Observer`/`Subject`, `Physics`, `SpatialHashGrid`, `ResourceManager`, data managers |
+| `Entities/` | 48 | Runtime objects: `Entity` -> `Player` / `EnemyBase` / `Obstacle`, plus `Projectile`, `Weapons` and `Pickups` |
+| `States/` | 27 | FSM nodes: MainMenu, CharacterSelect, StageSelect, Shop, StageLoading, Playing, LevelUp, Pause, TreasureChest, GameOver, Summary |
+| `UI/` | 42 | Reusable UI components, panels and views shared across states |
+
+### 2.2 Layer dependencies
+
+Edge labels are the number of `#include` relationships between packages, counted from
+the source rather than idealised:
+
+```mermaid
+graph TD
+    subgraph Presentation
+        States["States/<br/>11 game states"]
+        UI["UI/<br/>panels, widgets, views"]
+    end
+    subgraph Domain
+        Entities["Entities/<br/>Player, Enemy, Weapons, Pickups"]
+    end
+    subgraph Engine
+        Core["Core/<br/>GameManager, Physics, Pools, Data"]
+    end
+
+    States -->|46| Core
+    States -->|21| Entities
+    States -->|13| UI
+    UI -->|14| Core
+    Entities -->|18| Core
+    Core -.->|7 upward| Entities
+    Entities -.->|4 upward| States
+
+    classDef solid fill:#eef4ff,stroke:#5b7cba
+    classDef dashed fill:#fff4e6,stroke:#c98a2e
+    class States,UI,Entities,Core solid
+```
+
+The dependency flow is predominantly downward: presentation depends on domain, domain
+depends on engine. **Dotted edges are upward dependencies that break strict layering**,
+and we record them rather than hide them:
+
+- `Core/Physics` and `Core/Data` include concrete entity types (`EnemyBase`, `Obstacle`,
+  `EnemyDatabase`) because collision, knockback and map loading operate on those types
+  directly instead of on an abstract interface.
+- `Entities/Pickups` (`Coin`, `ExpGem`, `FloorChicken`) include `PlayingState`, because a
+  pickup calls back into the running game to grant gold, EXP or health.
+- `Core/GameManager` includes `PlayingState` and `MainMenuState` to construct the initial
+  state.
+
+The cleanest fix would be to invert these through interfaces -- a `PickupReceiver` that
+`PlayingState` implements would remove the `Entities -> States` edge entirely. We left it
+as-is because the coupling is small and stable, but it is a genuine deviation from the
+layering the diagram otherwise follows.
+
+### 2.3 Frame flow
+
+One iteration of the main loop. `GameManager` owns a stack of states and delegates to the
+top of it; only `PlayingState` runs the full simulation:
+
+```mermaid
+flowchart TD
+    A[GameManager::run] --> B[poll SFML events]
+    B --> C[apply deferred state transition]
+    C --> D[top state: update dt]
+    D --> E{is PlayingState?}
+    E -->|no| M[top state: draw]
+    E -->|yes| F[spawn waves from WaveManager]
+    F --> G[rebuild SpatialHashGrid]
+    G --> H[weapons fire, projectiles move]
+    H --> I[grid-accelerated collision]
+    I --> J[pickups, level-up queue, death checks]
+    J --> K[2.5D depth sort]
+    K --> M
+    M --> N[window display]
+    N --> A
+```
+
+### 2.4 Data-driven pipeline
+
+Content is authored as JSON and loaded at run time, so adding a stage, character or
+enemy needs no code change:
+
+```mermaid
+flowchart LR
+    subgraph Assets
+        CD[CHARACTER_DATA.json]
+        ED[enemies.json]
+        WD[WEAPON_DATA.json]
+        MD[maps/*.json]
+        AT[*_atlas.json]
+    end
+    subgraph Managers
+        CDM[CharacterDataManager]
+        EDB[EnemyDatabase]
+        WDM[WeaponDataManager]
+        ML[MapLoader]
+        IM[IconManager]
+    end
+    subgraph Runtime
+        CF[CharacterFactory]
+        WF[WeaponFactory]
+        WM[WaveManager]
+        OB[Obstacles + VertexArray mesh]
+        HUD[HUD icons]
+    end
+
+    CD --> CDM --> CF
+    ED --> EDB --> WM
+    WD --> WDM --> WF
+    MD --> ML --> OB
+    AT --> IM --> HUD
+```
 
 ---
 
