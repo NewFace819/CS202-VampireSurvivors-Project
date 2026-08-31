@@ -27,6 +27,20 @@ public:
     float getPassiveMagnetBonus() const   { return m_passiveMagnetBonus; }
     float getPassiveArmor() const         { return m_passiveArmor; }
 
+    // --- Per-player health ---
+    // Each player owns their health. A player at 0 HP with no revivals left is
+    // set inactive ("down"); the run ends only when every player is down.
+    void initHealth(float maxHealth, int revivals);
+    void takeDamage(float amount);
+    void heal(float amount);
+    void setMaxHealth(float maxHealth);      // rescales current HP proportionally
+    float getHealth() const { return m_health; }
+    float getMaxHealth() const { return m_maxHealth; }
+    bool isDown() const { return m_health <= 0.f; }
+    int  getRevivalsLeft() const { return m_revivalsLeft; }
+    void addRevival(int n) { m_revivalsLeft += n; }
+    bool tryRevive();                        // consumes a revival, restores 50% HP
+
     int getLevel() const { return m_level; }
     float getExp() const { return m_exp; }
     float getExpToNextLevel() const { return m_expToNext; }
@@ -38,6 +52,9 @@ private:
     float m_passiveMoveSpeedMult = 1.f;
     float m_passiveMagnetBonus = 0.f;
     float m_passiveArmor = 0.f;
+    float m_health = 100.f;
+    float m_maxHealth = 100.f;
+    int   m_revivalsLeft = 0;
     int m_level = 1;
     float m_exp = 0.f;
     float m_expToNext = 5.f;

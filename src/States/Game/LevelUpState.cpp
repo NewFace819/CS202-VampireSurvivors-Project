@@ -121,7 +121,7 @@ std::vector<LevelUpOption> LevelUpState::sampleItemsWithVSRules(std::vector<Leve
     };
 
     // Wiki rule: Attempt specifically to offer items already owned by player (2 checks)
-    int playerLevel = StatsManager::GetInstance().getLevel();
+    int playerLevel = m_playing->getPlayer(m_playerIdx).getLevel();
     float xVal = (playerLevel % 2 == 0) ? 2.0f : 1.0f;
     float ownedChance = 1.0f + 0.3f * xVal - (1.0f / totalLuck);
 
@@ -465,7 +465,6 @@ void LevelUpState::buildLeftPanel() {
 
     struct StatRow { std::string label; std::string val; bool bonus; };
     ProfileManager& prof = ProfileManager::GetInstance();
-    StatsManager& stats = StatsManager::GetInstance();
 
     auto fmtPct = [](float mul) -> std::string {
         int pct = static_cast<int>(std::round((mul - 1.0f) * 100.f));
@@ -474,7 +473,7 @@ void LevelUpState::buildLeftPanel() {
     };
 
     std::vector<StatRow> rows = {
-        {"Max Health", std::to_string(static_cast<int>(stats.getMaxHealth())), prof.getMaxHealthMultiplier() > 1.f},
+        {"Max Health", std::to_string(static_cast<int>(m_playing->getPlayer(m_playerIdx).getMaxHealth())), prof.getMaxHealthMultiplier() > 1.f},
         {"Recovery",   "3.50", true},
         {"Armor",      "+" + std::to_string(static_cast<int>(prof.getArmorReduction())), prof.getArmorReduction() > 0},
         {"Move Speed", fmtPct(prof.getMoveSpeedMultiplier()), prof.getMoveSpeedMultiplier() > 1.f},
@@ -722,7 +721,7 @@ void LevelUpState::applyOption(const LevelUpOption& opt) {
     if (opt.weaponName == "Money Bag") {
         m_playing->addGoldToRun(100);
     } else if (opt.weaponName == "Floor Chicken") {
-        StatsManager::GetInstance().heal(30.f);
+        m_playing->getPlayer(m_playerIdx).heal(30.f);
     } else if (opt.isPassive) {
         m_playing->addOrUpgradePassive(opt.weaponName, m_playerIdx);
     } else if (opt.existingWeapon) {

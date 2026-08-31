@@ -140,7 +140,6 @@ private:
     bool m_bossIsDead = false;
     EnemyBase* m_bossPtr = nullptr; // Track the boss to detect its death
 
-    int m_revivalsLeft = 0;
     int m_runGold = 0;
     int m_kills = 0;
     int m_rerollCharges = 10;

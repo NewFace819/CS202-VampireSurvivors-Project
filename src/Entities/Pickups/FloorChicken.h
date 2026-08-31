@@ -33,9 +33,13 @@ public:
     }
 
     void onPickup(PlayingState* playing) override {
-        // Heal the player
-        StatsManager::GetInstance().heal(m_healValue);
+        // Fallback only; onPickupPlayer is the live path and heals the collector.
         m_isActive = false; // deactivate
+    }
+
+    void onPickupPlayer(PlayingState* playing, Player* collector) override {
+        if (collector) collector->heal(m_healValue);
+        m_isActive = false;
     }
 
 private:

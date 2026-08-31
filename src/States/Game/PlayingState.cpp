@@ -134,7 +134,6 @@ PlayingState::PlayingState(GameManager* manager, const std::vector<CharacterType
     m_goldText.setStyle(sf::Text::Bold);
     m_goldText.setPosition(m_manager->getWindow().getSize().x - 220.0f, 25.0f);
 
-    m_revivalsLeft = ProfileManager::GetInstance().getRevivalBonus();
     m_runGold = 0;
 
     size_t count = charTypes.empty() ? 1 : charTypes.size();
@@ -146,6 +145,13 @@ PlayingState::PlayingState(GameManager* manager, const std::vector<CharacterType
         for (auto& p : list) {
             p.iconRect = IconManager::GetInstance().getIconRect(p.name);
         }
+    }
+
+    // Each player gets their own health pool and revival charges.
+    float baseMaxHp = 100.f * ProfileManager::GetInstance().getMaxHealthMultiplier();
+    int baseRevivals = ProfileManager::GetInstance().getRevivalBonus();
+    for (size_t i = 0; i < count; ++i) {
+        m_players[i].initHealth(baseMaxHp, baseRevivals);
     }
 
     for (size_t i = 0; i < count; ++i) {
@@ -312,6 +318,13 @@ void PlayingState::update(float dt) {
         p.setPassiveMagnetBonus(getPassiveStatBonus(pi, "magnet"));
         p.setPassiveArmor(getPassiveStatBonus(pi, "armor"));
 
+        // Hollow Heart: max health scales with the shop bonus and this player's passives.
+        p.setMaxHealth(100.f * ProfileManager::GetInstance().getMaxHealthMultiplier()
+                             * getPassiveMaxHealthMultiplier(pi));
+        // Pummarola stacks with the shop Recovery power-up.
+        float regen = ProfileManager::GetInstance().getRecoveryRate() + getPassiveStatBonus(pi, "regen");
+        if (regen > 0.f) p.heal(regen * dt);
+
         p.update(dt);
 
         if (m_stageType == StageType::InlaidLibrary) {
@@ -353,16 +366,11 @@ void PlayingState::update(float dt) {
         p.setPosition(pPos);
     }
 
-    // Apply Recovery Upgrade (HP regen)
-    float recovery = ProfileManager::GetInstance().getRecoveryRate();
-    if (recovery > 0.f) {
-        StatsManager::GetInstance().heal(recovery * dt);
-    }
-
     // Update weapons (firing projectiles relative to owner player)
     for (size_t i = 0; i < m_weapons.size(); ++i) {
         size_t ownerIdx = (i < m_weaponOwnerIndices.size()) ? m_weaponOwnerIndices[i] : 0;
         Player& owner = getPlayer(ownerIdx);
+        if (!owner.isActive()) continue;   // a downed player's weapons stop firing
 
         // Owner's in-run passive item bonuses (shop power-ups are applied separately).
         float passiveDmg   = getPassiveDamageMultiplier(ownerIdx);
@@ -641,7 +649,7 @@ void PlayingState::update(float dt) {
                 if (enemyBounds.intersects(p.getBounds())) {
                     float armorRed = ProfileManager::GetInstance().getArmorReduction() + p.getPassiveArmor();
                     float dmg = std::max(1.f, 10.f - armorRed);
-                    StatsManager::GetInstance().takeDamage(dmg * dt);
+                    p.takeDamage(dmg * dt);
                 }
 
                 // Enemy-Player Physical Collision (Separation)
@@ -672,7 +680,7 @@ void PlayingState::update(float dt) {
                     Physics::ApplyKnockback(enemy, proj.getDirection(), proj.getKnockback(), 1.0f);
                     
                     if (proj.getKnockback() == 150.f) {
-                        StatsManager::GetInstance().heal(8.f);
+                        getPlayer(proj.getOwnerPlayer()).heal(8.f);
                     }
                     
                     if (proj.isBouncing()) {
@@ -733,7 +741,7 @@ void PlayingState::update(float dt) {
                 if (p.isActive() && proj.getBounds().intersects(p.getBounds())) {
                     float armorRed = ProfileManager::GetInstance().getArmorReduction() + p.getPassiveArmor();
                     float dmg = std::max(1.f, proj.getDamage() - armorRed);
-                    StatsManager::GetInstance().takeDamage(dmg);
+                    p.takeDamage(dmg);
                     proj.deactivate();
                     break;
                 }
@@ -769,7 +777,7 @@ void PlayingState::update(float dt) {
                 if (p.isActive() && proj.getBounds().intersects(p.getBounds())) {
                     float armorRed = ProfileManager::GetInstance().getArmorReduction() + p.getPassiveArmor();
                     float dmg = std::max(1.f, proj.getDamage() - armorRed);
-                    StatsManager::GetInstance().takeDamage(dmg);
+                    p.takeDamage(dmg);
                     proj.deactivate();
                     break;
                 }
@@ -800,27 +808,37 @@ void PlayingState::update(float dt) {
         m_manager->pushState(std::make_unique<LevelUpState>(m_manager, this, nextPlayerIdx));
     }
 
-    // Check Player Death / Revival
-    if (StatsManager::GetInstance().getHealth() <= 0.f) {
-        if (m_revivalsLeft > 0) {
-            m_revivalsLeft--;
-            StatsManager::GetInstance().heal(StatsManager::GetInstance().getMaxHealth() * 0.5f);
-            
-            // Clear breathing room around every active player. Using the camera
-            // midpoint here left co-op players surrounded when they were apart.
+    // Check Player Death / Revival -- resolved per player.
+    // Each player revives on their own charges; a player out of charges goes down
+    // (inactive). The run ends only when every player is down.
+    for (size_t pi = 0; pi < m_players.size(); ++pi) {
+        Player& p = m_players[pi];
+        if (!p.isActive() || !p.isDown()) continue;
+
+        if (p.tryRevive()) {
+            // Clear breathing room around the player who was revived.
             const float clearRadiusSq = 450.f * 450.f;
             for (auto* enemy : m_activeEnemies) {
-                for (const auto& p : m_players) {
-                    if (!p.isActive()) continue;
-                    sf::Vector2f diff = enemy->getPosition() - p.getPosition();
-                    if (diff.x * diff.x + diff.y * diff.y < clearRadiusSq) {
-                        enemy->setActive(false);
-                        break;
-                    }
+                sf::Vector2f diff = enemy->getPosition() - p.getPosition();
+                if (diff.x * diff.x + diff.y * diff.y < clearRadiusSq) {
+                    enemy->setActive(false);
                 }
             }
-            std::cout << "Resurrected! Revivals left: " << m_revivalsLeft << "\n";
+            std::cout << "Player " << (pi + 1) << " resurrected! Revivals left: "
+                      << p.getRevivalsLeft() << "\n";
         } else {
+            p.setActive(false);
+            std::cout << "Player " << (pi + 1) << " is down.\n";
+        }
+    }
+
+    bool allDown = true;
+    for (const auto& p : m_players) {
+        if (p.isActive()) { allDown = false; break; }
+    }
+
+    if (allDown) {
+        {
             ProfileManager::GetInstance().save("save.txt");
 
             RunSummaryData summary;
@@ -916,8 +934,7 @@ void PlayingState::draw(sf::RenderWindow& window) {
         }
     }
 
-    // Health Bar Background (under characters)
-    StatsManager& stats = StatsManager::GetInstance();
+    // Health Bar Background (under characters) - each player shows their own HP
     float hpBarWidth = 40.f;
     float hpBarHeight = 6.f;
 
@@ -933,7 +950,7 @@ void PlayingState::draw(sf::RenderWindow& window) {
         window.draw(hpBg);
 
         // Health Bar Fill
-        float hpPercent = std::max(0.f, stats.getHealth() / stats.getMaxHealth());
+        float hpPercent = std::max(0.f, p.getHealth() / p.getMaxHealth());
         sf::RectangleShape hpFill(sf::Vector2f(hpBarWidth * hpPercent, hpBarHeight));
         hpFill.setPosition(playerPos.x - hpBarWidth / 2.f, playerPos.y + 25.f);
         hpFill.setFillColor(p.getPlayerId() == 2 ? sf::Color(255, 120, 120) : sf::Color::Red);
@@ -1228,6 +1245,10 @@ void PlayingState::addOrUpgradePassive(const std::string& name, size_t playerIdx
         if (p.name == name) {
             if (p.level < p.maxLevel) {
                 p.level++;
+                // Tiragisu grants an extra revival charge the moment it is picked up.
+                if (p.statType == "revival") {
+                    getPlayer(playerIdx).addRevival(static_cast<int>(p.bonusPerLevel));
+                }
                 std::cout << "Player " << (playerIdx + 1) << " Passive " << name << " now level " << p.level << "\n";
             }
             return;

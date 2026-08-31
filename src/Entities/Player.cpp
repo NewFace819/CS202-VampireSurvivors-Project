@@ -143,3 +143,38 @@ bool Player::checkLevelUp() {
     }
     return false;
 }
+
+// --- Per-player health ---
+
+void Player::initHealth(float maxHealth, int revivals) {
+    m_maxHealth = maxHealth;
+    m_health = maxHealth;
+    m_revivalsLeft = revivals;
+}
+
+void Player::takeDamage(float amount) {
+    if (amount <= 0.f) return;
+    m_health -= amount;
+    if (m_health < 0.f) m_health = 0.f;
+}
+
+void Player::heal(float amount) {
+    if (amount <= 0.f) return;
+    m_health += amount;
+    if (m_health > m_maxHealth) m_health = m_maxHealth;
+}
+
+void Player::setMaxHealth(float maxHealth) {
+    if (maxHealth <= 0.f) return;
+    // Keep the same HP fraction so a mid-run Hollow Heart pick does not heal or hurt.
+    float frac = (m_maxHealth > 0.f) ? (m_health / m_maxHealth) : 1.f;
+    m_maxHealth = maxHealth;
+    m_health = m_maxHealth * frac;
+}
+
+bool Player::tryRevive() {
+    if (m_revivalsLeft <= 0) return false;
+    m_revivalsLeft--;
+    m_health = m_maxHealth * 0.5f;
+    return true;
+}
