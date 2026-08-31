@@ -247,6 +247,7 @@ void PlayingState::update(float dt) {
                     }
                 }
             }
+            rebuildBlockedCells();
         }
     }
 
@@ -337,13 +338,16 @@ void PlayingState::update(float dt) {
             if (!enemy) break;  // pool exhausted
 
             // Ring around the camera, just outside the view, same as normal spawning.
-            float angle = (std::rand() % 360) * 3.14159f / 180.f;
             sf::Vector2u winSize = m_manager->getWindow().getSize();
             float halfW = winSize.x / 2.0f;
             float halfH = winSize.y / 2.0f;
             float spawnRadius = std::sqrt(halfW * halfW + halfH * halfH) + 60.f;
-            sf::Vector2f pos(cam.x + std::cos(angle) * spawnRadius,
-                             cam.y + std::sin(angle) * spawnRadius);
+            sf::Vector2f pos;
+            if (!findFreeSpawnPos(cam, spawnRadius, pos)) {
+                if (enemy->isShooter()) m_shooterPool.release(static_cast<ShooterEnemy*>(enemy));
+                else                    m_enemyPool.release(enemy);
+                continue;   // ring fully walled here; do not strand the enemy
+            }
 
             // Match the normal spawn path so horde enemies scale like real ones.
             if (stats.hpPerLevel > 0.f) {
@@ -585,13 +589,18 @@ void PlayingState::update(float dt) {
                 }
 
                 if (enemy) {
-                    float angle = (std::rand() % 360) * 3.14159f / 180.f;
                     sf::Vector2u winSize = m_manager->getWindow().getSize();
                     float halfW = winSize.x / 2.0f;
                     float halfH = winSize.y / 2.0f;
                     float spawnRadius = std::sqrt(halfW * halfW + halfH * halfH) + 100.f;
-                    float spawnX = cam.x + std::cos(angle) * spawnRadius;
-                    float spawnY = cam.y + std::sin(angle) * spawnRadius;
+                    sf::Vector2f freePos;
+                    if (!findFreeSpawnPos(cam, spawnRadius, freePos)) {
+                        if (enemy->isShooter()) m_shooterPool.release(static_cast<ShooterEnemy*>(enemy));
+                        else                    m_enemyPool.release(enemy);
+                        continue;   // ring fully walled here; do not strand the enemy
+                    }
+                    float spawnX = freePos.x;
+                    float spawnY = freePos.y;
 
                     int playerLevel = getHighestPlayerLevel();
                     if (stats.hpPerLevel > 0.f) {
@@ -624,8 +633,10 @@ void PlayingState::update(float dt) {
     for (auto it = m_activeEnemies.begin(); it != m_activeEnemies.end(); ) {
         EnemyBase* enemy = *it;
         if (!enemy->isActive()) {
-            // Spawn a random Collectible when an enemy dies
-            int roll = std::rand() % 100;
+            // Spawn a random Collectible when an enemy dies.
+            // Nothing drops inside a wall: the player cannot reach it, so it would
+            // just accumulate in sealed areas as unreachable clutter.
+            int roll = isBlocked(enemy->getPosition()) ? 100 : (std::rand() % 100);
             if (roll < 70) {
                 if (enemy->getStats().expDrop > 0.0f) {
                     auto gem = std::make_unique<ExpGem>();
@@ -655,7 +666,20 @@ void PlayingState::update(float dt) {
         Player* targetPlayer = getNearestPlayer(enemy->getPosition());
         if (targetPlayer) enemy->setTarget(targetPlayer);
 
+        // Enemies respect walls. Revert a move that ends inside a solid cell, but
+        // only when the enemy started outside one -- otherwise anything that spawned
+        // in a wall would be frozen there forever instead of walking out.
+        sf::Vector2f preMovePos = enemy->getPosition();
         enemy->update(dt);
+        if (isBlocked(enemy->getPosition()) && !isBlocked(preMovePos)) {
+            // Try sliding along each axis so enemies follow walls instead of sticking.
+            sf::Vector2f post = enemy->getPosition();
+            sf::Vector2f slideX(post.x, preMovePos.y);
+            sf::Vector2f slideY(preMovePos.x, post.y);
+            if (!isBlocked(slideX))      enemy->setPosition(slideX);
+            else if (!isBlocked(slideY)) enemy->setPosition(slideY);
+            else                         enemy->setPosition(preMovePos);
+        }
 
         if (m_stageType == StageType::InlaidLibrary) {
             sf::Vector2f epos = enemy->getPosition();
@@ -705,7 +729,12 @@ void PlayingState::update(float dt) {
                     float dist = std::sqrt(distSq);
                     float overlap = combinedRadius - dist;
                     sf::Vector2f pushDir = diff / dist;
-                    enemy->setPosition(enemy->getPosition() + pushDir * (overlap * 0.5f));
+                    // Crowd separation must not shove enemies through a wall, or a
+                    // dense pack would slowly extrude itself into blocked areas.
+                    sf::Vector2f pushed = enemy->getPosition() + pushDir * (overlap * 0.5f);
+                    if (!isBlocked(pushed) || isBlocked(enemy->getPosition())) {
+                        enemy->setPosition(pushed);
+                    }
                 }
             }
         }
@@ -1263,6 +1292,46 @@ Player* PlayingState::getNearestPlayer(const sf::Vector2f& pos) {
         }
     }
     return nearest ? nearest : &m_players[0];
+}
+
+void PlayingState::rebuildBlockedCells() {
+    m_blockedCells.clear();
+    for (const auto& obs : m_obstacles) {
+        if (!obs->isActive() || !obs->hasCollision()) continue;
+        sf::FloatRect b = obs->getBounds();
+        int x0 = static_cast<int>(std::floor(b.left / kBlockedCellSize));
+        int x1 = static_cast<int>(std::floor((b.left + b.width) / kBlockedCellSize));
+        int y0 = static_cast<int>(std::floor(b.top / kBlockedCellSize));
+        int y1 = static_cast<int>(std::floor((b.top + b.height) / kBlockedCellSize));
+        for (int gx = x0; gx <= x1; ++gx) {
+            for (int gy = y0; gy <= y1; ++gy) {
+                m_blockedCells.insert((static_cast<long long>(gx) << 32) ^ static_cast<unsigned int>(gy));
+            }
+        }
+    }
+}
+
+bool PlayingState::findFreeSpawnPos(const sf::Vector2f& center, float radius, sf::Vector2f& out) const {
+    // Try random angles around the ring, then a full sweep, before giving up.
+    // Spawning inside a wall used to leave the enemy stranded there, and with the
+    // horde cheat those strays accumulated into solid blocks of stuck enemies.
+    for (int attempt = 0; attempt < 12; ++attempt) {
+        float angle = (std::rand() % 360) * 3.14159f / 180.f;
+        sf::Vector2f p(center.x + std::cos(angle) * radius, center.y + std::sin(angle) * radius);
+        if (!isBlocked(p)) { out = p; return true; }
+    }
+    for (int deg = 0; deg < 360; deg += 5) {
+        float angle = deg * 3.14159f / 180.f;
+        sf::Vector2f p(center.x + std::cos(angle) * radius, center.y + std::sin(angle) * radius);
+        if (!isBlocked(p)) { out = p; return true; }
+    }
+    return false;
+}
+
+bool PlayingState::isBlocked(const sf::Vector2f& worldPos) const {
+    int gx = static_cast<int>(std::floor(worldPos.x / kBlockedCellSize));
+    int gy = static_cast<int>(std::floor(worldPos.y / kBlockedCellSize));
+    return m_blockedCells.count((static_cast<long long>(gx) << 32) ^ static_cast<unsigned int>(gy)) > 0;
 }
 
 int PlayingState::getHighestPlayerLevel() const {

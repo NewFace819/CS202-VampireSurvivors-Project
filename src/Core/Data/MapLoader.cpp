@@ -98,7 +98,17 @@ MapData MapLoader::LoadMap(const std::string& filepath, sf::Texture& outAtlasTex
                                 float widthRatio = 1.0f;
                                 bool noCollision = tile.value("noCollision", false);
                                 
-                                if (name == "Obstacle" || name == "Walls" || name == "PlayerWall") {
+                                if (name == "Walls" || name == "PlayerWall") {
+                                    // Walls are solid tiles and must block across their
+                                    // whole footprint. At 0.4 width a wall row became a
+                                    // picket fence: 12.8px posts with 19.2px gaps that
+                                    // the player could squeeze through.
+                                    if (!noCollision) {
+                                        collisionRatio = 1.0f;
+                                    }
+                                    widthRatio = 1.0f;
+                                } else if (name == "Obstacle") {
+                                    // Props draw full size but only their base blocks.
                                     if (!noCollision) {
                                         collisionRatio = 0.8f;
                                     }
@@ -131,7 +141,10 @@ MapData MapLoader::LoadMap(const std::string& filepath, sf::Texture& outAtlasTex
                             float collisionRatio = 0.0f;
                             float widthRatio = 1.0f;
                             bool noCollision = tile.value("noCollision", false);
-                            if (name == "Obstacle" || name == "Walls" || name == "PlayerWall") {
+                            if (name == "Walls" || name == "PlayerWall") {
+                                if (!noCollision) collisionRatio = 1.0f;
+                                widthRatio = 1.0f;
+                            } else if (name == "Obstacle") {
                                 if (!noCollision) collisionRatio = 0.8f;
                                 widthRatio = 0.4f;
                             }

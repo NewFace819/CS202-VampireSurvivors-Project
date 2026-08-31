@@ -17,6 +17,7 @@
 #include <vector>
 #include <string>
 #include <set>
+#include <unordered_set>
 
 class GameManager;
 
@@ -115,6 +116,19 @@ private:
     // Reused by the 2.5D depth sort in draw().
     std::vector<Obstacle*> m_depthObstacles;
     std::vector<Player*>   m_depthPlayers;
+
+    // Solid world cells derived from the obstacles' collision footprints. Rebuilt
+    // whenever the obstacle tiling refreshes, then queried in O(1) so enemies and
+    // pickup drops can respect walls without testing every obstacle each frame.
+    std::unordered_set<long long> m_blockedCells;
+    static constexpr float kBlockedCellSize = 16.f;
+    void rebuildBlockedCells();
+public:
+    bool isBlocked(const sf::Vector2f& worldPos) const;
+private:
+    // Picks a point on the spawn ring that is not inside a wall. Returns false if
+    // no free angle was found, in which case the caller should skip the spawn.
+    bool findFreeSpawnPos(const sf::Vector2f& center, float radius, sf::Vector2f& out) const;
     std::vector<size_t> m_weaponOwnerIndices; // Maps weapon index -> player index
     std::vector<size_t> m_levelUpQueue;
     ObjectPool<EnemyBase> m_enemyPool;
