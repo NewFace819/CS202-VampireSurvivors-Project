@@ -54,15 +54,21 @@ void UIPlayerCoopCard::SetCharacterProfile(const CharacterProfile* profile, cons
         if (frameKey.size() > 4 && frameKey.substr(frameKey.size()-4) == ".png")
             frameKey = frameKey.substr(0, frameKey.size()-4);
 
-        std::string resolvedCharId;
-        // Basic lookup for common chars
-        std::string charIdLower = profile->GetId();
-        std::transform(charIdLower.begin(), charIdLower.end(), charIdLower.begin(),
-            [](unsigned char c){ return std::tolower(c); });
-        resolvedCharId = charIdLower;
+        // Use textureName from CHARACTER_DATA.json, already stripped of the
+        // "character_" prefix by CharacterDataManager. The JSON key (GetId()) is
+        // often a different word from the sprite file -- CROCI/krochi,
+        // CIRO/arca, NEO/marrabbio and 28 others -- so using the id here loaded a
+        // file that does not exist, leaving the previous character's sprite on
+        // screen. CharacterCardWidget already resolves it this way.
+        std::string resolvedCharId = profile->GetTextureName();
+        if (resolvedCharId.empty()) {
+            resolvedCharId = profile->GetId();
+            std::transform(resolvedCharId.begin(), resolvedCharId.end(), resolvedCharId.begin(),
+                [](unsigned char c){ return std::tolower(c); });
+        }
 
         std::string texPath   = "assets/Graphics/Characters/character_" + resolvedCharId + ".png";
-        std::string atlasPath = "assets/Data/CharacterAtlas/character_" + resolvedCharId + "_atlas.json";
+        std::string atlasPath = "assets/data/CharacterAtlas/character_" + resolvedCharId + "_atlas.json";
 
         bool texLoaded = m_charTexture.loadFromFile(texPath);
         if (texLoaded) {
