@@ -10,7 +10,7 @@ void IconManager::init() {
 
     // 1. Load items_atlas.json
     {
-        std::ifstream file("assets/Data/items_atlas.json");
+        std::ifstream file("assets/data/items_atlas.json");
         if (file.is_open()) {
             try {
                 json j;
@@ -41,7 +41,7 @@ void IconManager::init() {
 
     // 2. Load WEAPON_DATA.json to map item names to frame names
     {
-        std::ifstream file("assets/Data/WEAPON_DATA.json");
+        std::ifstream file("assets/data/WEAPON_DATA.json");
         if (file.is_open()) {
             try {
                 json j;
@@ -112,7 +112,7 @@ void IconManager::init() {
     
     // 3. Load vfx_atlas.json
     {
-        std::ifstream file("assets/Data/vfx_atlas.json");
+        std::ifstream file("assets/data/vfx_atlas.json");
         if (file.is_open()) {
             try {
                 json j;

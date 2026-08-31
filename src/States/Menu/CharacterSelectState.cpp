@@ -12,22 +12,22 @@ CharacterSelectState::CharacterSelectState(GameManager* manager) : m_manager(man
         std::cerr << "CharacterSelectState: Could not load bold font!\n";
     }
 
-    if (!m_uiAtlas.loadFromFile("assets/Graphics/Spritesheets/UI.png", "assets/Data/ui_atlas.json", true)) {
+    if (!m_uiAtlas.loadFromFile("assets/Graphics/Spritesheets/UI.png", "assets/data/ui_atlas.json", true)) {
         std::cerr << "CharacterSelectState: Could not load UI atlas!\n";
     }
     
-    if (!m_illustAtlas.loadFromFile("assets/Graphics/Spritesheets/illustrations.png", "assets/Data/illustration_atlas.json", true)) {
+    if (!m_illustAtlas.loadFromFile("assets/Graphics/Spritesheets/illustrations.png", "assets/data/illustration_atlas.json", true)) {
         std::cerr << "CharacterSelectState: Could not load illustration atlas!\n";
     }
 
-    if (!m_itemsAtlas.loadFromFile("assets/Graphics/Spritesheets/items.png", "assets/Data/items_atlas.json", true)) {
+    if (!m_itemsAtlas.loadFromFile("assets/Graphics/Spritesheets/items.png", "assets/data/items_atlas.json", true)) {
         std::cerr << "CharacterSelectState: Could not load items atlas!\n";
     }
 
     // Load data managers
-    m_characterData.LoadData("assets/Data/CHARACTER_DATA.json");
-    m_weaponData.LoadData("assets/Data/WEAPON_DATA.json");
-    m_powerUpData.LoadFromJson("assets/Data/POWERUP_DATA.json");
+    m_characterData.LoadData("assets/data/CHARACTER_DATA.json");
+    m_weaponData.LoadData("assets/data/WEAPON_DATA.json");
+    m_powerUpData.LoadFromJson("assets/data/POWERUP_DATA.json");
     
     if (!m_progressionData.Load("save_data.json")) {
         m_progressionData.InitializeUnlockedCharacters(m_characterData.GetAllCharacters());

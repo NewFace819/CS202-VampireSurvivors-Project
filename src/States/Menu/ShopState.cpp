@@ -83,13 +83,13 @@ void ShopState::initUI() {
     SetupCompositeBackground();
 
     // Load atlases for UI elements, item icons, and menu background illustrations
-    if (!m_atlas.loadFromFile("assets/Graphics/Spritesheets/UI.png", "assets/Data/ui_atlas.json", true)) {
+    if (!m_atlas.loadFromFile("assets/Graphics/Spritesheets/UI.png", "assets/data/ui_atlas.json", true)) {
         std::cerr << "[ShopState] Could not load UI atlas!\n";
     }
-    if (!m_atlas.loadFromFile("assets/Graphics/Spritesheets/items.png", "assets/Data/items_atlas.json", true)) {
+    if (!m_atlas.loadFromFile("assets/Graphics/Spritesheets/items.png", "assets/data/items_atlas.json", true)) {
         std::cerr << "[ShopState] Could not load items atlas!\n";
     }
-    if (!m_illustAtlas.loadFromFile("assets/Graphics/Spritesheets/illustrations.png", "assets/Data/illustration_atlas.json", true)) {
+    if (!m_illustAtlas.loadFromFile("assets/Graphics/Spritesheets/illustrations.png", "assets/data/illustration_atlas.json", true)) {
         std::cerr << "[ShopState] Could not load illustration atlas!\n";
     }
 
@@ -127,7 +127,7 @@ void ShopState::initUI() {
     }
 
     // Load data structures
-    m_powerUpData.LoadFromJson("assets/Data/POWERUP_DATA.json");
+    m_powerUpData.LoadFromJson("assets/data/POWERUP_DATA.json");
     m_progressionData.Load("save_data.json");
 
     // Central window frame (Dark purple with gold border, symmetrically centered)

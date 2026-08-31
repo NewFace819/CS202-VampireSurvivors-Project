@@ -23,13 +23,13 @@ void SummaryState::enter() {
         std::cerr << "SummaryState: Failed to load font!\n";
     }
     
-    if (!m_uiAtlas.loadFromFile("assets/Graphics/Spritesheets/UI.png", "assets/Data/ui_atlas.json", true)) {
+    if (!m_uiAtlas.loadFromFile("assets/Graphics/Spritesheets/UI.png", "assets/data/ui_atlas.json", true)) {
         std::cerr << "SummaryState: Failed to load UI atlas!\n";
     }
-    if (!m_itemsAtlas.loadFromFile("assets/Graphics/Spritesheets/items.png", "assets/Data/items_atlas.json", true)) {
+    if (!m_itemsAtlas.loadFromFile("assets/Graphics/Spritesheets/items.png", "assets/data/items_atlas.json", true)) {
         std::cerr << "SummaryState: Failed to load items atlas!\n";
     }
-    if (!m_charAtlas.loadFromFile("assets/Graphics/Characters/characters.png", "assets/Data/characters_atlas.json", true)) {
+    if (!m_charAtlas.loadFromFile("assets/Graphics/Characters/characters.png", "assets/data/characters_atlas.json", true)) {
         std::cerr << "SummaryState: Failed to load characters atlas!\n";
     }
 

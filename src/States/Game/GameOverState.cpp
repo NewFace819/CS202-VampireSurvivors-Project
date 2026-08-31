@@ -12,7 +12,7 @@ void GameOverState::enter() {
         std::cerr << "GameOverState: Failed to load font!\n";
     }
     
-    if (!m_uiAtlas.loadFromFile("assets/Graphics/Spritesheets/UI.png", "assets/Data/ui_atlas.json", true)) {
+    if (!m_uiAtlas.loadFromFile("assets/Graphics/Spritesheets/UI.png", "assets/data/ui_atlas.json", true)) {
         std::cerr << "GameOverState: Failed to load UI atlas!\n";
     }
 

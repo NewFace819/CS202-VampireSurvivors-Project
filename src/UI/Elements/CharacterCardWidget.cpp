@@ -60,7 +60,7 @@ CharacterCardWidget::CharacterCardWidget(TextureAtlas& atlas, const sf::Font& fo
     }
 
     std::string texPath   = "assets/Graphics/Characters/character_" + resolvedCharId + ".png";
-    std::string atlasPath = "assets/Data/CharacterAtlas/character_" + resolvedCharId + "_atlas.json";
+    std::string atlasPath = "assets/data/CharacterAtlas/character_" + resolvedCharId + "_atlas.json";
 
 
     bool texLoaded = m_charTexture.loadFromFile(texPath);

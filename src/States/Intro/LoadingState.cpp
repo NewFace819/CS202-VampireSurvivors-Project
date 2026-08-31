@@ -38,7 +38,7 @@ LoadingState::LoadingState(GameManager* manager, StateFactory factory, const std
 
     // Load fonts and items atlas for the fake DLC loading screen
     m_font.loadFromFile("assets/fonts/Courier_HintedSmooth.ttf");
-    m_itemsAtlas.loadFromFile("assets/Graphics/Spritesheets/items.png", "assets/Data/items_atlas.json");
+    m_itemsAtlas.loadFromFile("assets/Graphics/Spritesheets/items.png", "assets/data/items_atlas.json");
 
     for (int i = 1; i <= 4; ++i) {
         sf::IntRect rect = m_itemsAtlas.getRect("TreasureIdle_0" + std::to_string(i));

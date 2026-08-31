@@ -10,11 +10,11 @@ MainMenuState::MainMenuState(GameManager* manager) : m_manager(manager) {
         std::cerr << "MainMenuState: Could not load font!\n";
     }
 
-    if (!m_uiAtlas.loadFromFile("assets/Graphics/Spritesheets/UI.png", "assets/Data/ui_atlas.json", true)) {
+    if (!m_uiAtlas.loadFromFile("assets/Graphics/Spritesheets/UI.png", "assets/data/ui_atlas.json", true)) {
         std::cerr << "MainMenuState: Could not load UI atlas!\n";
     }
     
-    if (!m_illustAtlas.loadFromFile("assets/Graphics/Spritesheets/illustrations.png", "assets/Data/illustration_atlas.json", true)) {
+    if (!m_illustAtlas.loadFromFile("assets/Graphics/Spritesheets/illustrations.png", "assets/data/illustration_atlas.json", true)) {
         std::cerr << "MainMenuState: Could not load illustration atlas!\n";
     }
     

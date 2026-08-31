@@ -66,7 +66,7 @@ PlayingState::PlayingState(GameManager* manager, const std::vector<CharacterType
         }
     } else if (m_stageType == StageType::InlaidLibrary) {
         waveJsonPath = "assets/data/inlaid_library.json";
-        MapData mapData = MapLoader::LoadMap("assets/Data/maps/library_map.json", m_libraryPropsTex);
+        MapData mapData = MapLoader::LoadMap("assets/data/maps/library_map.json", m_libraryPropsTex);
         if (mapData.success) {
             m_bgTex.loadFromImage(mapData.backgroundTexture->getTexture().copyToImage());
             m_bgTex.setSmooth(false);
@@ -85,7 +85,7 @@ PlayingState::PlayingState(GameManager* manager, const std::vector<CharacterType
         }
     } else if (m_stageType == StageType::PlantMap) {
         waveJsonPath = "assets/data/plant_map.json";
-        MapData mapData = MapLoader::LoadMap("assets/Data/maps/plant_map.json", m_plantPropsTex);
+        MapData mapData = MapLoader::LoadMap("assets/data/maps/plant_map.json", m_plantPropsTex);
         if (mapData.success) {
             m_bgTex.loadFromImage(mapData.backgroundTexture->getTexture().copyToImage());
             m_bgTex.setSmooth(false);

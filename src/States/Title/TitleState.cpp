@@ -12,8 +12,8 @@ TitleState::TitleState(GameManager* manager)
     , m_promptAlpha(0.f)
     , m_inputLocked(true)
 {
-    m_uiAtlas.loadFromFile("assets/Graphics/Spritesheets/UI.png", "assets/Data/ui_atlas.json");
-    m_illAtlas.loadFromFile("assets/Graphics/Spritesheets/illustrations.png", "assets/Data/illustration_atlas.json");
+    m_uiAtlas.loadFromFile("assets/Graphics/Spritesheets/UI.png", "assets/data/ui_atlas.json");
+    m_illAtlas.loadFromFile("assets/Graphics/Spritesheets/illustrations.png", "assets/data/illustration_atlas.json");
 
     if (!m_font.loadFromFile("assets/fonts/Courier_HintedSmooth.ttf")) {
         std::cerr << "TitleState: Could not load font!\n";

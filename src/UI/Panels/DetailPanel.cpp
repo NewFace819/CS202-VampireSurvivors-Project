@@ -58,7 +58,7 @@ void DetailPanel::SetCharacterProfile(const CharacterProfile& profile, const Wea
             [](unsigned char c){ return std::tolower(c); });
     }
     std::string texPath   = "assets/Graphics/Characters/character_" + texId + ".png";
-    std::string atlasPath = "assets/Data/CharacterAtlas/character_" + texId + "_atlas.json";
+    std::string atlasPath = "assets/data/CharacterAtlas/character_" + texId + "_atlas.json";
 
     m_characterSprite = sf::Sprite(); // reset
     if (m_charTexture.loadFromFile(texPath)) {
