@@ -405,7 +405,7 @@ Game objects that produce notable events inherit `Subject` and call `notify(Game
 
 **Where:** `ObjectPool<T>` template; used as `ObjectPool<EnemyBase>` and `ObjectPool<ShooterEnemy>` in `PlayingState`.
 
-Pre-allocates 1 000 enemy objects at startup; `acquire()` pops from the free list in O(1), `release()` pushes back.
+Pre-allocates 10 000 enemy objects and 2 000 shooter objects at startup; `acquire()` pops from the free list in O(1), `release()` pushes back. Raising the capacity was a one-line constructor change precisely because allocation is encapsulated behind the pool.
 
 **Reasoning:** A Vampire Survivors clone spawns hundreds of enemies per minute. Repeated `new`/`delete` causes heap fragmentation and latency spikes. The pool eliminates this entirely.
 
@@ -435,7 +435,9 @@ Holds persistent save data (gold, powerup ranks) and per-run stat multipliers. A
 
 Divides the infinite world into fixed-size cells. Collision queries return only entities in the same or neighbouring cells — O(1) average lookup instead of O(n²) brute force.
 
-**Reasoning:** With 300+ enemies, 100+ projectiles, and 50+ collectibles simultaneously, a naive nested loop is ~50 000 checks/frame at 60 fps. The spatial grid reduces this by an order of magnitude.
+**Reasoning:** With thousands of enemies and 100+ projectiles simultaneously, a naive nested loop is prohibitive: at 3 000 enemies against 200 projectiles it is ~600 000 intersection tests per frame. The grid reduces each query to the entities in the neighbouring cells only.
+
+Queries take a radius rather than a fixed 3x3 cell scan, so large-area weapons (Garlic's aura, Santa Water's zones) cannot miss enemies sitting at their edges, and enemy separation asks for the pair's combined radius so it stays correct if the cell size is retuned.
 
 ---
 
@@ -452,8 +454,8 @@ Divides the infinite world into fixed-size cells. Collision queries return only 
 | 7 | Player movement — 8-directional with animated sprite, facing direction tracked | `Player::update` |
 | 8 | EXP & Leveling — exp gems from enemies, magnet radius, scaling exp-to-next | `ExpGem`, `Player::addExp` |
 | 9 | 16 unique weapons — Whip, Magic Wand, Fire Wand, Axe, Cross, King Bible, Knife, Santa Water, Runetracer, Lightning Ring, Garlic, Song of Mana, Eight the Sparrow, Phiera Der Tuphello, Bone, Cherry Bomb | `Entities/Weapons/` |
-| 10 | Weapon evolution system — 10+ evolutions triggered at max level + passive item | `EvolutionRegistry`, `PlayingState::tryEvolveWeapon` |
-| 11 | 15 passive items — Hollow Heart, Empty Tome, Bracer, Spinach, Candelabrador, Clover, Pummarola, Spellbinder, Attractorb, Armor, Duplicator, Tiragisu, Stone Mask, Skull O'Maniac, Wings | `PassiveItem`, `createDefaultPassiveItems` |
+| 10 | Weapon evolution system — 11 evolutions triggered at max level + required passive item | `EvolutionRegistry`, `TreasureChestState::determineReward`, `PlayingState::evolveWeaponForPlayer` |
+| 11 | 15 passive items, each with a working stat effect — Hollow Heart, Empty Tome, Bracer, Spinach, Candelabrador, Clover, Pummarola, Spellbinder, Attractorb, Armor, Duplicator, Tiragisu, Stone Mask, Skull O'Maniac, Wings | `PassiveItem`, `PlayingState::getPassiveStatBonus` |
 | 12 | Level-up UI — pick from 4 random weapon / passive upgrade cards | `LevelUpState` |
 | 13 | Burst-fire system — wiki-accurate 0.1 s intervals between burst shots | `WeaponBase::update` burst queue |
 | 14 | Wave / spawner system — timed enemy waves loaded from data files | `StageWaveDataManager`, `WaveManager` |
@@ -461,7 +463,7 @@ Divides the infinite world into fixed-size cells. Collision queries return only 
 | 16 | Shooter enemies — `ShooterEnemy` fires projectiles at the player | `ShooterEnemy` |
 | 17 | Enemy Object Pool — 1 000-object pre-allocated pool for enemies | `ObjectPool<EnemyBase>`, `ObjectPool<ShooterEnemy>` |
 | 18 | Projectile system — velocity, lifetime, pierce, knockback, trail VFX, sprite animation | `Projectile.h` |
-| 19 | Collision detection — AABB via SpatialHashGrid for enemy↔projectile and player↔enemy | `Collision.cpp`, `SpatialHashGrid` |
+| 19 | Collision detection — AABB via SpatialHashGrid for enemy↔projectile, enemy↔enemy separation and player↔enemy; blocked-cell lookup keeps enemies and pickups out of walls | `Collision.cpp`, `SpatialHashGrid`, `PlayingState::isBlocked` |
 | 20 | Data-Driven Map & Obstacle System — `MapLoader` parses multi-layer tilemaps via `sf::VertexArray(sf::Triangles)` with exact polygon mesh vertices, UV coordinates, and physical collision bounds for Mad Forest, Inlaid Library, and Plant Map | `MapLoader`, `Obstacle`, `PlayingState` |
 | 21 | Collectible items — Exp Gems, Coins, Floor Chicken, Treasure Chests | `Entities/Pickups/` |
 | 22 | Treasure Chest state — dedicated overlay for opening chests and choosing rewards | `TreasureChestState` |
@@ -469,7 +471,7 @@ Divides the infinite world into fixed-size cells. Collision queries return only 
 | 24 | HUD — survival timer, gold counter, level indicator, weapon icons | `PlayingState::draw` |
 | 25 | Game Over state — death screen with run statistics | `GameOverState` |
 | 26 | Summary / End-of-run screen — kills, time, damage per weapon, gold earned | `SummaryState`, `RunSummaryData` |
-| 27 | Multi-player support — per-player weapon and passive item lists | `m_players`, `m_weaponOwnerIndices` |
+| 27 | Multi-player support — per-player weapons, passive items, EXP, levelling, health, death and revivals | `m_players`, `m_weaponOwnerIndices`, `m_playerPassiveItems`, `Player` |
 | 28 | Banish / Skip / Reroll charges — 10 each per run, consumed in level-up UI | `PlayingState` charge members |
 | 29 | Icon Manager — unified icon look-up for all weapons and passives from atlas | `IconManager` |
 | 30 | VFX trail system — fading particle trail on projectiles | `Projectile::enableTrail` |
@@ -525,25 +527,35 @@ See the evaluation form: [https://tinyurl.com/httprojeval](https://tinyurl.com/h
 > [!IMPORTANT]
 > **TODO:** Paste the video links below. The submission requires demo videos covering **all features** and **all difficulty levels**.
 
-| Video | Link | Features shown |
-|---|---|---|
-| Full gameplay demo (Mad Forest) | _(paste URL)_ | All weapons, level-up, boss, summary |
-| Full gameplay demo (Inlaid Library) | _(paste URL)_ | Shooter enemies, library obstacles |
-| Full gameplay demo (Green Acres / Plant Map) | _(paste URL)_ | Plant map stage |
-| Weapon evolution showcase | _(paste URL)_ | Evolution system |
-| Shop / Meta-progression | _(paste URL)_ | Shop, save/load |
-| Multi-player mode | _(paste URL)_ | 2-player split weapons |
+Cheat codes available while recording: `Alt+C` all weapons and passives maxed,
+`Alt+E` Whip + Hollow Heart (evolution setup), `Alt+T` spawn a treasure chest,
+`Alt+H` spawn a horde (hold to keep spawning).
+
+| # | Video | Link | Shot list -- features to show on camera |
+|---|---|---|---|
+| 1 | Mad Forest -- full run | _(paste URL)_ | Main menu (1) -> character select, scroll roster, show locked/unlocked (2) -> stage select (3) -> 8-way movement (7) -> EXP gems and magnet (8) -> level-up screen: 4 cards, reroll, skip, banish (12, 28) -> several weapons firing, burst intervals (9, 13) -> wave escalation (14) -> boss spawn and kill (15) -> death -> summary screen with per-weapon damage (25, 26) |
+| 2 | Inlaid Library -- full run | _(paste URL)_ | Stage select -> shooter enemies firing projectiles (16) -> library furniture: walk behind and in front to show 2.5D depth ordering (20) -> collision sliding along obstacles (19) -> treasure chest pickup (21, 22) -> pause overlay (23) |
+| 3 | Green Acres / Plant Map -- full run | _(paste URL)_ | Stage select showing 3 stages (3) -> tile-mesh map rendering (20) -> walls block the player **and** enemies, no pickups drop inside sealed rooms (19) -> `Alt+H` horde to show enemy pooling and performance at high counts (17) |
+| 4 | Weapon evolution showcase | _(paste URL)_ | `Alt+E` -> max the base weapon -> pick the required passive -> `Alt+T` chest -> evolution animation and evolved weapon in HUD (10) -> repeat for a second evolution to show it is general, not hard-coded |
+| 5 | Shop / meta-progression | _(paste URL)_ | Main menu -> shop (4) -> buy several power-up ranks -> refund-all (36) -> quit to menu, relaunch, show gold and ranks persisted (5) -> unlock and buy a character (35) |
+| 6 | Local 2-player co-op | _(paste URL)_ | Character select for both players -> in-run: **separate weapons per player** (27) -> separate EXP bars and `P1 LV n` / `P2 LV n` (8) -> separate health bars, damage one player only -> level-up triggered by the correct player -> one player down while the other keeps playing, then revive -> dynamic camera tracking both players |
+
+> Numbers in brackets refer to the feature list in section 5, so each of the 40 features
+> can be pointed at a specific timestamp during marking.
 
 ---
 
 ## 9. AI Usage Declaration
 
 > [!IMPORTANT]
-> **TODO:** Export this section as a **separate PDF** titled *"AI Usage Declaration"* and sign it before submitting.
+> The submission requires this as a **separate document**. The full, signable version is
+> [`AI_Usage_Declaration.md`](AI_Usage_Declaration.md) -- export that file to PDF and submit
+> both. The section below is a summary; the standalone file is authoritative.
 
-This declaration is based on two verified sources:
-1. **Git commit log** of this repository (`git log --oneline --all`)
+This declaration is based on three verified sources:
+1. **Git commit log** of this repository -- 100 commits, 2 contributors, 9 Jun to 31 Aug 2026
 2. **Antigravity IDE conversation logs** at `C:\Users\wiih0\.gemini\antigravity-ide\brain\`
+3. **Claude Code session transcript**, 30-31 Aug 2026
 
 ---
 
@@ -624,13 +636,38 @@ The game was essentially blank. AI helped bootstrap the initial implementation f
 
 ---
 
+### Aug 30-31 -- Claude Code session (confirmed AI)
+
+15 commits, all AI-authored and human-directed. The member reported symptoms, chose
+which problems to pursue, decided the design questions, play-tested each change and
+approved every commit. Full list in
+[`AI_Usage_Declaration.md`](AI_Usage_Declaration.md) section 6. Summary:
+
+| Area | Commits |
+|---|---|
+| Co-op correctness -- projectile ownership, evolution ownership, enemy scaling, revival | `84fe747e` `625240aa` `ffe05de6` `02c6d880` |
+| Passive item system -- per-player storage, all 15 stat effects wired | `daef8945` `30c1ae56` `63eae2b2` |
+| Per-player health, death and revivals | `ab94e74d` |
+| Performance -- grid-based projectile collision, draw culling, Release build | `49742ea1` |
+| Cross-platform fixes -- CMakeLists case collision, `assets/Data` casing | `a8c425d6` `a810cc1e` |
+| Rendering and map -- 2.5D depth sort, solid walls, co-op card sprite | `885da875` `ec342846` `0c1f883b` |
+| Repository hygiene | `da9a45de` |
+
+---
+
 ### What was never AI-generated
 
-- Spatial Hash Grid collision algorithm (`SpatialHashGrid.cpp`)
-- Physics/knockback math (`Collision.cpp`, `Physics.h`)
 - All game assets (sprites, tilemaps, audio, data JSONs)
 - Original weapon damage/cooldown/area balance values
-- CMake build configuration
+- Project scope, architecture and choice of design patterns
+- The original Spatial Hash Grid algorithm (`SpatialHashGrid.cpp`), physics and knockback
+  math (`Collision.cpp`, `Physics.h`), and CMake configuration
+
+> **Correction (31 Aug):** `SpatialHashGrid.cpp`, `Physics.h` and `CMakeLists.txt` were
+> originally written without AI, but were **subsequently modified by AI** in commit
+> `49742ea1` (radius-aware grid queries, allocation-free neighbour lookup, an
+> `EnemyBase*` knockback overload, and the Release build default). Their *original*
+> authorship stands; their *current* contents are partly AI-authored.
 
 ---
 

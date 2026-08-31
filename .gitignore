@@ -400,3 +400,10 @@ Group54_*.zip
 # --- Runtime save files (player progress, not source) ---
 save.txt
 save_data.json
+
+# Generated print-ready HTML from make_pdf.py
+report.html
+AI_Usage_Declaration.html
+
+# The report/declaration renderer is a deliverable, unlike the other *.py helpers
+!make_pdf.py
