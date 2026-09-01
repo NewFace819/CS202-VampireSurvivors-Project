@@ -19,9 +19,9 @@
 
 ## 1. Summary statement
 
-This project was developed with substantial assistance from AI coding tools. AI was used
-for implementation, refactoring, debugging, and documentation across most of the
-development period. The team designed the project, chose its architecture and scope,
+This project was developed with substantial assistance from AI coding tools. **Both
+members used AI for their own parts of the work**, throughout the project, for
+implementation, refactoring, debugging and documentation. The team designed the project, chose its architecture and scope,
 authored or sourced all game assets, and reviewed, tested and accepted every change.
 
 We declare the usage below to the best of our knowledge.
@@ -32,16 +32,45 @@ We declare the usage below to the best of our knowledge.
 
 | Tool | Period | Used by | Purpose |
 |---|---|---|---|
-| Antigravity IDE (Gemini) | 29 Jun – 30 Aug 2026 | Do Gia Huy (logs on that machine) | Implementation, refactoring, debugging |
+| Antigravity IDE (Gemini) | 29 Jun – 30 Aug 2026 | **Both members** | Implementation, refactoring, debugging |
 | Claude Code (Claude Opus) | 30 Aug – 1 Sep 2026 | Vo Thanh Hai | Bug fixing, performance work, code review |
 
-> Both members should confirm this attribution. The Antigravity logs are stored under
-> `C:\Users\wiih0\`, which indicates Do Gia Huy's machine, but sessions may have
-> been run jointly.
+Both members used Gemini through the Antigravity IDE for their own work throughout the
+project. The saved conversation logs under `C:\Users\wiih0\` are Do Gia Huy's;
+Vo Thanh Hai's Gemini sessions are not separately archived, and his use is declared here
+on his own statement rather than from a log file.
 
 ---
 
-## 3. Evidence sources
+## 3. How AI was used
+
+Both members worked with AI the same way, and it is worth describing because it affects
+what "AI-assisted" means in the tables below.
+
+The work was **conversational and directed, not generative from a prompt**. A typical
+exchange ran:
+
+1. The member describes a problem in their own words — often a symptom rather than a
+   diagnosis: *"the gems disappear when I move up"*, *"why don't I see the shooter
+   enemies"*, *"the recording is just a white screen"*.
+2. The AI investigates the actual source, reports what it found, and proposes an
+   approach — sometimes several, with trade-offs.
+3. The member decides: picks an option, redirects, or rejects the premise. Design
+   questions were always resolved by the member, not the AI.
+4. The AI implements and compiles.
+5. The member builds, plays the game, and reports back what is still wrong.
+
+Steps 2 to 5 frequently repeated. Several changes took multiple rounds before they were
+accepted — enemy-wall collision was fixed twice, the first attempt having been observed
+failing in-game, and the recording window mode went through five configurations before a
+capture worked. Work that failed testing was not committed.
+
+The members therefore understand the submitted code, chose its design, and are
+responsible for it. AI shortened the writing, not the deciding.
+
+---
+
+## 4. Evidence sources
 
 This declaration is derived from three verifiable sources:
 
@@ -56,26 +85,27 @@ than asserted either way.
 
 ---
 
-## 4. Timeline
+## 5. Timeline
 
 ```
 Jun 9              Project created — no AI
 Jun 29             AI session: game bootstrap (menu, state flow, playing loop)
 Jul 4              EXP/levelling, level-up choices, projectile effects
-Jul 8–11           Synergy/evolution, collectibles, save/load          [unverified]
+Jul 8–11            Synergy/evolution, collectibles, save/load  (Hai)   [confirmed]
 Jul 12–17          WaveManager, EnemyDatabase, Inlaid Library stage    [unverified]
 Jul 25             AI session: asset restructure, character frames
 Jul 27             AI session: WeaponFactory, class refactor
 Jul 28             .agents/AGENTS.md added — AI agent mode configured
-Jul 29 – Aug 13    40+ character implementations                       [unverified]
-Aug 27–29          Co-op mode, initial report                          [AI-assisted]
-Aug 29–30          Report, PlantMap stage, MapLoader VertexArray       [AI-assisted]
-Aug 30–31          Claude Code session — 15 commits                    [AI-assisted]
+Jul 29 – Aug 6     40+ character implementations   (Hai)               [confirmed]
+Aug 11             Local co-op mode                (Hai)               [confirmed]
+Aug 13             Co-op library map merge         (Huy)               [unverified]
+Aug 29–30          Report, PlantMap, MapLoader     (Huy)               [AI-assisted]
+Aug 30 – Sep 1     Claude Code session, 15 commits  (Hai)               [AI-assisted]
 ```
 
 ---
 
-## 5. Phase 1 — Antigravity IDE (29 Jun – 30 Aug)
+## 6. Phase 1 — Antigravity IDE (29 Jun – 30 Aug)
 
 ### Confirmed sessions
 
@@ -105,31 +135,38 @@ member, video and declaration stub sections.
 
 ### Commits attributed to AI assistance
 
-| Commit | Date | Change | Basis |
-|---|---|---|---|
-| `6f30710d` | Jul 28 | Remove puddle fallback, duplicate loop check | Commit message names AI mode |
-| `5ad7f225` | Jul 28 | Simplify weapon targeting and projectile logic | unverified |
-| `82294864` | Jul 28 | IconManager, HUD icon fix | unverified |
-| `a5a484de` | Jul 28 | Cross weapon, WeaponFactory | unverified |
-| `1367589d` | Jul 28 | KingBible, SantaWater, Runetracer, bouncing | unverified |
-| `4b8e5b3a` | Jul 28 | Shop UI overhaul | unverified |
-| `feat(characters)` ×10 | Jul 29 – Aug 13 | 40+ character implementations | unverified |
-| `4b078055` | Aug 6 | VFX trails, particles | unverified |
-| `f1628b5e` | Aug 1 | Weapon evolution fix, evolved weapon classes | unverified |
-| `a193cedd` | Aug 11 | Local 2-player co-op mode | unverified |
-| `987f00ed` | Aug 11 | Co-op weapons, EXP, levelling separation | unverified |
-| `07c724f3` | Aug 13 | Co-op library map hitbox merge | unverified |
-| `ce6d7afc` | Aug 29 | PlantMap stage, HUD fix, report | AI-assisted |
-| `ca7301e8` | Aug 30 | MapLoader VertexArray, library_map | AI-assisted |
-| `c315bd98` | Aug 30 | CharacterFactory pattern | AI-assisted |
+| Commit | Date | Author | Change | Basis |
+|---|---|---|---|---|
+| `6f30710d` | Jul 28 | Huy | Remove puddle fallback, duplicate loop check | Commit message names AI mode |
+| `5ad7f225` | Jul 28 | Huy | Simplify weapon targeting and projectile logic | unverified |
+| `82294864` | Jul 28 | Huy | IconManager, HUD icon fix | unverified |
+| `a5a484de` | Jul 28 | Huy | Cross weapon, WeaponFactory | unverified |
+| `1367589d` | Jul 28 | Huy | KingBible, SantaWater, Runetracer, bouncing | unverified |
+| `4b8e5b3a` | Jul 28 | Hai | Shop UI overhaul | **confirmed by member** (Gemini) |
+| `feat(characters)` ×10 | Jul 29 – Aug 6 | Hai | 40+ character implementations | **confirmed by member** (Gemini) |
+| `4b078055` | Aug 6 | Huy | VFX trails, particles | unverified |
+| `f1628b5e` | Aug 1 | Hai | Weapon evolution fix, evolved weapon classes | **confirmed by member** (Gemini) |
+| `a193cedd` | Aug 11 | Hai | Local 2-player co-op mode | **confirmed by member** (Gemini) |
+| `987f00ed` | Aug 11 | Hai | Co-op weapons, EXP, levelling separation | **confirmed by member** (Gemini) |
+| `07c724f3` | Aug 13 | Huy | Co-op library map hitbox merge | unverified |
+| `ce6d7afc` | Aug 29 | Huy | PlantMap stage, HUD fix, report | AI-assisted |
+| `ca7301e8` | Aug 30 | Huy | MapLoader VertexArray, library_map | AI-assisted |
+| `c315bd98` | Aug 30 | Huy | CharacterFactory pattern | AI-assisted |
+
+**Reading the Basis column.** *Confirmed by member* means the author has stated they used
+Gemini on that work. *AI-assisted* means it is corroborated by a saved Antigravity session
+log. *Unverified* means neither: the commit predates the logs we still hold, or could not
+be tied to a specific session. Unverified is not a claim that no AI was involved — it
+records that we cannot evidence it either way, and we preferred saying so to guessing.
 
 ---
 
-## 6. Phase 2 — Claude Code session (30–31 Aug)
+## 7. Phase 2 — Claude Code session (30 Aug – 1 Sep)
 
-A single session covering 15 commits. All were AI-authored, human-directed: the member
-reported symptoms, chose which problems to pursue, decided design questions, play-tested
-each change and approved every commit.
+A single session covering 15 commits, run by Vo Thanh Hai. All were AI-authored and
+human-directed, following the pattern described in section 3: the member reported
+symptoms, chose which problems to pursue, decided the design questions, play-tested each
+change and approved every commit.
 
 | Commit | Change |
 |---|---|
@@ -165,7 +202,7 @@ committed only after a first attempt was observed failing in-game and corrected.
 
 ---
 
-## 7. What was **not** AI-generated
+## 8. What was **not** AI-generated
 
 - All game assets — sprites, tilemaps, audio, data JSONs
 - Original weapon damage, cooldown and area balance values
@@ -178,7 +215,7 @@ committed only after a first attempt was observed failing in-game and corrected.
 
 ---
 
-## 8. Academic integrity statement
+## 9. Academic integrity statement
 
 We confirm that:
 
@@ -189,7 +226,7 @@ We confirm that:
 
 ---
 
-## 9. Signatures
+## 10. Signatures
 
 | Member | Student ID | Tools used | Signature | Date |
 |---|---|---|---|---|
