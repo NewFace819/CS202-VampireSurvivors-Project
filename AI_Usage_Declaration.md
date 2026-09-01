@@ -48,6 +48,7 @@ This declaration is derived from three verifiable sources:
 1. **Git commit log** — 100 commits, 2 contributors, 9 June to 1 September 2026
    (`git log --all --date=short --pretty="%ad|%h|%an|%s"`)
 2. **Antigravity IDE conversation logs** — `C:\Users\wiih0\.gemini\antigravity-ide\brain\`
+   (individual sessions are cited below by their conversation ID, e.g. `2e07d3fa`)
 3. **Claude Code session transcript** — 30 August to 1 September 2026
 
 Where a commit could not be traced to a session log, it is marked **unverified** rather
@@ -78,20 +79,29 @@ Aug 30–31          Claude Code session — 15 commits                    [AI-a
 
 ### Confirmed sessions
 
-**Jun 29 — Game bootstrap.** The repository was essentially empty. AI implemented the
-main menu, game state flow and initial playing loop from a written plan (`Plan/`),
-and debugged a black screen, missing assets and a non-appearing weapon.
+**Jun 29 — Game bootstrap.** *(Antigravity session `2e07d3fa`)* The repository was
+essentially empty. AI implemented the main menu, game state flow and initial playing
+loop from a structured plan file (`agent.md`, `Plan/`), and debugged a black screen,
+missing assets, a broken main menu and a weapon that failed to appear. It also helped
+write an initial draft of the project report.
 
-**Jul 25 — Asset restructure.** Reorganised character sprite assets and atlas structure;
-debugged font loading and save-file path resolution.
+**Jul 25 — Asset restructure.** *(Antigravity session `d7b1bc22`)* Integrated and
+reorganised character sprite assets; renamed asset folders and restructured the character
+atlas; debugged font loading and save-file path resolution.
 
-**Jul 27 — WeaponFactory and refactor.** Proposed and implemented `WeaponFactory` and
-`AllWeapons.h`; refactored class structure to reduce include boilerplate.
+**Jul 27 — WeaponFactory and refactor.** *(Antigravity session `25c6781c`)* Suggested
+and created `WeaponFactory` and the `AllWeapons.h` aggregation header; refactored the
+class structure to reduce include boilerplate; verified the factory pattern was applied
+correctly.
 
-**Aug 29–30 — Report and stages.** Wrote the project report (architecture overview, class
-diagrams, design-pattern analysis, feature list); added the PlantMap stage; rewrote
-`MapLoader` tile rendering using `sf::VertexArray`; created `CharacterFactory`, removing
-300+ lines of switch statements from `PlayingState`.
+**Aug 29–30 — Report and stages.** *(Antigravity session `143e8bc6`)* Read all
+source files and wrote the project report: architecture overview, 6 class diagrams, 8
+design patterns and the 40-feature list. Added the PlantMap stage (`PlantMap` enum,
+loading block, wave config JSON, third stage-select panel). Found and removed a duplicate
+level-indicator block in `PlayingState::draw()`. Rewrote `MapLoader` tile rendering using
+`sf::VertexArray` and integrated `library_map`. Created `CharacterFactory`, removing 300+
+lines of switch statements from `PlayingState`. Added the report's TODO checklist and the
+member, video and declaration stub sections.
 
 ### Commits attributed to AI assistance
 
