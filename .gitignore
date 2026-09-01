@@ -411,3 +411,10 @@ AI_Usage_Declaration.html
 # Generated PDFs from make_pdf.py + headless Chrome
 report.pdf
 AI_Usage_Declaration.pdf
+
+# Generated HTML/PDF from make_pdf.py
+*.html
+FEATURE_LIST.pdf
+MEMBER_CONTRIBUTION.pdf
+DEMO_VIDEOS.pdf
+DEMO_SCRIPT_VI.pdf
