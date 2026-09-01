@@ -52,7 +52,25 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     nlohmann_json::nlohmann_json
 )
 
+# Make the assets available next to the executable.
+#
+# This previously used `cmd /C ... mklink /J`, which fails on a clean build: CMake paths
+# use forward slashes, so cmd.exe reads "C:/Temp/..." as the switch "/Temp" and aborts
+# with "Invalid switch". It only appeared to work locally because the junction already
+# existed and `if not exist` skipped the broken command -- a fresh clone always failed.
+#
+# cmake -E is used instead: no shell, no quoting rules, and it works on every platform.
+# copy_directory_if_different avoids recopying 40+ MB on every build, falling back to
+# plain copy_directory on CMake older than 3.26.
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.26)
+    set(ASSET_COPY_CMD copy_directory_if_different)
+else()
+    set(ASSET_COPY_CMD copy_directory)
+endif()
+
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
-    COMMAND cmd /C "if not exist \"$<TARGET_FILE_DIR:${PROJECT_NAME}>/assets\" mklink /J \"$<TARGET_FILE_DIR:${PROJECT_NAME}>/assets\" \"${CMAKE_SOURCE_DIR}/assets\""
+    COMMAND ${CMAKE_COMMAND} -E ${ASSET_COPY_CMD}
+            "${CMAKE_SOURCE_DIR}/assets"
+            "$<TARGET_FILE_DIR:${PROJECT_NAME}>/assets"
+    COMMENT "Copying assets next to the executable"
 )
