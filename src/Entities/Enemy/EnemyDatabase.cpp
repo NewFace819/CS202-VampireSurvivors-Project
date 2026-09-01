@@ -121,3 +121,12 @@ const EnemyStats& EnemyDatabase::getStats(const std::string& id) {
 bool EnemyDatabase::exists(const std::string& id) {
     return s_database.find(id) != s_database.end();
 }
+
+std::vector<std::string> EnemyDatabase::getAllNames() {
+    std::vector<std::string> names;
+    names.reserve(s_database.size());
+    for (const auto& kv : s_database) {
+        names.push_back(kv.first);
+    }
+    return names;
+}

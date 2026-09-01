@@ -42,6 +42,10 @@ public:
     // Check if an enemy exists
     static bool exists(const std::string& id);
 
+    // All registered enemy IDs. Lets callers select by capability -- e.g. ranged
+    // enemies are those with a shoot cooldown -- instead of hard-coding IDs.
+    static std::vector<std::string> getAllNames();
+
 private:
     static std::unordered_map<std::string, EnemyStats> s_database;
 };

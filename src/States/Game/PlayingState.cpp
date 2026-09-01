@@ -369,6 +369,62 @@ void PlayingState::update(float dt) {
     }
     hPressedLastFrame = hPressed;
 
+    // Cheat Code: Alt+J = spawn ranged (shooter) enemies around the players.
+    // The wave data only introduces them from t=60s, which is too late to demo
+    // ranged combat in a short recording.
+    static bool jPressedLastFrame = false;
+    bool jPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt) && sf::Keyboard::isKeyPressed(sf::Keyboard::J);
+    if (jPressed && !jPressedLastFrame) {
+        // Any enemy whose data gives it a shoot cooldown is ranged.
+        std::vector<std::string> shooterTypes;
+        for (const auto& name : EnemyDatabase::getAllNames()) {
+            if (EnemyDatabase::getStats(name).shootCooldown > 0.f) {
+                shooterTypes.push_back(name);
+            }
+        }
+
+        int spawned = 0;
+        if (shooterTypes.empty()) {
+            std::cout << "CHEAT: no ranged enemy types found in the database." << "\n";
+        } else {
+            const int shooterCount = 12;
+            sf::Vector2u winSize = m_manager->getWindow().getSize();
+            float halfW = winSize.x / 2.0f;
+            float halfH = winSize.y / 2.0f;
+            // Closer than the normal ring so they are on screen and firing right away.
+            float spawnRadius = std::sqrt(halfW * halfW + halfH * halfH) * 0.55f;
+
+            for (int i = 0; i < shooterCount; ++i) {
+                EnemyStats stats = EnemyDatabase::getStats(shooterTypes[std::rand() % shooterTypes.size()]);
+
+                EnemyBase* enemy = m_shooterPool.acquire();
+                if (!enemy) break;
+
+                sf::Vector2f pos;
+                if (!findFreeSpawnPos(cam, spawnRadius, pos)) {
+                    m_shooterPool.release(static_cast<ShooterEnemy*>(enemy));
+                    continue;
+                }
+
+                if (stats.hpPerLevel > 0.f) {
+                    stats.maxHp += stats.hpPerLevel * getHighestPlayerLevel();
+                }
+                float curse = getRunCurseMultiplier();
+                stats.maxHp *= curse;
+                stats.speed *= curse;
+                stats.hp = stats.maxHp;
+
+                enemy->init(pos, stats, &m_enemiesTex);
+                enemy->setTarget(getNearestPlayer(pos));
+                m_activeEnemies.push_back(enemy);
+                ++spawned;
+            }
+            std::cout << "CHEAT: Spawned " << spawned << " ranged enemies. Pool left: "
+                      << m_shooterPool.availableCount() << "\n";
+        }
+    }
+    jPressedLastFrame = jPressed;
+
     // Update players & Stage Bounds
     for (size_t pi = 0; pi < m_players.size(); ++pi) {
         Player& p = m_players[pi];

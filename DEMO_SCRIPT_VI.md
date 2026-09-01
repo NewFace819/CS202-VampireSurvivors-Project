@@ -33,6 +33,7 @@
 | `Alt + E` | Whip + Hollow Heart (chuẩn bị tiến hóa) |
 | `Alt + T` | Sinh rương báu cạnh nhân vật |
 | `Alt + H` | Sinh đợt quái lớn (giữ phím để sinh tiếp) |
+| `Alt + J` | Sinh 12 **quái bắn xa** ngay cạnh nhân vật |
 
 ---
 
@@ -103,7 +104,8 @@
 ## 4:00 – 4:45 · Màn 2 — Inlaid Library
 
 1. Chọn **Inlaid Library** **(3)**
-2. **Quái bắn đạn** (ShooterEnemy) — né vài viên **(16)**
+2. **`Alt + J`** → sinh ngay **quái bắn xa** (ShooterEnemy) — né vài viên đạn **(16)**
+   → *Quái bắn xa chỉ tự xuất hiện từ phút thứ 1 trong dữ liệu wave, nên dùng cheat cho nhanh.*
 3. **Hiệu ứng 2.5D — quay kỹ:** đi **lên phía sau** bàn ghế → nhân vật **bị che**;
    đi **xuống phía trước** → nhân vật **hiện lên trên** **(20)**
 4. Đi sát vật cản → **va chạm trượt**, không kẹt **(19)**
