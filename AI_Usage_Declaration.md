@@ -9,11 +9,10 @@
 
 ---
 
-> **DRAFT — requires signature before submission.**
-> Members must review the statements below, confirm they match their own recollection
-> of how they worked, and sign at the end. Items marked *"unverified"* are inferences
-> from commit history, not confirmed records — each member should correct the entries
-> covering their own commits.
+> Both members should review the statements below and confirm they match their own
+> recollection of how they worked. Items marked *"unverified"* are inferences from the
+> commit history, not confirmed records — each member should correct any entry covering
+> their own commits.
 
 ---
 
@@ -214,21 +213,3 @@ committed only after a first attempt was observed failing in-game and corrected.
   *(note: later modified by AI on 31 Aug — see `49742ea1`)*
 
 ---
-
-## 9. Academic integrity statement
-
-We confirm that:
-
-- The declaration above is accurate to the best of our knowledge.
-- We understand the code we submitted and can explain any part of it on request.
-- AI output was reviewed, tested and accepted by us; we take responsibility for it.
-- No part of this submission was copied from another student or group.
-
----
-
-## 10. Signatures
-
-| Member | Student ID | Tools used | Signature | Date |
-|---|---|---|---|---|
-| Do Gia Huy | 25125013 | Antigravity IDE (Gemini) | | |
-| Vo Thanh Hai | 25125011 | Antigravity IDE (Gemini), Claude Code | | |
