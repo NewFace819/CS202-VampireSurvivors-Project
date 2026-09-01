@@ -424,3 +424,7 @@ Group54_source*.zip
 Group54_source*.rar
 CONTRIBUTION_TASKS.tsv
 Member_contribution.xlsx
+
+# Assembled submission folder (regenerate from the repo)
+SUBMISSION/
+HOW_TO_BUILD.pdf
