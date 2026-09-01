@@ -418,3 +418,9 @@ FEATURE_LIST.pdf
 MEMBER_CONTRIBUTION.pdf
 DEMO_VIDEOS.pdf
 DEMO_SCRIPT_VI.pdf
+
+# Submission archive (regenerate with git archive)
+Group54_source*.zip
+Group54_source*.rar
+CONTRIBUTION_TASKS.tsv
+Member_contribution.xlsx
