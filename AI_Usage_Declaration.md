@@ -5,7 +5,7 @@
 **Group:** 54
 **Members:** Do Gia Huy (25125013), Vo Thanh Hai (25125011)
 **Repository:** https://github.com/NewFace819/CS202-VampireSurvivors-Project
-**Declaration date:** 31 August 2026
+**Declaration date:** 1 September 2026
 
 ---
 
@@ -33,7 +33,7 @@ We declare the usage below to the best of our knowledge.
 | Tool | Period | Used by | Purpose |
 |---|---|---|---|
 | Antigravity IDE (Gemini) | 29 Jun – 30 Aug 2026 | Do Gia Huy (logs on that machine) | Implementation, refactoring, debugging |
-| Claude Code (Claude Opus) | 30 – 31 Aug 2026 | Vo Thanh Hai | Bug fixing, performance work, code review |
+| Claude Code (Claude Opus) | 30 Aug – 1 Sep 2026 | Vo Thanh Hai | Bug fixing, performance work, code review |
 
 > Both members should confirm this attribution. The Antigravity logs are stored under
 > `C:\Users\wiih0\`, which indicates Do Gia Huy's machine, but sessions may have
@@ -45,10 +45,10 @@ We declare the usage below to the best of our knowledge.
 
 This declaration is derived from three verifiable sources:
 
-1. **Git commit log** — 100 commits, 2 contributors, 9 June to 31 August 2026
+1. **Git commit log** — 100 commits, 2 contributors, 9 June to 1 September 2026
    (`git log --all --date=short --pretty="%ad|%h|%an|%s"`)
 2. **Antigravity IDE conversation logs** — `C:\Users\wiih0\.gemini\antigravity-ide\brain\`
-3. **Claude Code session transcript** — 30–31 August 2026
+3. **Claude Code session transcript** — 30 August to 1 September 2026
 
 Where a commit could not be traced to a session log, it is marked **unverified** rather
 than asserted either way.

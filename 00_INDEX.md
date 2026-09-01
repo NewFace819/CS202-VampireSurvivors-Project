@@ -13,7 +13,7 @@
 |---|---|---|---|
 | 1 | AI Usage Declaration (Markdown + PDF) | [`AI_Usage_Declaration.md`](AI_Usage_Declaration.md) | Draft — **needs signatures** |
 | 2 | Demo video links (all features / all levels) | [`DEMO_VIDEOS.md`](DEMO_VIDEOS.md) | Complete — [youtu.be/V-Nj_YRaE-0](https://youtu.be/V-Nj_YRaE-0) |
-| 3 | Report (Markdown + PDF): class diagrams, design patterns, design reasoning | [`report.md`](report.md) | Complete |
+| 3 | Report (Markdown + PDF): class diagrams, design patterns, design reasoning | [`report.md`](report.md) | Complete — section 6 summarises the AI declaration |
 | 4 | Feature list (40 × 0.25 pts = 10 pts) | [`FEATURE_LIST.md`](FEATURE_LIST.md) | Complete |
 | 5 | Source code | `src/`, `assets/`, `CMakeLists.txt` | Complete — see packaging below |
 | 6 | Member contribution | [`MEMBER_CONTRIBUTION.md`](MEMBER_CONTRIBUTION.md) | Complete — **evaluation form still to be filled in by the team** |

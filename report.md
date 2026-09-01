@@ -568,3 +568,31 @@ Dynamic allocation mid-frame is non-deterministic in time. A bounded pool of 1 0
 Hard-coding 40+ character stats and 30-minute wave sequences in C++ makes balancing a recompile cycle. File-driven managers let data be tweaked without touching source code.
 
 ---
+
+## 6. AI Usage Declaration
+
+> The full declaration is a **separate submission document**:
+> [`AI_Usage_Declaration.md`](AI_Usage_Declaration.md) (and its PDF). It is authoritative
+> and is the version to be signed. This section is a summary for readers of the report.
+
+This project was developed with substantial AI assistance. AI was used for
+implementation, refactoring, debugging and documentation across most of the development
+period. The team designed the project, chose its architecture and scope, authored or
+sourced all game assets, and reviewed, tested and accepted every change.
+
+| Tool | Period | Purpose |
+|---|---|---|
+| Antigravity IDE (Gemini) | 29 Jun – 30 Aug 2026 | Implementation, refactoring, debugging |
+| Claude Code (Claude Opus) | 30 Aug – 1 Sep 2026 | Bug fixing, performance work, code review |
+
+The declaration is built from three verifiable sources: the git commit log (100 commits,
+2 contributors, 9 June to 1 September 2026), the Antigravity IDE conversation logs, and
+the Claude Code session transcript. **Commits that could not be traced to a session log
+are marked `unverified` rather than asserted either way.**
+
+**Not AI-generated:** all game assets; the original weapon balance values; the project
+scope, architecture and choice of design patterns; and the original `SpatialHashGrid`,
+`Collision.cpp`, `Physics.h` and CMake configuration — though the latter four were
+modified by AI on 31 August, which the full declaration records explicitly.
+
+---
