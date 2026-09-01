@@ -3,10 +3,82 @@
 #include "States/Menu/MainMenuState.h"
 #include "Entities/Enemy/EnemyDatabase.h"
 
-GameManager::GameManager() 
-    : m_window(sf::VideoMode::getDesktopMode(), "Vampire Survivors Clone", sf::Style::Fullscreen) {
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <windows.h>
+#endif
+
+namespace {
+// Borderless window covering nearly the entire screen.
+//
+// Not fullscreen and not borderless-at-desktop-size: both hand the window exclusive
+// presentation on Windows, which screen recorders cannot capture -- OBS produced a
+// blank frame, then later froze on the menu once gameplay began. A window that leaves
+// the taskbar visible is never treated as fullscreen and always captures.
+//
+// The size comes from the desktop work area (screen minus taskbar) less the window
+// frame, so the client area is as large as it can be. That matters because the game
+// renders the world 1:1 with client pixels: a smaller window shows less of the world,
+// not a scaled-down view of the same area.
+sf::VideoMode windowedMode() {
+    sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
+    unsigned int w = desktop.width;
+    unsigned int h = desktop.height;
+
+#ifdef _WIN32
+    RECT work = {0, 0, 0, 0};
+    if (SystemParametersInfoW(SPI_GETWORKAREA, 0, &work, 0)) {
+        // Full width, and just short of full height: the window covers almost all of
+        // the taskbar, leaving a thin strip of it visible. That sliver is deliberate.
+        // A window covering the screen exactly is treated by Windows as fullscreen and
+        // given exclusive presentation, which is what froze OBS on the menu frame once
+        // gameplay started. Stopping a few pixels short keeps it an ordinary composited
+        // window that screen recorders can capture, while looking essentially fullscreen.
+        const long kTaskbarSliver = 16;
+        const long availW = GetSystemMetrics(SM_CXSCREEN);
+        const long availH = GetSystemMetrics(SM_CYSCREEN) - kTaskbarSliver;
+        (void)work;
+
+        if (availW > 320) w = static_cast<unsigned int>(availW);
+        if (availH > 240) h = static_cast<unsigned int>(availH);
+    }
+#endif
+
+    return sf::VideoMode(w, h);
+}
+
+// Top-left of the work area, so the window sits just under any top-docked taskbar.
+sf::Vector2i windowedPosition() {
+    return sf::Vector2i(0, 0);
+}
+} // namespace
+
+GameManager::GameManager()
+    : m_window(windowedMode(), "Vampire Survivors Clone", sf::Style::None) {
+    m_window.setPosition(windowedPosition());
+
+
+    // Hide the OS pointer and draw our own, so exactly one cursor is ever visible.
+    // See the note in GameManager.h.
+    m_window.setMouseCursorVisible(false);
+
     m_window.setFramerateLimit(60);
-    
+
+    // Build the mouse cursor we draw ourselves -- see the note in GameManager.h.
+    // A plain arrow: white fill, dark outline so it stays visible on any background.
+    m_cursorShape.setPointCount(7);
+    m_cursorShape.setPoint(0, sf::Vector2f( 0.f,  0.f));
+    m_cursorShape.setPoint(1, sf::Vector2f( 0.f, 17.f));
+    m_cursorShape.setPoint(2, sf::Vector2f( 4.f, 13.f));
+    m_cursorShape.setPoint(3, sf::Vector2f( 7.f, 20.f));
+    m_cursorShape.setPoint(4, sf::Vector2f(10.f, 19.f));
+    m_cursorShape.setPoint(5, sf::Vector2f( 7.f, 12.f));
+    m_cursorShape.setPoint(6, sf::Vector2f(12.f, 12.f));
+    m_cursorShape.setFillColor(sf::Color::White);
+    m_cursorShape.setOutlineColor(sf::Color(20, 20, 20));
+    m_cursorShape.setOutlineThickness(1.5f);
+
     // Load Enemy Database
     EnemyDatabase::loadDatabase("assets/data/enemies.json", "assets/enemies_atlas.json");
     
@@ -59,10 +131,25 @@ void GameManager::run() {
             }
         }
 
+        drawCursor();
+
         m_window.display();
 
         processStateChanges();
     }
+}
+
+void GameManager::drawCursor() {
+    // Screen coordinates: reset to the default view so the cursor is not dragged
+    // around by whatever camera the active state left behind.
+    sf::View previous = m_window.getView();
+    m_window.setView(m_window.getDefaultView());
+
+    sf::Vector2i mouse = sf::Mouse::getPosition(m_window);
+    m_cursorShape.setPosition(static_cast<float>(mouse.x), static_cast<float>(mouse.y));
+    m_window.draw(m_cursorShape);
+
+    m_window.setView(previous);
 }
 
 void GameManager::pushState(std::unique_ptr<GameState> state) {

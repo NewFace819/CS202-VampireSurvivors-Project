@@ -12,11 +12,11 @@
 | # | Requirement | Document | Status |
 |---|---|---|---|
 | 1 | AI Usage Declaration (Markdown + PDF) | [`AI_Usage_Declaration.md`](AI_Usage_Declaration.md) | Draft — **needs signatures** |
-| 2 | Demo video links (all features / all levels) | [`DEMO_VIDEOS.md`](DEMO_VIDEOS.md) | **Needs URLs** — script in [`DEMO_SCRIPT_VI.md`](DEMO_SCRIPT_VI.md) |
+| 2 | Demo video links (all features / all levels) | [`DEMO_VIDEOS.md`](DEMO_VIDEOS.md) | Complete — [youtu.be/V-Nj_YRaE-0](https://youtu.be/V-Nj_YRaE-0) |
 | 3 | Report (Markdown + PDF): class diagrams, design patterns, design reasoning | [`report.md`](report.md) | Complete |
 | 4 | Feature list (40 × 0.25 pts = 10 pts) | [`FEATURE_LIST.md`](FEATURE_LIST.md) | Complete |
 | 5 | Source code | `src/`, `assets/`, `CMakeLists.txt` | Complete — see packaging below |
-| 6 | Member contribution | [`MEMBER_CONTRIBUTION.md`](MEMBER_CONTRIBUTION.md) + [form](https://tinyurl.com/httprojeval) | Draft — **both members must agree the split** |
+| 6 | Member contribution | [`MEMBER_CONTRIBUTION.md`](MEMBER_CONTRIBUTION.md) | Complete — **evaluation form still to be filled in by the team** |
 
 ---
 
@@ -70,8 +70,7 @@ cmake -S . -B build_check && cmake --build build_check
 ## Before submitting — checklist
 
 - [ ] Both members sign [`AI_Usage_Declaration.md`](AI_Usage_Declaration.md) and confirm the tool attribution
-- [ ] Both members agree the percentages in [`MEMBER_CONTRIBUTION.md`](MEMBER_CONTRIBUTION.md)
-- [ ] Record the demo and paste URLs into [`DEMO_VIDEOS.md`](DEMO_VIDEOS.md)
+- [ ] Both members confirm the 50/50 split in [`MEMBER_CONTRIBUTION.md`](MEMBER_CONTRIBUTION.md)
 - [ ] Fill in the [evaluation form](https://tinyurl.com/httprojeval)
 - [ ] Regenerate all PDFs after the edits above
 - [ ] Package and split the source archive, then test a clean build

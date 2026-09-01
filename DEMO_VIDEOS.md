@@ -17,7 +17,7 @@ The full recording script is [`DEMO_SCRIPT_VI.md`](DEMO_SCRIPT_VI.md) (Vietnames
 
 | Video | Link | Duration |
 |---|---|---|
-| Vampire Survivors Clone -- full feature demo | _(paste URL here)_ | ~7 min |
+| Vampire Survivors Clone -- full feature demo | https://youtu.be/V-Nj_YRaE-0 | ~7 min |
 
 ### Timestamps
 

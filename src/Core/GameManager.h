@@ -18,6 +18,15 @@ public:
 
 private:
     sf::RenderWindow m_window;
+
+    // Cursor drawn by the game rather than the OS. Under sf::Style::Fullscreen the
+    // Windows pointer is not composited over the exclusive surface, and neither
+    // setMouseCursorVisible(true) nor installing an sf::Cursor brings it back --
+    // SFML registers its window class with a null cursor and then still falls
+    // through to DefWindowProc, which re-applies it. Drawing our own bypasses all
+    // of that and looks the same in every window mode.
+    sf::ConvexShape m_cursorShape;
+    void drawCursor();
     std::stack<std::unique_ptr<GameState>> m_states;
 
     // Deferred transition helpers to prevent deleting states during updates
