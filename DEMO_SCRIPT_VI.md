@@ -1,196 +1,182 @@
-# Kịch bản quay video demo
+# Kịch bản quay video demo (bản rút gọn)
 
 **Môn:** CS202 — Lập trình Hướng đối tượng
 **Đồ án:** Vampire Survivors Clone (C++20 / SFML 2.6)
 **Nhóm:** 54 — Đỗ Gia Huy (25125013), Võ Thành Hải (25125011)
 
-> Một video duy nhất, quay liền mạch, thể hiện **toàn bộ 40 tính năng** và **cả 3 màn chơi**.
-> Thời lượng mục tiêu: **12–15 phút**.
-> Số trong ngoặc `(n)` là số thứ tự tính năng trong [`FEATURE_LIST.md`](FEATURE_LIST.md) —
-> đọc to hoặc hiện lên màn hình để giám khảo đối chiếu được từng tính năng.
+> Một video duy nhất, **7 phút**, vẫn thể hiện **đủ 40 tính năng** và **cả 3 màn chơi**.
+> Số trong ngoặc `(n)` là số thứ tự trong [`FEATURE_LIST.md`](FEATURE_LIST.md).
 
 ---
 
-## Chuẩn bị trước khi quay
+## Nguyên tắc để quay nhanh
 
-| Việc | Ghi chú |
+| Nguyên tắc | Lý do |
 |---|---|
-| Build bản Release | `cmake --build build` — bản Debug chạy chậm hơn nhiều lần, sẽ giật khi demo đông quái |
-| Xóa file save | Xóa `build/save.txt` và `build/save_data.json` để demo được phần "mua lần đầu" trong Shop |
-| Ghi hình | OBS, 1920×1080, 60 fps. Thu cả tiếng game |
-| Cỡ cửa sổ | Để nguyên mặc định, đừng phóng to hết cỡ (tránh chữ HUD bị nhỏ trên video) |
-| Chuẩn bị sẵn | Mở `FEATURE_LIST.md` ở màn hình phụ để không quên tính năng nào |
+| **Dùng cheat ngay từ đầu** — `Alt+C` cho toàn bộ vũ khí max level | Không phải chơi 10 phút để lên cấp. Nói rõ: *"đây là cheat để kiểm thử, không phải cơ chế của game"* |
+| **Không chơi hết màn** | Chỉ cần vào màn, thể hiện đúng tính năng đặc trưng rồi thoát ra |
+| **Vừa thao tác vừa nói** | Đừng chơi im lặng rồi mới giải thích — sẽ mất gấp đôi thời gian |
+| **Không quay lại từ đầu khi lỡ tay** | Cứ nói "em làm lại thao tác này" rồi tiếp tục, cắt sau |
 
-### Phím cheat (dùng để demo cho nhanh, **nên nói rõ đây là cheat dành cho việc kiểm thử**)
+### Chuẩn bị trước khi bấm ghi
+
+- Build **Release**: `cmake --build build` (bản Debug sẽ giật khi đông quái)
+- Xóa `build/save.txt` và `build/save_data.json` (để demo được phần mua lần đầu)
+- OBS 1920×1080, 60 fps, thu cả tiếng game
+- Mở sẵn `FEATURE_LIST.md` ở màn hình phụ
+
+### Phím cheat
 
 | Phím | Tác dụng |
 |---|---|
-| `Alt + C` | Nhận toàn bộ vũ khí và passive, lên max level |
-| `Alt + E` | Nhận Whip + Hollow Heart (chuẩn bị cho tiến hóa) |
-| `Alt + T` | Sinh ra một rương báu ngay cạnh nhân vật |
-| `Alt + H` | Sinh ra một đợt quái lớn (giữ phím để sinh liên tục) |
+| `Alt + C` | Toàn bộ vũ khí + passive, max level |
+| `Alt + E` | Whip + Hollow Heart (chuẩn bị tiến hóa) |
+| `Alt + T` | Sinh rương báu cạnh nhân vật |
+| `Alt + H` | Sinh đợt quái lớn (giữ phím để sinh tiếp) |
 
 ---
 
-## Phần 1 — Mở đầu và menu chính *(0:00 – 1:00)*
+## 0:00 – 0:20 · Mở đầu
 
-**Lời thoại gợi ý:**
-> "Xin chào thầy/cô. Em là ... và ..., nhóm 54. Đây là đồ án Vampire Survivors Clone,
-> viết bằng C++20 và thư viện SFML. Sau đây em xin demo toàn bộ tính năng của đồ án."
+> "Em là ... và ..., nhóm 54. Đây là đồ án Vampire Survivors Clone viết bằng C++20 và SFML.
+> Sau đây em demo toàn bộ tính năng."
 
-**Thao tác:**
-1. Mở game — quay màn hình Intro / Title **(38)**
-2. Dừng ở **Main Menu**, chỉ vào nền động, các nút Start / Shop / Quit **(1)**
+- Mở game, lướt nhanh qua Intro/Title **(38)**, dừng ở **Main Menu** **(1)**
 
 ---
 
-## Phần 2 — Shop và hệ thống lưu tiến trình *(1:00 – 2:30)*
+## 0:20 – 1:10 · Shop và lưu tiến trình
 
-**Lời thoại gợi ý:**
-> "Trước tiên là phần Shop — đây là hệ thống nâng cấp vĩnh viễn, dữ liệu được lưu ra file
-> nên vẫn còn sau khi tắt game."
+> "Đây là hệ thống nâng cấp vĩnh viễn, lưu ra file nên còn sau khi tắt game."
 
-**Thao tác:**
-1. Vào **Shop** — cho thấy 14 loại power-up, giá tăng dần theo rank **(4)**
-2. Mua vài rank (Might, Armor, Move Speed) — chỉ vào số vàng giảm đi
-3. Bấm **Refund All** — cho thấy được hoàn lại toàn bộ vàng **(36)**
-4. Mua lại vài rank
-5. **Thoát hẳn game, mở lại** → vào Shop → vàng và rank vẫn còn **(5)**
-   → *Đây là bằng chứng rõ nhất cho tính năng lưu file, nên làm thật chậm.*
+1. Vào **Shop** — 14 loại power-up, giá tăng theo rank **(4)**
+2. Mua 2–3 rank (đừng mua hết, mất thời gian)
+3. Bấm **Refund All** → hoàn lại toàn bộ vàng **(36)**, rồi mua lại vài rank
+4. **Tắt game, mở lại** → vàng và rank vẫn còn **(5)**
+   → *Đây là bằng chứng cho tính năng lưu file. Làm chậm, đừng cắt.*
 
 ---
 
-## Phần 3 — Chọn nhân vật *(2:30 – 3:30)*
+## 1:10 – 1:40 · Chọn nhân vật
 
-**Thao tác:**
-1. Vào **Character Select** — cuộn qua danh sách hơn 40 nhân vật **(2)**
-2. Chỉ vào: chân dung, bảng chỉ số, vũ khí khởi đầu của từng nhân vật
-3. Cho thấy nhân vật **đang khóa** (hiện giá tiền, ẩn chỉ số) và nhân vật **đã mở**
-4. **Mua/mở khóa một nhân vật** bằng vàng **(35)**
-5. Chỉ vào icon vũ khí, icon passive — tất cả lấy từ atlas dùng chung **(29, 32)**
+1. Cuộn nhanh danh sách **hơn 40 nhân vật** **(2)**
+2. Chỉ vào chân dung, bảng chỉ số, vũ khí khởi đầu
+3. Cho thấy một nhân vật **đang khóa** (ẩn chỉ số, hiện giá) → **mua mở khóa** **(35)**
+4. Nói lướt: *"toàn bộ icon vũ khí và passive lấy từ atlas dùng chung qua IconManager"* **(29, 32)**
 
 ---
 
-## Phần 4 — Màn 1: Mad Forest *(3:30 – 7:00)*
+## 1:40 – 3:20 · Màn 1 — Mad Forest *(phần dài nhất)*
 
-**Lời thoại gợi ý:**
-> "Đây là màn đầu tiên. Nhân vật tự động tấn công, người chơi chỉ điều khiển di chuyển."
-
-**Thao tác theo thứ tự:**
-1. Vào **Stage Select**, cho thấy **cả 3 màn** rồi chọn Mad Forest **(3)**
-2. Màn hình **Stage Loading** **(37)**
-3. Di chuyển **8 hướng**, chỉ vào animation nhân vật đổi hướng **(7, 31)**
-4. Chỉ vào **nền lặp vô hạn** — chạy xa một đoạn để thấy nền nối liền, không có mép **(6)**
-5. Giết quái → nhặt **gem kinh nghiệm**, cho thấy **bán kính hút đồ** **(8, 21)**
-6. **Lên cấp** → màn hình Level Up: 4 lá bài, nút **Reroll / Skip / Banish** và số lượt còn lại **(12, 28)**
-   - Bấm thử **Reroll** một lần
-   - Bấm thử **Banish** một món để cho thấy nó không xuất hiện lại nữa
-7. Chơi tiếp cho có **nhiều vũ khí** — chỉ vào nhịp bắn theo loạt 0.1 giây **(9, 13)**
-8. Chỉ vào **hiệu ứng VFX**: vệt đuôi đạn, hạt particle **(18, 30)**
-9. Nhấn `Esc` → **màn hình Pause** **(23)**
-10. Chơi tiếp đến khi **wave tăng độ khó** → **boss xuất hiện** → hạ boss **(14, 15)**
-11. `Alt + H` giữ vài giây → cho thấy game vẫn mượt với **hàng nghìn quái**
-    → nói rõ: *"đây là nhờ Object Pool 10.000 đối tượng và Spatial Hash Grid"* **(17, 19)**
-12. Để nhân vật **chết** → **Game Over** → **Summary**: số quái, thời gian, sát thương từng vũ khí **(25, 26)**
+1. **Stage Select** — cho thấy **cả 3 màn** rồi chọn Mad Forest **(3)**, qua **Stage Loading** **(37)**
+2. Di chuyển **8 hướng**, animation đổi hướng **(7, 31)**
+3. Chạy một đoạn → **nền lặp vô hạn**, không thấy mép **(6)**
+4. Giết quái → **gem kinh nghiệm**, **bán kính hút đồ** **(8, 21)**
+5. Lên cấp → **màn hình Level Up**: 4 lá bài, **Reroll / Skip / Banish** **(12, 28)**
+   - Bấm **Reroll** một lần, **Banish** một món — chỉ cần mỗi thứ một lần
+6. **`Alt + C`** → nhận hết vũ khí max level
+   → *nói rõ đây là cheat kiểm thử*
+   - Chỉ vào **nhiều vũ khí bắn cùng lúc**, **loạt đạn cách nhau 0.1 giây** **(9, 13)**
+   - Chỉ vào **vệt đuôi đạn và hạt particle** **(18, 30)**
+   - Chỉ vào **hàng icon passive trên HUD** **(11, 24)**
+7. **`Esc`** → **Pause** → bỏ pause **(23)**
+8. **Giữ `Alt + H`** vài giây → hàng nghìn quái, game vẫn mượt
+   > "Nhờ Object Pool 10.000 đối tượng và Spatial Hash Grid cho va chạm." **(17, 19, 14)**
+9. Đợi/ép **boss** xuất hiện, hạ boss **(15)**
+10. Để nhân vật **chết** → **Game Over** → **Summary**: số quái, thời gian, sát thương từng vũ khí **(25, 26)**
 
 ---
 
-## Phần 5 — Tiến hóa vũ khí *(7:00 – 8:30)*
+## 3:20 – 4:00 · Tiến hóa vũ khí
 
-**Lời thoại gợi ý:**
-> "Hệ thống tiến hóa: vũ khí lên max level, cộng với passive tương ứng, mở rương sẽ tiến hóa."
+> "Vũ khí max level cộng passive tương ứng, mở rương sẽ tiến hóa."
 
-**Thao tác:**
-1. Vào một màn bất kỳ
-2. `Alt + E` → nhận Whip + Hollow Heart
-3. Lên level cho **Whip đạt max**
-4. `Alt + T` → mở rương → **Whip tiến hóa thành Bloody Tear** **(10, 22)**
-5. Chỉ vào **icon vũ khí mới trên HUD**
-6. **Làm lại lần nữa với cặp khác** (ví dụ Magic Wand + Empty Tome → Holy Wand)
-   → *chứng minh hệ thống tổng quát, không phải hard-code từng trường hợp*
-7. Có thể nói thêm: *"tổng cộng có 11 công thức tiến hóa, và 15 passive đều có hiệu ứng chỉ số thật"* **(11)**
+1. Vào lại một màn, **`Alt + E`** → Whip + Hollow Heart
+2. Lên level cho **Whip max**
+3. **`Alt + T`** → mở rương → **Whip → Bloody Tear** **(10, 22)**
+4. **Làm lại với cặp khác** (Magic Wand + Empty Tome → Holy Wand)
+   → *chứng minh hệ thống tổng quát, không hard-code*
+5. Nói lướt: *"tổng cộng 11 công thức tiến hóa, 15 passive đều có hiệu ứng chỉ số thật"*
 
 ---
 
-## Phần 6 — Màn 2: Inlaid Library *(8:30 – 10:00)*
+## 4:00 – 4:45 · Màn 2 — Inlaid Library
 
-**Lời thoại gợi ý:**
-> "Màn 2 có bản đồ dựng từ file JSON và loại quái biết bắn."
-
-**Thao tác:**
 1. Chọn **Inlaid Library** **(3)**
-2. Cho thấy **quái bắn đạn** (ShooterEnemy) — né đạn của chúng **(16)**
-3. **Quan trọng — hiệu ứng 2.5D:** đi **lên phía sau** bàn ghế → nhân vật bị che khuất;
-   đi **xuống phía trước** → nhân vật hiện lên trên **(20)**
-4. Đi sát vào bàn ghế → cho thấy **va chạm trượt** dọc theo vật cản, không bị kẹt **(19)**
-5. Nhặt **Coin, Floor Chicken, rương** **(21)**
+2. **Quái bắn đạn** (ShooterEnemy) — né vài viên **(16)**
+3. **Hiệu ứng 2.5D — quay kỹ:** đi **lên phía sau** bàn ghế → nhân vật **bị che**;
+   đi **xuống phía trước** → nhân vật **hiện lên trên** **(20)**
+4. Đi sát vật cản → **va chạm trượt**, không kẹt **(19)**
+5. Nhặt **Coin / Floor Chicken** **(21)**
 
 ---
 
-## Phần 7 — Màn 3: Green Acres (Plant Map) *(10:00 – 11:30)*
+## 4:45 – 5:30 · Màn 3 — Green Acres
 
-**Thao tác:**
 1. Chọn **Green Acres** **(3)**
-2. Cho thấy bản đồ được vẽ bằng **lưới tile mesh (VertexArray)** **(20)**
-3. **Đi vào tường** → không qua được **(19)**
-4. `Alt + H` sinh quái → cho thấy **quái cũng không đi xuyên tường**, và **không có vật phẩm nào rơi trong khu vực bị chặn**
-   → nói rõ: *"tường chặn cả người chơi lẫn quái, và vật phẩm không rơi vào vùng không tới được"*
+2. Bản đồ vẽ bằng **lưới tile mesh (VertexArray)** **(20)**
+3. **Đi vào tường** → không qua được
+4. **Giữ `Alt + H`** → quái **cũng không xuyên tường**, và **không có vật phẩm rơi trong vùng bị chặn** **(19)**
 
 ---
 
-## Phần 8 — Chế độ 2 người chơi *(11:30 – 14:00)*
+## 5:30 – 6:45 · Chế độ 2 người chơi *(phần quan trọng nhất)*
 
-> **Phần quan trọng nhất — quay kỹ và chậm.** Đây là tính năng khó nhất của đồ án.
+> Đây là tính năng khó nhất. Đừng cắt ngắn phần này.
 
-**Lời thoại gợi ý:**
-> "Cuối cùng là chế độ 2 người chơi trên cùng một máy. Mỗi người có vũ khí, kinh nghiệm,
-> cấp độ, passive và máu riêng biệt."
+> "Chế độ 2 người trên cùng máy. Mỗi người có vũ khí, kinh nghiệm, cấp độ, passive và máu riêng."
 
-**Thao tác theo thứ tự:**
-1. Chọn chế độ **co-op**, chọn nhân vật cho **cả hai người**
-2. Vào game — chỉ vào **camera bám theo cả hai**, tự giãn ra khi hai người đi xa nhau
-3. **Vũ khí riêng:** cho thấy mỗi người có bộ vũ khí khác nhau trên HUD **(27)**
-4. **EXP và cấp độ riêng:** chỉ vào **hai thanh EXP** và nhãn `P1 LV n` / `P2 LV n` ở dưới màn hình **(8)**
-5. Cho **một người ăn gem** → chỉ thanh EXP của người đó tăng
-6. **Lên cấp riêng:** khi P2 lên cấp, màn hình Level Up chỉ áp dụng cho P2
-7. **Máu riêng:** cho **một người bị quái đánh** → chỉ thanh máu của người đó giảm
-8. **Vũ khí bám đúng người:** cho một người dùng **Garlic / King Bible**, rồi **đi thật xa nhau**
-   → hiệu ứng vẫn bám đúng chủ, không bị kéo vào giữa màn hình
-9. **Gục và hồi sinh:** để **một người chết** →
+1. Chọn **co-op**, chọn nhân vật cho **cả hai**
+2. Vào game — **camera bám cả hai**, giãn ra khi đi xa nhau
+3. **Vũ khí riêng** — HUD mỗi người khác nhau **(27)**
+4. **EXP / cấp độ riêng** — hai thanh EXP, nhãn `P1 LV n` / `P2 LV n`; cho **một người ăn gem**, chỉ thanh người đó tăng **(8)**
+5. **Máu riêng** — cho **một người bị đánh**, chỉ thanh máu người đó giảm
+6. **Vũ khí bám đúng chủ** — một người cầm **Garlic / King Bible**, **đi thật xa nhau**
+   → hiệu ứng vẫn bám đúng người, không bị kéo về giữa màn hình
+7. **Gục và hồi sinh** — để **một người chết**:
    - người đó **gục, vũ khí ngừng bắn**
-   - **người còn lại vẫn chơi bình thường**, game **không kết thúc**
-   - nếu còn lượt hồi sinh thì cho thấy hồi sinh
-10. Để **cả hai cùng gục** → lúc này mới hiện **Summary** **(26)**
+   - **người kia vẫn chơi bình thường**, game **không kết thúc**
+8. Để **cả hai cùng gục** → lúc đó mới hiện **Summary** **(26)**
 
 ---
 
-## Phần 9 — Kết *(14:00 – 15:00)*
+## 6:45 – 7:00 · Kết
 
-**Lời thoại gợi ý:**
-> "Về mặt thiết kế hướng đối tượng, đồ án áp dụng 8 mẫu thiết kế: Finite State Machine,
-> Template Method, Factory Method, Observer, Object Pool, Singleton, Strategy và Spatial
-> Hash Grid. Chi tiết nằm trong phần 4 của báo cáo.
-> Em xin cảm ơn thầy/cô đã theo dõi."
-
-**Có thể chèn thêm (không bắt buộc):** vài giây lướt qua sơ đồ lớp trong báo cáo để minh họa
-kiến trúc phân tầng `Core / Entities / States / UI`.
+> "Về thiết kế hướng đối tượng, đồ án áp dụng 8 mẫu: Finite State Machine, Template Method,
+> Factory Method, Observer, Object Pool, Singleton, Strategy và Spatial Hash Grid — chi tiết
+> ở phần 4 của báo cáo. Kiến trúc chia 4 tầng Core / Entities / States / UI. Em cảm ơn thầy/cô."
+> **(33, 34, 39, 40)**
 
 ---
 
-## Bảng đối chiếu — đảm bảo không sót tính năng nào
+## Bảng đối chiếu tính năng
 
-| Phần | Tính năng được thể hiện |
+| Phần | Tính năng |
 |---|---|
-| 1 | 1, 38 |
-| 2 | 4, 5, 36 |
-| 3 | 2, 29, 32, 35 |
-| 4 | 3, 6, 7, 8, 9, 12, 13, 14, 15, 17, 18, 19, 21, 23, 25, 26, 28, 30, 31, 37 |
-| 5 | 10, 11, 22 |
-| 6 | 3, 16, 19, 20, 21 |
-| 7 | 3, 19, 20 |
-| 8 | 8, 26, 27 |
-| 9 | 33, 34, 39, 40 (nói bằng lời + chỉ vào báo cáo) |
+| Mở đầu | 1, 38 |
+| Shop | 4, 5, 36 |
+| Chọn nhân vật | 2, 29, 32, 35 |
+| Màn 1 | 3, 6, 7, 8, 9, 11, 12, 13, 14, 15, 17, 18, 19, 21, 23, 24, 25, 26, 28, 30, 31, 37 |
+| Tiến hóa | 10, 11, 22 |
+| Màn 2 | 3, 16, 19, 20, 21 |
+| Màn 3 | 3, 19, 20 |
+| Co-op | 8, 26, 27 |
+| Kết | 33, 34, 39, 40 |
 
-> **Lưu ý:** các tính năng 24 (HUD), 33 (cheat code), 34 (Observer), 39 (UI module hóa),
-> 40 (data-driven) không quay trực tiếp được — hãy **nhắc bằng lời** khi đi qua phần liên quan,
-> hoặc mở nhanh file mã nguồn / báo cáo để minh chứng.
+> **5 tính năng không quay trực tiếp được** — 24 (HUD), 33 (cheat), 34 (Observer),
+> 39 (UI module hóa), 40 (data-driven). Phải **nói bằng lời** đúng lúc đi qua, như đã ghi
+> trong kịch bản. Đừng bỏ qua, vì mỗi tính năng là 0.25 điểm.
+
+---
+
+## Nếu cần ngắn hơn 7 phút
+
+Cắt theo thứ tự sau, **dừng lại khi đã đủ ngắn**:
+
+1. **Refund All** trong Shop (–15 giây) — nhưng mất tính năng **36**
+2. Phần **mua mở khóa nhân vật** (–20 giây) — mất tính năng **35**
+3. Tiến hóa **lần thứ hai** (–20 giây) — vẫn còn tính năng 10, chỉ kém thuyết phục hơn
+4. **Boss** ở màn 1 (–30 giây) — mất tính năng **15**
+
+> **Không cắt:** phần lưu tiến trình (tắt/mở lại game) và phần co-op. Đó là hai thứ khó
+> làm nhất và dễ ghi điểm nhất.
