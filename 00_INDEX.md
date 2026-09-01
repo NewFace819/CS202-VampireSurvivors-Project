@@ -45,77 +45,67 @@ and a LaTeX engine are installed.
 
 ## What to upload
 
-Limit: **20 files, 20 MB each**. This comes to 14.
+Limit: **20 files, 20 MB each**. This comes to 13, all within the size limit.
 
-| # | File | Covers requirement |
-|---|---|---|
-| 1 | `AI_Usage_Declaration.md` | 1 |
-| 2 | `AI_Usage_Declaration.pdf` | 1 |
-| 3 | `DEMO_VIDEOS.md` | 2 |
-| 4 | `DEMO_VIDEOS.pdf` | 2 |
-| 5 | `report.md` | 3 |
-| 6 | `report.pdf` | 3 |
-| 7 | `FEATURE_LIST.md` | 4 |
-| 8 | `FEATURE_LIST.pdf` | 4 |
-| 9 | `MEMBER_CONTRIBUTION.md` | 6 |
-| 10 | `MEMBER_CONTRIBUTION.pdf` | 6 |
-| 11 | `Member_contribution.xlsx` | 6 |
-| 12-14 | `Group54_source.part1.rar` .. `part3.rar` | 5 |
+| # | File | Size | Covers |
+|---|---|---|---|
+| 1 | `AI_Usage_Declaration.md` | small | req 1 |
+| 2 | `AI_Usage_Declaration.pdf` | 234 KB | req 1 |
+| 3 | `DEMO_VIDEOS.md` | small | req 2 |
+| 4 | `DEMO_VIDEOS.pdf` | 92 KB | req 2 |
+| 5 | `report.md` | small | req 3 |
+| 6 | `report.pdf` | 391 KB | req 3 |
+| 7 | `FEATURE_LIST.md` | small | req 4 |
+| 8 | `FEATURE_LIST.pdf` | 163 KB | req 4 |
+| 9 | `MEMBER_CONTRIBUTION.md` | small | req 6 |
+| 10 | `MEMBER_CONTRIBUTION.pdf` | 174 KB | req 6 |
+| 11 | `Member_contribution.xlsx` | small | req 6 |
+| 12 | `Group54_source.zip` | **11.3 MB** | req 5 |
+| 13 | `HOW_TO_BUILD.md` | small | helps the marker run req 5 |
 
-Member contribution is submitted in all three forms: the spreadsheet the course
-provides, plus the markdown and PDF that explain the division of work week by week and
-justify the 50/50 split.
+Member contribution is submitted in all three forms: the course spreadsheet, plus the
+markdown and PDF that explain the week-by-week division and justify the 50/50 split.
 
-`00_INDEX.md` itself does not need uploading; it is a guide for the team.
+`00_INDEX.md` is a guide for the team and does not need uploading.
 
 ---
 
-## Packaging the source code
+## The source archive
 
-| Path | Size | Include? |
+**`Group54_source.zip` is 11.3 MB — one file, no splitting.** Rebuild it with:
+
+```bash
+git archive --format=zip -o _raw.zip HEAD -- src assets CMakeLists.txt .gitignore
+```
+
+then drop the unused fonts and images (see below) from the result.
+
+`git archive` exports tracked files only, so `build/` (232 MB) and `.git/` (485 MB) are
+excluded automatically.
+
+### What was excluded, and why it is safe
+
+| Excluded | Size | Reason |
 |---|---|---|
-| `src/` | ~1 MB | Yes |
-| `assets/` | 67 MB, ~43 MB after trimming | Yes |
-| `CMakeLists.txt`, `.gitignore` | tiny | Yes |
-| `build/` | **232 MB** | **No** - build output |
-| `.git/` | **485 MB** | **No** |
-| `Group54_*`, `*.html` | - | No - weekly reports and generated pages |
+| 9 font files | 24 MB | Only `Courier_HintedSmooth.ttf` is referenced anywhere. `Arial Unicode MS Font.ttf` alone is 22 MB and is a proprietary Microsoft font that should not be redistributed. |
+| `vs_vfx.png` | 5.2 MB | Byte-identical to `assets/Graphics/Spritesheets/vfx.png`, which is the copy the code loads. |
+| `vs_enemies2.png`, `vs_enemies3.png` | 6.8 MB | Referenced only from `assets/data/enemies/*.json`, which the code never loads -- it loads `assets/data/enemies.json`. |
 
-### Trim 24 MB of unused fonts first
+Kept despite looking unused: `vs_enemies.png`, which **is** referenced directly from the
+source.
 
-`assets/fonts/` holds 25 MB but only `Courier_HintedSmooth.ttf` (788 KB) is referenced
-anywhere in the source. The rest are unused, including `Arial Unicode MS Font.ttf` at
-**22.2 MB**, which is also a proprietary Microsoft font that should not be redistributed.
+### Verification performed
 
-Removing them takes `assets/` from 67 MB to about 43 MB, which is the difference between
-a three-part and a four-part archive.
+1. All 128 asset path literals in `src/` were checked against the archive contents: every
+   one resolves.
+2. The archive was extracted to a clean folder, configured, and built from scratch.
+3. The resulting executable was launched and ran.
 
-Checked before trimming: `vs_enemies2.png`, `vs_enemies3.png` and `vs_vfx.png` look
-unused from the source but **are referenced from JSON data files**, so they stay.
-
-### Build the archive
-
-```bash
-git archive --format=zip -o Group54_source.zip HEAD -- src assets CMakeLists.txt .gitignore
-```
-
-`git archive` exports tracked files only, so `build/`, `.git/` and untracked scratch files
-are excluded automatically. Delete the unused fonts from inside the resulting zip.
-
-Then split with WinRAR: right-click -> *Add to archive* -> **Split to volumes: 19 MB**,
-giving about three parts.
-
-### Verify before submitting
-
-Extract the archive somewhere clean and build it:
-
-```bash
-cmake -S . -B build_check && cmake --build build_check
-```
-
-This matters more than usual for this project: a `CMakeLists.txt` case collision and 76
-wrong-cased asset paths were fixed during the final week. A clean build from the packaged
-copy is the only proof the archive actually works on another machine.
+That third step caught a real bug: the old `POST_BUILD` step used
+`cmd /C ... mklink /J`, and because CMake paths use forward slashes, `cmd.exe` read
+`C:/Temp/...` as the switch `/Temp` and aborted. It never showed locally because the
+junction already existed. **Every clean build of this project failed before that fix**
+(commit `6876b4ff`).
 
 ---
 
@@ -123,5 +113,5 @@ copy is the only proof the archive actually works on another machine.
 
 - [ ] Both members read [`AI_Usage_Declaration.md`](AI_Usage_Declaration.md) and confirm the tool attribution
 - [ ] Both members confirm the 50/50 split and the task hours
-- [ ] Trim the unused fonts, build the archive, split it, and test a clean build
+- [x] Source archive built, trimmed and verified with a clean build and run
 - [ ] Confirm the YouTube video is **Unlisted**, not Private, or the marker cannot open it
